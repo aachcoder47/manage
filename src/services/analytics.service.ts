@@ -55,7 +55,9 @@ export const generateInterviewAnalytics = async (payload: {
 
     const basePromptOutput = baseCompletion.choices[0] || {};
     const content = basePromptOutput.message?.content || "";
-    const analyticsResponse = JSON.parse(Array.isArray(content) ? content.join("") : content);
+    const analyticsResponse = JSON.parse(
+      Array.isArray(content) ? content.join("") : content,
+    );
 
     analyticsResponse.mainInterviewQuestions = questions.map(
       (q: Question) => q.question,

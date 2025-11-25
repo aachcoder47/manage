@@ -18,9 +18,11 @@ export async function POST(req: Request, res: Response) {
 
   let callSummaries = "";
   if (responses) {
-    responses.forEach((response: { details: { call_analysis: { call_summary: string; }; }; }) => {
-      callSummaries += response.details?.call_analysis?.call_summary;
-    });
+    responses.forEach(
+      (response: { details: { call_analysis: { call_summary: string } } }) => {
+        callSummaries += response.details?.call_analysis?.call_summary;
+      },
+    );
   }
 
   const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
@@ -50,7 +52,9 @@ export async function POST(req: Request, res: Response) {
 
     const basePromptOutput = baseCompletion.choices[0] || {};
     const content = basePromptOutput.message?.content || "";
-    const insightsResponse = JSON.parse(Array.isArray(content) ? content.join("") : content);
+    const insightsResponse = JSON.parse(
+      Array.isArray(content) ? content.join("") : content,
+    );
 
     await InterviewService.updateInterview(
       { insights: insightsResponse.insights },
