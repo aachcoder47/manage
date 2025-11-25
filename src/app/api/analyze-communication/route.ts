@@ -42,7 +42,8 @@ export async function POST(req: Request) {
     logger.info("Communication analysis completed successfully");
 
     const analysisContent = Array.isArray(analysis) ? analysis.join("") : analysis;
-    return NextResponse.json(
+    
+return NextResponse.json(
       { analysis: JSON.parse(analysisContent || "{}") },
       { status: 200 },
     );
