@@ -1,5 +1,3 @@
-"use server";
-
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Mistral } from "@mistralai/mistralai";
 import { 
@@ -109,7 +107,7 @@ export class CandidateFilteringService {
       const paginatedCandidates = filteredCandidates.slice(startIndex, startIndex + limit);
       
       // Generate insights
-      const insights = await this.generateCandidateInsights(filteredCandidates);
+      const insights = await this.generateBatchCandidateInsights(filteredCandidates);
       
       return {
         candidates: paginatedCandidates,
@@ -122,11 +120,13 @@ export class CandidateFilteringService {
     }
   }
 
-  static async enhanceCandidatesData(responses: Response[]): Promise<EnhancedCandidate[]> {
+  static async enhanceCandidatesData(respondents: { respondents: any }[]): Promise<EnhancedCandidate[]> {
     const enhancedCandidates: EnhancedCandidate[] = [];
-
-    for (const response of responses) {
+    
+    for (const respondent of respondents) {
       try {
+        const response = respondent.respondents;
+        
         // Get candidate profile
         const { data: profile } = await supabase
           .from("candidate_profile")
@@ -174,8 +174,8 @@ export class CandidateFilteringService {
           }
         });
       } catch (error) {
-        console.error(`Error enhancing candidate data for response ${response.id}:`, error);
-        enhancedCandidates.push({ ...response });
+        console.error(`Error enhancing candidate data:`, error);
+        enhancedCandidates.push({ ...respondent.respondents });
       }
     }
 
@@ -217,7 +217,7 @@ export class CandidateFilteringService {
         responseFormat: { type: "json_object" }
       });
 
-      const insights = JSON.parse(completion.choices[0]?.message?.content || "{}");
+      const insights = JSON.parse(completion.choices[0]?.message?.content as string || "{}");
       
       return {
         candidate_id: response.id,
@@ -334,16 +334,8 @@ Consider:
         if (!locationMatch) return false;
       }
       
-      // Assessment type filter
-      if (criteria.assessmentType && criteria.assessmentType.length > 0) {
-        const assessmentTypes = candidate.candidate_assessments?.map(a => 
-          a.skill_assessment?.assessment_type
-        ) || [];
-        const hasRequiredType = criteria.assessmentType.some(type => 
-          assessmentTypes.includes(type)
-        );
-        if (!hasRequiredType) return false;
-      }
+      // Assessment type filter - temporarily disabled due to data structure limitations
+      // This would require fetching skill assessment details separately
       
       // Time spent filter
       if (criteria.timeSpent) {
@@ -356,7 +348,7 @@ Consider:
     });
   }
 
-  private static async generateCandidateInsights(candidates: EnhancedCandidate[]) {
+  private static async generateBatchCandidateInsights(candidates: EnhancedCandidate[]) {
     const scores = candidates.map(c => c.overall_score || 0);
     const averageScore = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
 

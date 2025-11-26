@@ -1,7 +1,6 @@
-"use server";
-
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { ATSIntegration, ATSSyncLog, ATSProvider, CandidateProfile, Response } from "@/types/skill-assessment";
+import { ATSIntegration, ATSSyncLog, ATSProvider, CandidateProfile } from "@/types/skill-assessment";
+import { Response } from "@/types/response";
 import axios from "axios";
 
 const supabase = createClientComponentClient();

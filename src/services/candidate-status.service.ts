@@ -1,8 +1,7 @@
-"use server";
-
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Mistral } from "@mistralai/mistralai";
-import { CandidateStatus, CandidateProfile, Response } from "@/types/skill-assessment";
+import { CandidateStatus, CandidateProfile } from "@/types/skill-assessment";
+import { Response } from "@/types/response";
 import { CandidateFilteringService } from "./candidate-filtering.service";
 import { ATSIntegrationService } from "./ats.service";
 
@@ -180,8 +179,7 @@ export class CandidateStatusService {
           response_id: responseId,
           new_status: newStatus,
           reason: reason,
-          requested_by: requestedBy,
-          requires_approval: true
+          requested_by: requestedBy
         });
 
         return {
@@ -678,7 +676,7 @@ export class CandidateStatusService {
         responseFormat: { type: "json_object" }
       });
 
-      const recommendation = JSON.parse(completion.choices[0]?.message?.content || "{}");
+      const recommendation = JSON.parse(completion.choices[0]?.message?.content as string || "{}");
       
       return {
         recommended_status: recommendation.recommended_status || CandidateStatus.PENDING,
