@@ -21,6 +21,7 @@ import {
   Calendar
 } from "lucide-react";
 import { toast } from "sonner";
+import { CandidateStatus } from "@/types/skill-assessment";
 
 interface Candidate {
   id: number;
@@ -72,24 +73,29 @@ export default function HiringOverviewPage() {
 
   const handleCandidateAction = async (candidateId: number, action: 'hire' | 'consider' | 'reject') => {
     try {
-      // Update candidate status in the responses table
+      // Map actions to CandidateStatus enum values
       const statusMap = {
-        'hire': 'SELECTED',
-        'consider': 'POTENTIAL', 
-        'reject': 'NOT_SELECTED'
+        'hire': CandidateStatus.SELECTED,
+        'consider': CandidateStatus.ON_HOLD, // Use ON_HOLD for "consider" 
+        'reject': CandidateStatus.REJECTED
       };
 
-      const response = await fetch(`/api/responses/${candidateId}`, {
-        method: 'PATCH',
+      const response = await fetch('/api/candidate-status', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          candidate_status: statusMap[action]
+          responseId: candidateId,
+          newStatus: statusMap[action],
+          reason: `Candidate ${action}ed via hiring overview`,
+          requestedBy: 'hiring_manager'
         })
       });
 
       if (response.ok) {
+        const data = await response.json();
+        
         // Update local state
         setCandidates(prev => prev.map(c => 
           c.id === candidateId 
@@ -97,13 +103,17 @@ export default function HiringOverviewPage() {
             : c
         ));
         
-        toast.success(`Candidate ${action === 'hire' ? 'hired' : action === 'consider' ? 'marked as potential' : 'rejected'} successfully!`);
+        toast.success(`Candidate ${action === 'hire' ? 'hired' : action === 'consider' ? 'marked as on hold' : 'rejected'} successfully!`);
+        
+        // Refresh data to get updated stats
+        fetchHiringData();
       } else {
-        throw new Error('Failed to update candidate status');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update candidate status');
       }
     } catch (error) {
       console.error('Error updating candidate status:', error);
-      toast.error('Failed to update candidate status');
+      toast.error(error instanceof Error ? error.message : 'Failed to update candidate status');
     }
   };
 
