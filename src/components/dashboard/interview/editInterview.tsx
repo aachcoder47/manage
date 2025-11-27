@@ -104,7 +104,7 @@ function EditInterview({ interview }: EditInterviewProps) {
     const interviewData = {
       objective: objective,
       questions: questions,
-      interviewer_id: Number(selectedInterviewer),
+      interviewer_id: BigInt(selectedInterviewer || 0),
       question_count: questionCount,
       time_duration: Number(duration),
       description: description,
