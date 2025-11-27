@@ -106,7 +106,7 @@ function EditInterview({ interview }: EditInterviewProps) {
       questions: questions,
       interviewer_id: BigInt(selectedInterviewer || 0),
       question_count: questionCount,
-      time_duration: Number(duration),
+      time_duration: String(duration),
       description: description,
       is_anonymous: isAnonymous,
     };
