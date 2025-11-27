@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import React, { useState, useEffect } from "react";
 import { useOrganization } from "@clerk/nextjs";
 import { useInterviews } from "@/contexts/interviews.context";
-import { Share2, Filter, Pencil, UserIcon, Eye, Palette, BarChart3 } from "lucide-react";
+import { Share2, Filter, Pencil, UserIcon, Eye, Palette, BarChart3, MoreVertical, Trash2, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from "next/navigation";
 import { ResponseService } from "@/services/responses.service";
@@ -36,6 +36,8 @@ import {
 } from "@/components/ui/select";
 import { CandidateStatus } from "@/lib/enum";
 import LoaderWithText from "@/components/loaders/loader-with-text/loaderWithText";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card } from "@/components/ui/card";
 
 interface Props {
   params: {
@@ -77,7 +79,7 @@ function InterviewHome({ params, searchParams }: Props) {
           : `https://${interview.url}`;
       window.open(url, "_blank");
     } else {
-      console.error("Interview URL is null or undefined.");
+      toast.error("Interview URL not found");
     }
   };
 
@@ -85,14 +87,19 @@ function InterviewHome({ params, searchParams }: Props) {
     const fetchInterview = async () => {
       try {
         const response = await getInterviewById(params.interviewId);
-        setInterview(response);
-        setIsActive(response.is_active);
-        setIsViewed(response.is_viewed);
-        setThemeColor(response.theme_color ?? "#4F46E5");
-        seticonColor(response.theme_color ?? "#4F46E5");
+        if (response) {
+            setInterview(response);
+            setIsActive(response.is_active);
+            setIsViewed(response.is_viewed);
+            setThemeColor(response.theme_color ?? "#4F46E5");
+            seticonColor(response.theme_color ?? "#4F46E5");
+        }
         setLoading(true);
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
+        toast.error("Failed to fetch interview details", {
+            description: error.message
+        });
       } finally {
         setLoading(false);
       }
@@ -120,6 +127,7 @@ function InterviewHome({ params, searchParams }: Props) {
 
     fetchOrganizationData();
   }, [organization]);
+
   useEffect(() => {
     const fetchResponses = async () => {
       try {
@@ -128,8 +136,11 @@ function InterviewHome({ params, searchParams }: Props) {
         );
         setResponses(response);
         setLoading(true);
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
+        toast.error("Failed to fetch responses", {
+            description: error.message
+        });
       } finally {
         setLoading(false);
       }
@@ -160,8 +171,11 @@ function InterviewHome({ params, searchParams }: Props) {
         setResponses(updatedResponses);
       }
       setIsViewed(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      toast.error("Failed to update view status", {
+        description: error.message
+      });
     }
   };
 
@@ -182,10 +196,11 @@ function InterviewHome({ params, searchParams }: Props) {
         position: "bottom-right",
         duration: 3000,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      setIsActive(!isActive); // Revert on error
       toast.error("Error", {
-        description: "Failed to update the interview status.",
+        description: error.message || "Failed to update the interview status.",
         duration: 3000,
       });
     }
@@ -202,10 +217,10 @@ function InterviewHome({ params, searchParams }: Props) {
         position: "bottom-right",
         duration: 3000,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast.error("Error", {
-        description: "Failed to update the theme color.",
+        description: error.message || "Failed to update the theme color.",
         duration: 3000,
       });
     }
@@ -254,332 +269,232 @@ function InterviewHome({ params, searchParams }: Props) {
     );
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+        case "NOT_SELECTED": return "bg-red-500";
+        case "POTENTIAL": return "bg-yellow-500";
+        case "SELECTED": return "bg-green-500";
+        default: return "bg-gray-300";
+    }
+  };
+
   return (
-    <div className="flex flex-col w-full h-full m-2 bg-white">
+    <div className="flex flex-col w-full h-full bg-background/50 backdrop-blur-sm">
       {loading ? (
         <div className="flex flex-col items-center justify-center h-[80%] w-full">
           <LoaderWithText />
         </div>
       ) : (
         <>
-          <div className="flex flex-row p-3 pt-4 justify-center gap-6 items-center sticky top-2 bg-white">
-            <div className="font-bold text-md">{interview?.name}</div>
-
-            <div
-              className="w-5 h-5 rounded-full border-2 border-white shadow"
-              style={{ backgroundColor: iconColor }}
-            />
-
-            <div className="flex flex-row gap-3 my-auto">
-              <UserIcon className="my-auto" size={16} />:{" "}
-              {String(responses?.length)}
+          {/* Header Bar */}
+          <div className="flex flex-row px-6 py-4 justify-between items-center sticky top-0 bg-background/80 backdrop-blur-md z-10 border-b border-border/50">
+            <div className="flex items-center gap-4">
+                <div
+                className="w-8 h-8 rounded-full border-2 border-white shadow-md transition-transform hover:scale-110 cursor-pointer"
+                style={{ backgroundColor: iconColor }}
+                onClick={() => setShowColorPicker(true)}
+                title="Change Theme Color"
+                />
+                <div>
+                    <h1 className="font-bold text-xl tracking-tight">{interview?.name}</h1>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <UserIcon size={12} />
+                        <span>{responses?.length || 0} Responses</span>
+                    </div>
+                </div>
             </div>
 
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className={
-                      "bg-transparent shadow-none relative text-xs text-indigo-600 px-1 h-7 hover:scale-110 hover:bg-transparent"
-                    }
-                    variant={"secondary"}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      router.push(`/interviews/${params.interviewId}/hiring-overview`);
-                    }}
-                  >
-                    <BarChart3 size={16} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-zinc-300"
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <span className="text-black flex flex-row gap-4">Hiring Overview</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg border border-border/50 mr-4">
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-background hover:text-indigo-600 transition-colors"
+                                onClick={() => router.push(`/interviews/${params.interviewId}/hiring-overview`)}
+                            >
+                                <BarChart3 size={18} />
+                            </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Hiring Overview</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
 
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className={
-                      "bg-transparent shadow-none relative text-xs text-indigo-600 px-1 h-7 hover:scale-110 hover:bg-transparent"
-                    }
-                    variant={"secondary"}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      openSharePopup();
-                    }}
-                  >
-                    <Share2 size={16} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-zinc-300"
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <span className="text-black flex flex-row gap-4">Share</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-transparent shadow-none text-xs text-indigo-600 px-0 h-7 hover:scale-110 relative"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      seeInterviewPreviewPage();
-                    }}
-                  >
-                    <Eye />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-zinc-300"
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <span className="text-black flex flex-row gap-4">
-                    Preview
-                  </span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-transparent shadow-none text-xs text-indigo-600 px-0 h-7 hover:scale-110 relative"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setShowColorPicker(!showColorPicker);
-                    }}
-                  >
-                    <Palette size={19} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-zinc-300"
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <span className="text-black flex flex-row gap-4">
-                    Theme Color
-                  </span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-transparent shadow-none text-xs text-indigo-600 px-0 h-7 hover:scale-110 relative"
-                    onClick={(event) => {
-                      router.push(
-                        `/interviews/${params.interviewId}?edit=true`,
-                      );
-                    }}
-                  >
-                    <Pencil size={16} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-zinc-300"
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <span className="text-black flex flex-row gap-4">Edit</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-background hover:text-indigo-600 transition-colors"
+                                onClick={openSharePopup}
+                            >
+                                <Share2 size={18} />
+                            </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Share Interview</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
 
-            <label className="inline-flex cursor-pointer">
-              {currentPlan == "free_trial_over" ? (
-                <>
-                  <span className="ms-3 my-auto text-sm">Inactive</span>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipContent
-                        className="bg-zinc-300"
-                        side="bottom"
-                        sideOffset={4}
-                      >
-                        Upgrade your plan to reactivate
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </>
-              ) : (
-                <>
-                  <span className="ms-3 my-auto text-sm">Active</span>
-                  <Switch
-                    checked={isActive}
-                    className={`ms-3 my-auto ${
-                      isActive ? "bg-indigo-600" : "bg-[#E6E7EB]"
-                    }`}
-                    onCheckedChange={handleToggle}
-                  />
-                </>
-              )}
-            </label>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-background hover:text-indigo-600 transition-colors"
+                                onClick={seeInterviewPreviewPage}
+                            >
+                                <Eye size={18} />
+                            </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Preview as Candidate</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-background hover:text-indigo-600 transition-colors"
+                                onClick={() => router.push(`/interviews/${params.interviewId}?edit=true`)}
+                            >
+                                <Pencil size={18} />
+                            </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Edit Interview</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+
+                <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 rounded-full border border-border/50">
+                    <span className={`text-xs font-medium ${isActive ? "text-green-600" : "text-muted-foreground"}`}>
+                        {isActive ? "Active" : "Inactive"}
+                    </span>
+                    <Switch
+                        checked={isActive}
+                        onCheckedChange={handleToggle}
+                        className="scale-75 data-[state=checked]:bg-green-600"
+                        disabled={currentPlan === "free_trial_over"}
+                    />
+                </div>
+            </div>
           </div>
-          <div className="flex flex-row w-full p-2 h-[85%] gap-1 ">
-            <div className="w-[20%] flex flex-col p-2 divide-y-2 rounded-sm border-2 border-slate-100">
-              <div className="flex w-full justify-center py-2">
+
+          {/* Main Content Area */}
+          <div className="flex flex-row w-full h-[calc(100vh-80px)] p-6 gap-6 overflow-hidden">
+            
+            {/* Sidebar: Response List */}
+            <Card className="w-[350px] flex flex-col h-full border-border/50 bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border/50 bg-muted/10">
                 <Select
                   onValueChange={async (newValue: string) => {
                     setFilterStatus(newValue);
                   }}
                 >
-                  <SelectTrigger className="w-[95%] bg-slate-100 rounded-lg">
-                    <Filter size={18} className=" text-slate-400" />
-                    <SelectValue placeholder="Filter By" />
+                  <SelectTrigger className="w-full bg-background border-border/50">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Filter size={16} />
+                        <SelectValue placeholder="Filter Responses" />
+                    </div>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={CandidateStatus.NO_STATUS}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-gray-400 rounded-full mr-2" />
-                        No Status
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.NOT_SELECTED}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-red-500 rounded-full mr-2" />
-                        Not Selected
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.POTENTIAL}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2" />
-                        Potential
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.SELECTED}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-2" />
-                        Selected
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="ALL">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 border-2 border-gray-300 rounded-full mr-2" />
-                        All
-                      </div>
-                    </SelectItem>
+                    <SelectItem value="ALL">All Responses</SelectItem>
+                    <SelectItem value={CandidateStatus.NO_STATUS}>No Status</SelectItem>
+                    <SelectItem value={CandidateStatus.NOT_SELECTED}>Not Selected</SelectItem>
+                    <SelectItem value={CandidateStatus.POTENTIAL}>Potential</SelectItem>
+                    <SelectItem value={CandidateStatus.SELECTED}>Selected</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <ScrollArea className="h-full p-1 rounded-md border-none">
-                {filterResponses().length > 0 ? (
-                  filterResponses().map((response) => (
-                    <div
-                      className={`p-2 rounded-md hover:bg-indigo-100 border-2 my-1 text-left text-xs ${
-                        searchParams.call == response.call_id
-                          ? "bg-indigo-200"
-                          : "border-indigo-100"
-                      } flex flex-row justify-between cursor-pointer w-full`}
-                      key={response?.id}
-                      onClick={() => {
-                        router.push(
-                          `/interviews/${params.interviewId}?call=${response.call_id}`,
-                        );
-                        handleResponseClick(response);
-                      }}
-                    >
-                      <div className="flex flex-row gap-1 items-center w-full">
-                        {response.candidate_status === "NOT_SELECTED" ? (
-                          <div className="w-[5%] h-full bg-red-500 rounded-sm" />
-                        ) : response.candidate_status === "POTENTIAL" ? (
-                          <div className="w-[5%] h-full bg-yellow-500 rounded-sm" />
-                        ) : response.candidate_status === "SELECTED" ? (
-                          <div className="w-[5%] h-full bg-green-500 rounded-sm" />
-                        ) : (
-                          <div className="w-[5%] h-full bg-gray-400 rounded-sm" />
-                        )}
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex flex-col my-auto">
-                            <p className="font-medium mb-[2px]">
-                              {response?.name
-                                ? `${response?.name}'s Response`
-                                : "Anonymous"}
-                            </p>
-                            <p className="">
-                              {formatTimestampToDateHHMM(
-                                String(response?.created_at),
-                              )}
-                            </p>
-                          </div>
-                          <div className="flex flex-col items-center justify-center ml-auto flex-shrink-0">
-                            {!response.is_viewed && (
-                              <div className="w-4 h-4 flex items-center justify-center mb-1">
-                                <div className="text-indigo-500 text-xl leading-none">
-                                  ●
-                                </div>
-                              </div>
-                            )}
-                            <div
-                              className={`w-6 h-6 flex items-center justify-center ${
-                                response.is_viewed ? "h-full" : ""
-                              }`}
+              <ScrollArea className="flex-1 p-3">
+                <div className="space-y-2">
+                    <AnimatePresence>
+                        {filterResponses().length > 0 ? (
+                        filterResponses().map((response) => (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                key={response?.id}
+                                onClick={() => {
+                                    router.push(`/interviews/${params.interviewId}?call=${response.call_id}`);
+                                    handleResponseClick(response);
+                                }}
+                                className={`
+                                    group relative p-3 rounded-xl border transition-all duration-200 cursor-pointer
+                                    ${searchParams.call == response.call_id 
+                                        ? "bg-indigo-50/80 border-indigo-200 shadow-sm" 
+                                        : "bg-background border-transparent hover:bg-muted/50 hover:border-border/50"}
+                                `}
                             >
-                              {response.analytics &&
-                                response.analytics.overallScore !==
-                                  undefined && (
-                                  <TooltipProvider>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <div className="w-6 h-6 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center">
-                                          <span className="text-indigo-500 text-xs font-semibold">
-                                            {response?.analytics?.overallScore}
-                                          </span>
+                                <div className="flex items-start gap-3">
+                                    <div className={`w-1.5 h-10 rounded-full flex-shrink-0 ${getStatusColor(response.candidate_status || "")}`} />
+                                    
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start mb-1">
+                                            <p className="font-semibold text-sm truncate text-foreground">
+                                                {response?.name || "Anonymous"}
+                                            </p>
+                                            {!response.is_viewed && (
+                                                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                                            )}
                                         </div>
-                                      </TooltipTrigger>
-                                      <TooltipContent
-                                        className="bg-gray-500"
-                                        side="bottom"
-                                        sideOffset={4}
-                                      >
-                                        <span className="text-white font-normal flex flex-row gap-4">
-                                          Overall Score
-                                        </span>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                )}
-                            </div>
-                          </div>
+                                        
+                                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                            <Clock size={12} />
+                                            <span>{formatTimestampToDateHHMM(String(response?.created_at))}</span>
+                                        </div>
+                                    </div>
+
+                                    {response.analytics?.overallScore !== undefined && (
+                                        <div className={`
+                                            flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold border-2
+                                            ${response.analytics.overallScore >= 70 
+                                                ? "border-green-200 bg-green-50 text-green-700" 
+                                                : response.analytics.overallScore >= 40 
+                                                    ? "border-yellow-200 bg-yellow-50 text-yellow-700" 
+                                                    : "border-red-200 bg-red-50 text-red-700"}
+                                        `}>
+                                            {response.analytics.overallScore}
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        ))
+                        ) : (
+                        <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-sm">
+                            <p>No responses found</p>
                         </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-gray-500">
-                    No responses to display
-                  </p>
-                )}
+                        )}
+                    </AnimatePresence>
+                </div>
               </ScrollArea>
-            </div>
-            {responses && (
-              <div className="w-[85%] rounded-md ">
-                {searchParams.call ? (
-                  <CallInfo
-                    call_id={searchParams.call}
-                    onDeleteResponse={handleDeleteResponse}
-                    onCandidateStatusChange={handleCandidateStatusChange}
-                  />
-                ) : searchParams.edit ? (
-                  <EditInterview interview={interview} />
-                ) : (
-                  <SummaryInfo responses={responses} interview={interview} />
+            </Card>
+
+            {/* Main Detail View */}
+            <div className="flex-1 h-full overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
+                {responses && (
+                    <div className="h-full w-full">
+                        {searchParams.call ? (
+                        <CallInfo
+                            call_id={searchParams.call}
+                            onDeleteResponse={handleDeleteResponse}
+                            onCandidateStatusChange={handleCandidateStatusChange}
+                        />
+                        ) : searchParams.edit ? (
+                        <EditInterview interview={interview} />
+                        ) : (
+                        <SummaryInfo responses={responses} interview={interview} />
+                        )}
+                    </div>
                 )}
-              </div>
-            )}
+            </div>
           </div>
         </>
       )}

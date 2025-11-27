@@ -10,19 +10,24 @@ import { ClientService } from "@/services/clients.service";
 import { ResponseService } from "@/services/responses.service";
 import { useInterviews } from "@/contexts/interviews.context";
 import Modal from "@/components/dashboard/Modal";
-import { Gem, Plus, Sparkles } from "lucide-react";
+import { Gem, Plus, Sparkles, Building2, ArrowUpLeft } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
-  const { organization } = useOrganization();
+  const { organization, isLoaded } = useOrganization();
   const { user } = useUser();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPlan, setCurrentPlan] = useState<string>("");
   const [allowedResponsesCount, setAllowedResponsesCount] =
     useState<number>(10);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function InterviewsLoader() {
     return (
@@ -38,55 +43,30 @@ function Interviews() {
     const fetchOrganizationData = async () => {
       try {
         if (organization?.id) {
-          const data = await ClientService.getOrganizationById(organization.id);
-          if (data?.plan) {
-            setCurrentPlan(data.plan);
-            if (data.plan === "free_trial_over") {
-              setIsModalOpen(true);
-            }
+          // Import subscription service
+          const { SubscriptionService } = await import('@/services/subscription.service');
+          
+          // Get or create subscription
+          let subscription = await SubscriptionService.getSubscriptionByOrgId(organization.id);
+          
+          if (!subscription) {
+            // Create free subscription for new organizations
+            subscription = await SubscriptionService.createSubscription({
+              organization_id: organization.id,
+              plan_type: 'free',
+              status: 'active',
+            });
           }
-          if (data?.allowed_responses_count) {
-            setAllowedResponsesCount(data.allowed_responses_count);
-          }
+          
+          setCurrentPlan(subscription.plan_type);
         }
       } catch (error) {
-        console.error("Error fetching organization data:", error);
+        console.error("Error fetching subscription data:", error);
       }
     };
 
     fetchOrganizationData();
   }, [organization]);
-
-  useEffect(() => {
-    const fetchResponsesCount = async () => {
-      if (!organization || currentPlan !== "free") {
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const totalResponses =
-          await ResponseService.getResponseCountByOrganizationId(
-            organization.id,
-          );
-        const hasExceededLimit = totalResponses >= allowedResponsesCount;
-        if (hasExceededLimit) {
-          setCurrentPlan("free_trial_over");
-          await InterviewService.deactivateInterviewsByOrgId(organization.id);
-          await ClientService.updateOrganization(
-            { plan: "free_trial_over" },
-            organization.id,
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching responses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResponsesCount();
-  }, [organization, currentPlan, allowedResponsesCount]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -102,6 +82,38 @@ function Interviews() {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 }
   };
+
+  if (!mounted || !isLoaded) {
+    return (
+      <main className="p-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <InterviewsLoader />
+        </div>
+      </main>
+    );
+  }
+
+  if (!organization) {
+    return (
+      <main className="p-8 max-w-7xl mx-auto">
+        <div className="flex flex-col items-center justify-center h-[60vh] space-y-6 text-center">
+           <div className="p-6 bg-indigo-50 rounded-full text-indigo-600 ring-8 ring-indigo-50/50">
+              <Building2 size={48} />
+           </div>
+           <div className="space-y-2">
+            <h2 className="text-2xl font-bold tracking-tight">Create an Organization</h2>
+            <p className="text-muted-foreground max-w-md mx-auto text-lg">
+                You need to create or select an organization to start managing interviews.
+            </p>
+           </div>
+           <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2 rounded-full border border-border/50">
+             <ArrowUpLeft size={16} />
+             <span>Use the switcher in the sidebar to create one</span>
+           </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="p-8 max-w-7xl mx-auto">
@@ -208,7 +220,7 @@ function Interviews() {
               </div>
 
               <div className="text-center text-sm text-muted-foreground">
-                Contact <a href="mailto:founders@folo-up.co" className="text-indigo-600 font-semibold hover:underline">founders@folo-up.co</a> to upgrade.
+                Contact <a href="mailto:ritwikr890@gmail.com" className="text-indigo-600 font-semibold hover:underline">ritwikr890@gmail.com</a> to upgrade.
               </div>
             </div>
           </Modal>
