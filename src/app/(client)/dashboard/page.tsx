@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useOrganization } from "@clerk/nextjs";
+import { useOrganization, useUser } from "@clerk/nextjs";
 import InterviewCard from "@/components/dashboard/interview/interviewCard";
 import CreateInterviewCard from "@/components/dashboard/interview/createInterviewCard";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -10,12 +10,14 @@ import { ClientService } from "@/services/clients.service";
 import { ResponseService } from "@/services/responses.service";
 import { useInterviews } from "@/contexts/interviews.context";
 import Modal from "@/components/dashboard/Modal";
-import { Gem, Plus } from "lucide-react";
+import { Gem, Plus, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
   const { organization } = useOrganization();
+  const { user } = useUser();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPlan, setCurrentPlan] = useState<string>("");
   const [allowedResponsesCount, setAllowedResponsesCount] =
@@ -25,11 +27,9 @@ function Interviews() {
   function InterviewsLoader() {
     return (
       <>
-        <div className="flex flex-row">
-          <div className="h-60 w-56 ml-1 mr-3 mt-3 flex-none animate-pulse rounded-xl bg-gray-300" />
-          <div className="h-60 w-56 ml-1 mr-3  mt-3 flex-none animate-pulse rounded-xl bg-gray-300" />
-          <div className="h-60 w-56 ml-1 mr-3 mt-3 flex-none animate-pulse rounded-xl bg-gray-300" />
-        </div>
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-72 w-full animate-pulse rounded-xl bg-muted/50 border border-muted" />
+        ))}
       </>
     );
   }
@@ -88,97 +88,131 @@ function Interviews() {
     fetchResponsesCount();
   }, [organization, currentPlan, allowedResponsesCount]);
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <main className="p-8 pt-0 ml-12 mr-auto rounded-md">
-      <div className="flex flex-col items-left">
-        <h2 className="mr-2 text-2xl font-semibold tracking-tight mt-8">
-          My Interviews
-        </h2>
-        <h3 className=" text-sm tracking-tight text-gray-600 font-medium ">
-          Start getting responses now!
-        </h3>
-        <div className="relative flex items-center mt-1 flex-wrap">
-        {currentPlan == "free_trial_over" ? (
-            <Card className=" flex bg-gray-200 items-center border-dashed border-gray-700 border-2 hover:scale-105 ease-in-out duration-300 h-60 w-56 ml-1 mr-3 mt-4 rounded-xl shrink-0 overflow-hidden shadow-md">
-              <CardContent className="flex items-center flex-col mx-auto">
-                <div className="flex flex-col justify-center items-center w-full overflow-hidden">
-                  <Plus size={90} strokeWidth={0.5} className="text-gray-700" />
-                </div>
-                <CardTitle className="p-0 text-md text-center">
-                  You cannot create any more interviews unless you upgrade
-                </CardTitle>
-              </CardContent>
-            </Card>
+    <main className="p-8 max-w-7xl mx-auto">
+      <div className="flex flex-col space-y-8">
+        {/* Welcome Header */}
+        <div className="flex flex-col space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">{user?.firstName || "there"}</span> 👋
+          </h2>
+          <p className="text-muted-foreground text-lg">
+            Manage your interviews and track candidate responses.
+          </p>
+        </div>
+
+        <motion.div 
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          {currentPlan == "free_trial_over" ? (
+            <motion.div variants={item}>
+              <Card className="group relative flex items-center justify-center border-dashed border-2 border-red-200 bg-red-50/50 hover:bg-red-50 cursor-pointer transition-all duration-300 h-72 w-full rounded-xl overflow-hidden">
+                <CardContent className="flex items-center flex-col mx-auto p-6 text-center">
+                  <div className="flex flex-col justify-center items-center w-16 h-16 rounded-full bg-red-100 mb-4">
+                    <Plus size={32} className="text-red-500" />
+                  </div>
+                  <CardTitle className="text-lg font-medium text-red-900">
+                    Limit Reached
+                  </CardTitle>
+                  <p className="text-xs text-red-600 mt-2">
+                    Upgrade to create more interviews
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
           ) : (
-            <CreateInterviewCard />
+            <motion.div variants={item}>
+              <CreateInterviewCard />
+            </motion.div>
           )}
+
           {interviewsLoading || loading ? (
             <InterviewsLoader />
           ) : (
             <>
-              {isModalOpen && (
-                <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                  <div className="flex flex-col space-y-4">
-                    <div className="flex justify-center text-indigo-600">
-                      <Gem />
-                    </div>
-                    <h3 className="text-xl font-semibold text-center">
-                      Upgrade to Pro
-                    </h3>
-                    <p className="text-l text-center">
-                      You have reached your limit for the free trial. Please
-                      upgrade to pro to continue using our features.
-                    </p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="flex justify-center items-center">
-                        <Image
-                          src={"/premium-plan-icon.png"}
-                          alt="Graphic"
-                          width={299}
-                          height={300}
-                        />
-                      </div>
-
-                      <div className="grid grid-rows-2 gap-2">
-                        <div className="p-4 border rounded-lg">
-                          <h4 className="text-lg font-medium">Free Plan</h4>
-                          <ul className="list-disc pl-5 mt-2">
-                            <li>10 Responses</li>
-                            <li>Basic Support</li>
-                            <li>Limited Features</li>
-                          </ul>
-                        </div>
-                        <div className="p-4 border rounded-lg">
-                          <h4 className="text-lg font-medium">Pro Plan</h4>
-                          <ul className="list-disc pl-5 mt-2">
-                            <li>Flexible Pay-Per-Response</li>
-                            <li>Priority Support</li>
-                            <li>All Features</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-l text-center">
-                      Contact{" "}
-                      <span className="font-semibold">founders@folo-up.co</span>{" "}
-                      to upgrade your plan.
-                    </p>
-                  </div>
-                </Modal>
-              )}
-              {interviews.map((item) => (
-                <InterviewCard
-                  id={item.id}
-                  interviewerId={item.interviewer_id}
-                  key={item.id}
-                  name={item.name}
-                  url={item.url ?? ""}
-                  readableSlug={item.readable_slug}
-                />
+              {interviews.map((interview) => (
+                <motion.div key={interview.id} variants={item}>
+                  <InterviewCard
+                    id={interview.id}
+                    interviewerId={interview.interviewer_id}
+                    name={interview.name}
+                    url={interview.url ?? ""}
+                    readableSlug={interview.readable_slug}
+                  />
+                </motion.div>
               ))}
             </>
           )}
-        </div>
+        </motion.div>
+
+        {/* Upgrade Modal */}
+        {isModalOpen && (
+          <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <div className="flex flex-col space-y-6 p-2">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="p-3 bg-indigo-100 rounded-full text-indigo-600 mb-2">
+                  <Sparkles size={32} />
+                </div>
+                <h3 className="text-2xl font-bold">
+                  Upgrade to Pro
+                </h3>
+                <p className="text-muted-foreground max-w-sm">
+                  You've reached the limit of your free trial. Unlock unlimited potential with our Pro plan.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 border rounded-xl bg-muted/30">
+                  <h4 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-gray-400" />
+                    Free Plan
+                  </h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">✓ 10 Responses</li>
+                    <li className="flex items-center gap-2">✓ Basic Support</li>
+                    <li className="flex items-center gap-2">✓ Limited Features</li>
+                  </ul>
+                </div>
+                <div className="p-4 border-2 border-indigo-500/20 bg-indigo-50/50 rounded-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] px-2 py-1 rounded-bl-lg font-medium">
+                    RECOMMENDED
+                  </div>
+                  <h4 className="text-lg font-semibold mb-3 flex items-center gap-2 text-indigo-900">
+                    <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                    Pro Plan
+                  </h4>
+                  <ul className="space-y-2 text-sm text-indigo-800">
+                    <li className="flex items-center gap-2">✓ Flexible Pay-Per-Response</li>
+                    <li className="flex items-center gap-2">✓ Priority Support</li>
+                    <li className="flex items-center gap-2">✓ All AI Features</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="text-center text-sm text-muted-foreground">
+                Contact <a href="mailto:founders@folo-up.co" className="text-indigo-600 font-semibold hover:underline">founders@folo-up.co</a> to upgrade.
+              </div>
+            </div>
+          </Modal>
+        )}
       </div>
     </main>
   );
