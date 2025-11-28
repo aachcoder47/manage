@@ -1,97 +1,201 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Copy, ArrowUpRight } from "lucide-react";
+import { Copy, ArrowUpRight, Brain, Filter, BarChart3 } from "lucide-react";
+import { CopyCheck } from "lucide-react";
+import { ResponseService } from "@/services/responses.service";
+import axios from "axios";
+import MiniLoader from "@/components/loaders/mini-loader/miniLoader";
+import { InterviewerService } from "@/services/interviewers.service";
+import { useRouter } from "next/navigation";
 
-export default function CandidatePage() {
-  const params = useParams();
-  const slug = params?.candidateSlug;
+interface Props {
+  name: string | null;
+  interviewerId: bigint;
+  id: string;
+  url: string;
+  readableSlug: string;
+}
 
-  const [candidate, setCandidate] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+const getBaseUrl = () => {
+  let baseUrl =
+    process.env.NEXT_PUBLIC_LIVE_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000");
+
+  if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
+    baseUrl = "https://" + baseUrl;
+  }
+
+  return baseUrl.replace(/\/$/, "");
+};
+
+const base_url = getBaseUrl();
+
+export default function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
+  const router = useRouter();
+  const [copied, setCopied] = useState(false);
+  const [responseCount, setResponseCount] = useState<number | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [img, setImg] = useState("");
+  const [hasAssessments, setHasAssessments] = useState(false);
+  const [averageScore, setAverageScore] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!slug) return;
-
-    async function loadCandidate() {
+    async function fetchInterviewer() {
       try {
-        const res = await fetch(`/api/candidates/${slug}`);
-        if (!res.ok) throw new Error("Candidate not found");
-
-        const data = await res.json();
-
-        // Fix readableSlug missing → causes runtime error
-        const fixedData = {
-          ...data,
-          readableSlug: data.readableSlug ?? data.slug ?? slug,
-        };
-
-        setCandidate(fixedData);
+        const interviewer = await InterviewerService.getInterviewer(interviewerId);
+        setImg(interviewer.image);
       } catch (err) {
-        console.error("Error loading candidate:", err);
-        toast.error("Failed to load candidate");
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch interviewer:", err);
+      }
+    }
+    fetchInterviewer();
+  }, [interviewerId]);
+
+  useEffect(() => {
+    async function fetchResponsesAndAnalytics() {
+      try {
+        const responses = await ResponseService.getAllResponses(id);
+        setResponseCount(responses.length);
+
+        setIsFetching(true);
+
+        for (const response of responses) {
+          if (!response.is_analysed) {
+            try {
+              const result = await axios.post("/api/get-call", { id: response.call_id });
+              if (result.status !== 200) throw new Error(`HTTP error! status: ${result.status}`);
+            } catch (err) {
+              console.error(`Failed to call api/get-call for response id ${response.call_id}:`, err);
+            }
+          }
+        }
+
+        setIsFetching(false);
+      } catch (err) {
+        console.error("Error fetching responses:", err);
+        setIsFetching(false);
       }
     }
 
-    loadCandidate();
-  }, [slug]);
+    fetchResponsesAndAnalytics();
+  }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  if (!candidate) return <div>Candidate not found</div>;
-
-  // Interview URL fix
-  const interviewURL = `${window.location.origin}/interview/${candidate.readableSlug}`;
-
-  // --- FIX 1: COPY WORKS NOW ---
-  const copyText = async () => {
-    try {
-      await navigator.clipboard.writeText(interviewURL);
-      toast.success("Interview link copied!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to copy");
-    }
+  const copyToClipboard = () => {
+    const textToCopy = readableSlug ? `${base_url}/call/${readableSlug}` : url;
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        setCopied(true);
+        toast.success("Interview link copied to clipboard.", { position: "bottom-right", duration: 3000 });
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((err) => console.error("Failed to copy text:", err));
   };
 
-  // --- FIX 2: JUMP WORKS NOW ---
-  const jumpToInterview = () => {
-    try {
-      window.open(interviewURL, "_blank", "noopener,noreferrer");
-    } catch (err) {
-      console.error(err);
-      toast.error("Could not open interview");
-    }
+  const handleJumpToInterview = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const interviewUrl = readableSlug ? `/call/${readableSlug}` : `/call/${url}`;
+    window.open(interviewUrl, "_blank");
+  };
+
+  const handleCreateAssessment = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    router.push(`/interviews/${id}/assessments`);
+  };
+
+  const handleFilterCandidates = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    router.push(`/interviews/${id}/filter`);
+  };
+
+  const handleViewAnalytics = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    router.push(`/interviews/${id}/analytics`);
   };
 
   return (
-    <div className="p-6">
-      <Card>
-        <CardContent>
-          <CardTitle className="text-xl mb-4">Candidate Information</CardTitle>
-
-          <div className="mb-4">
-            <p>Name: {candidate.name}</p>
-            <p>Email: {candidate.email}</p>
-            <p>Role: {candidate.role}</p>
+    <a
+      href={`/interviews/${id}`}
+      style={{ pointerEvents: isFetching ? "none" : "auto", cursor: isFetching ? "default" : "pointer" }}
+    >
+      <Card className="group relative h-72 w-full rounded-xl overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300">
+        <CardContent className={`p-0 h-full flex flex-col ${isFetching ? "opacity-60" : ""}`}>
+          {/* Header */}
+          <div className="w-full h-28 overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/90 to-purple-600/90 group-hover:scale-105 transition-transform duration-500" />
+            <div className="relative z-10 p-4 flex flex-col h-full justify-between">
+              <div className="flex justify-between items-start">
+                <CardTitle className="text-white text-lg font-semibold leading-tight line-clamp-2 text-left">
+                  {name}
+                  {isFetching && <MiniLoader />}
+                </CardTitle>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Button size="icon" className="h-7 w-7 bg-white/20 hover:bg-white/30 border-none text-white backdrop-blur-md" onClick={handleJumpToInterview}>
+                    <ArrowUpRight size={14} />
+                  </Button>
+                  <Button
+                    size="icon"
+                    className={`h-7 w-7 bg-white/20 hover:bg-white/30 border-none text-white backdrop-blur-md ${copied ? "bg-white/40" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      copyToClipboard();
+                    }}
+                  >
+                    {copied ? <CopyCheck size={14} /> : <Copy size={14} />}
+                  </Button>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {hasAssessments && (
+                  <div className="bg-white/20 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
+                    <Brain className="h-3 w-3" />
+                    AI Active
+                  </div>
+                )}
+                {averageScore !== null && (
+                  <div className="bg-emerald-500/80 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-full font-medium">
+                    Avg: {averageScore}%
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="flex gap-3">
-            <Button onClick={copyText}>
-              <Copy size={16} className="mr-2" /> Copy Interview Link
-            </Button>
+          {/* Body */}
+          <div className="flex-1 p-4 flex flex-col justify-between bg-background/50">
+            <div className="flex items-center gap-3">
+              <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-background shadow-sm">
+                <Image src={img} alt="Interviewer" fill className="object-cover" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Responses</span>
+                <span className="text-lg font-bold text-foreground">{responseCount || 0}</span>
+              </div>
+            </div>
 
-            <Button onClick={jumpToInterview}>
-              Jump to Interview <ArrowUpRight size={16} className="ml-2" />
-            </Button>
+            {/* Action Buttons */}
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              <Button variant="outline" className="h-8 text-xs flex items-center justify-center gap-1.5" onClick={handleCreateAssessment} title="Create Skill Assessment">
+                <Brain className="h-3.5 w-3.5" /> Assess
+              </Button>
+              <Button variant="outline" className="h-8 text-xs flex items-center justify-center gap-1.5" onClick={handleFilterCandidates} title="Filter Candidates" disabled={responseCount === 0}>
+                <Filter className="h-3.5 w-3.5" /> Filter
+              </Button>
+              <Button variant="outline" className="h-8 text-xs flex items-center justify-center gap-1.5" onClick={handleViewAnalytics} title="View Analytics" disabled={responseCount === 0}>
+                <BarChart3 className="h-3.5 w-3.5" /> Analytics
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
-    </div>
+    </a>
   );
-}
+                    }
