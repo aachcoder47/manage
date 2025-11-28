@@ -47,9 +47,10 @@ function CreateInterviewCard() {
 
     // Check if user has pending subscription
     if (subscription && subscription.status === 'pending') {
-      toast.info("Payment is pending. Complete payment to activate your subscription.", {
-        duration: 4000,
+      toast.info("Redirecting to payment page...", {
+        duration: 2000,
       });
+      router.push('/payment/pending');
       return;
     }
 
@@ -84,7 +85,7 @@ function CreateInterviewCard() {
           subscription && subscription.status === 'active' && subscription.plan_type !== 'free'
             ? 'border-green-200 bg-green-50/30 cursor-not-allowed'
             : subscription && subscription.status === 'pending'
-            ? 'border-yellow-200 bg-yellow-50/30 cursor-not-allowed'
+            ? 'border-yellow-200 bg-yellow-50/30 cursor-pointer hover:border-yellow-300 hover:shadow-lg'
             : 'border-muted-foreground/25 bg-muted/5 hover:bg-muted/10 cursor-pointer hover:border-primary/50 hover:shadow-lg'
         }`}
         onClick={handleClick}
@@ -109,13 +110,13 @@ function CreateInterviewCard() {
             subscription && subscription.status === 'active' && subscription.plan_type !== 'free'
               ? 'text-green-700'
               : subscription && subscription.status === 'pending'
-              ? 'text-yellow-700'
+              ? 'text-yellow-700 group-hover:text-yellow-800'
               : 'text-muted-foreground group-hover:text-foreground'
           }`}>
             {subscription && subscription.status === 'active' && subscription.plan_type !== 'free'
               ? 'Subscribed Plan'
               : subscription && subscription.status === 'pending'
-              ? 'Payment Pending'
+              ? 'Complete Payment'
               : 'Create New Interview'
             }
           </CardTitle>
@@ -129,7 +130,7 @@ function CreateInterviewCard() {
             {subscription && subscription.status === 'active' && subscription.plan_type !== 'free'
               ? 'Access managed by subscription'
               : subscription && subscription.status === 'pending'
-              ? 'Complete payment to activate'
+              ? 'Click to complete payment'
               : 'Set up a new AI-conducted interview in seconds'
             }
           </p>

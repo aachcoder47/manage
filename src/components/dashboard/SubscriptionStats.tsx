@@ -142,6 +142,11 @@ export default function SubscriptionStats({ organizationId }: SubscriptionStatsP
               <p className="text-xs text-yellow-600 mt-1">
                 Complete payment to activate {planConfig.name} features
               </p>
+              <Link href="/payment/pending" className="mt-3 inline-block">
+                <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                  Complete Payment
+                </Button>
+              </Link>
             </div>
           </div>
         )}
