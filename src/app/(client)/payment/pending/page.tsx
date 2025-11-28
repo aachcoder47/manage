@@ -53,7 +53,7 @@ export default function PaymentPendingPage() {
       // Load Razorpay
       const Razorpay = (await import('razorpay')).default;
       
-      const options = {
+      const options: any = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_...', // Fallback for testing
         subscription_id: subscription.razorpay_subscription_id,
         name: "FoloUp",
@@ -93,7 +93,7 @@ export default function PaymentPendingPage() {
       };
 
       const rzp = new Razorpay(options);
-      rzp.open();
+      (rzp as any).open();
     } catch (error) {
       console.error("Payment retry error:", error);
       toast.error("Failed to initiate payment. Please try again.");
@@ -108,7 +108,7 @@ export default function PaymentPendingPage() {
       const subData = await SubscriptionService.getSubscriptionByOrgId(organization!.id);
       setSubscription(subData);
       
-      if (subData.status === 'active' && subData.plan_type !== 'free') {
+      if (subData && subData.status === 'active' && subData.plan_type !== 'free') {
         toast.success("Payment completed! Redirecting to dashboard...");
         setTimeout(() => router.push('/dashboard'), 1500);
       } else {
@@ -177,7 +177,7 @@ export default function PaymentPendingPage() {
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Price</span>
               <span className="font-semibold">
-                {planConfig.price ? `₹${planConfig.price}/month` : 'Custom'}
+                {planConfig.price ? `$${planConfig.price}/month` : 'Custom'}
               </span>
             </div>
             <div className="flex justify-between items-center">
