@@ -1,11 +1,14 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, BarChart3, Users, Zap, Shield } from "lucide-react";
-import { auth } from "@clerk/nextjs/server";
+import { useAuth } from "@clerk/nextjs";
 
 export default function LandingPage() {
-  const { userId } = auth();
+  const { userId } = useAuth();
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -100,13 +103,13 @@ export default function LandingPage() {
           <div className="mt-20 relative mx-auto max-w-5xl">
             <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur shadow-2xl overflow-hidden aspect-[16/9] relative group">
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-10" />
-              {/* Placeholder for dashboard image */}
-              <div className="w-full h-full bg-slate-900/5 flex items-center justify-center text-muted-foreground">
-                <div className="text-center">
-                  <BarChart3 className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                  <p>Interactive Dashboard Preview</p>
-                </div>
-              </div>
+              <Image 
+                src="/dashboard-preview.png" 
+                alt="Futuristic HR Dashboard Preview" 
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
         </div>
@@ -201,7 +204,7 @@ export default function LandingPage() {
             </Button>
           </Link>
           <p className="mt-4 text-sm text-muted-foreground">
-            No credit card required · 14-day free trial · Cancel anytime
+            Freemium model available for testing · Start for free today
           </p>
         </div>
       </section>
@@ -224,24 +227,23 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#features" className="hover:text-foreground">Features</Link></li>
+                <li><Link href="/features" className="hover:text-foreground">Features</Link></li>
                 <li><Link href="/pricing" className="hover:text-foreground">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Security</Link></li>
+                <li><Link href="/security" className="hover:text-foreground">Security</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground">About Us</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Careers</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-foreground">About Us</Link></li>
+                <li><Link href="/contact" className="hover:text-foreground">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-foreground">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
