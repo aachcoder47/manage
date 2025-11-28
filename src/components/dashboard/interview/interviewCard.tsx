@@ -1,3 +1,4 @@
+// src/components/dashboard/interview/interviewCard.tsx
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
