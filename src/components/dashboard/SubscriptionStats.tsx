@@ -48,7 +48,7 @@ export default function SubscriptionStats({ organizationId }: SubscriptionStatsP
   if (!subscription) return null;
 
   const planKey = subscription.plan_type;
-  const planConfig = PRICING_PLANS[planKey] || PRICING_PLANS['free'];
+  const planConfig = subscription.status === 'pending' ? PRICING_PLANS['free'] : PRICING_PLANS[planKey] || PRICING_PLANS['free'];
   const limit = planConfig.interviews;
   const isUnlimited = limit === -1;
   const percentage = isUnlimited ? 0 : Math.min((usage / limit) * 100, 100);
@@ -140,13 +140,18 @@ export default function SubscriptionStats({ organizationId }: SubscriptionStatsP
                 <span className="font-medium">Payment Pending</span>
               </div>
               <p className="text-xs text-yellow-600 mt-1">
-                Complete payment to activate {planConfig.name} features
+                You can use basic features with free plan limits while payment is pending
               </p>
-              <Link href="/payment/pending" className="mt-3 inline-block">
-                <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                  Complete Payment
+              <div className="mt-3 flex gap-2 justify-center">
+                <Link href="/payment/pending">
+                  <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                    Complete Payment
+                  </Button>
+                </Link>
+                <Button size="sm" variant="outline" className="border-yellow-300 text-yellow-700 hover:bg-yellow-50">
+                  Continue Using Free
                 </Button>
-              </Link>
+              </div>
             </div>
           </div>
         )}
