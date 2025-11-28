@@ -4,7 +4,7 @@ export interface Subscription {
   id: string;
   organization_id: string;
   plan_type: 'free' | 'basic' | 'pro' | 'advanced' | 'enterprise';
-  status: 'active' | 'cancelled' | 'expired';
+  status: 'active' | 'cancelled' | 'expired' | 'pending';
   razorpay_subscription_id?: string;
   razorpay_customer_id?: string;
   current_period_start?: Date;

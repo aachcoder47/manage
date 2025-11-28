@@ -63,8 +63,19 @@ export default function SubscriptionStats({ organizationId }: SubscriptionStatsP
             <Zap className="w-5 h-5 text-indigo-600 fill-indigo-100" />
             Subscription Status
           </CardTitle>
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 uppercase tracking-wider">
-            {planConfig.name} Plan
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
+            subscription.status === 'active' && subscription.plan_type !== 'free'
+              ? 'bg-green-100 text-green-700'
+              : subscription.status === 'pending'
+              ? 'bg-yellow-100 text-yellow-700'
+              : 'bg-indigo-100 text-indigo-700'
+          }`}>
+            {subscription.status === 'active' && subscription.plan_type !== 'free'
+              ? 'Subscribed'
+              : subscription.status === 'pending'
+              ? 'Pending'
+              : `${planConfig.name} Plan`
+            }
           </span>
         </div>
       </CardHeader>
@@ -109,7 +120,7 @@ export default function SubscriptionStats({ organizationId }: SubscriptionStatsP
         </div>
 
         {/* Upgrade CTA */}
-        {planKey !== 'enterprise' && (
+        {planKey !== 'enterprise' && subscription.status === 'active' && subscription.plan_type === 'free' && (
           <div className="pt-2">
             <Link href="/pricing" className="w-full">
               <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white group">
@@ -117,6 +128,36 @@ export default function SubscriptionStats({ organizationId }: SubscriptionStatsP
                 <Zap className="w-4 h-4 ml-2 group-hover:fill-white/20 transition-all" />
               </Button>
             </Link>
+          </div>
+        )}
+
+        {/* Pending Payment Message */}
+        {subscription.status === 'pending' && (
+          <div className="pt-2">
+            <div className="w-full bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center gap-2 text-yellow-700">
+                <AlertCircle className="w-5 h-5" />
+                <span className="font-medium">Payment Pending</span>
+              </div>
+              <p className="text-xs text-yellow-600 mt-1">
+                Complete payment to activate {planConfig.name} features
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Subscribed Status Message */}
+        {subscription.status === 'active' && subscription.plan_type !== 'free' && (
+          <div className="pt-2">
+            <div className="w-full bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center gap-2 text-green-700">
+                <CheckCircle2 className="w-5 h-5" />
+                <span className="font-medium">You're subscribed!</span>
+              </div>
+              <p className="text-xs text-green-600 mt-1">
+                Full access to all {planConfig.name} features
+              </p>
+            </div>
           </div>
         )}
       </CardContent>

@@ -49,7 +49,15 @@ interface Props {
   };
 }
 
-const base_url = process.env.NEXT_PUBLIC_LIVE_URL;
+const getBaseUrl = () => {
+  let baseUrl = process.env.NEXT_PUBLIC_LIVE_URL || 
+                (typeof window !== 'undefined' ? window.location.origin.replace(/^https?:\/\//, '') : 'localhost:3000');
+  
+  // Remove trailing slash if present
+  return baseUrl.replace(/\/$/, '');
+};
+
+const base_url = getBaseUrl();
 
 function InterviewHome({ params, searchParams }: Props) {
   const [interview, setInterview] = useState<Interview>();
@@ -524,8 +532,8 @@ function InterviewHome({ params, searchParams }: Props) {
           open={isSharePopupOpen}
           shareContent={
             interview?.readable_slug
-              ? `${base_url}/call/${interview?.readable_slug}`
-              : (interview?.url as string)
+              ? `${window.location.protocol}//${base_url}/call/${interview?.readable_slug}`
+              : (interview?.url?.startsWith('http') ? interview.url : `${window.location.protocol}//${interview?.url}`)
           }
           onClose={closeSharePopup}
         />

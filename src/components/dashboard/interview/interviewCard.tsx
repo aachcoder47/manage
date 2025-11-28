@@ -19,7 +19,20 @@ interface Props {
   readableSlug: string;
 }
 
-const base_url = process.env.NEXT_PUBLIC_LIVE_URL;
+const getBaseUrl = () => {
+  let baseUrl = process.env.NEXT_PUBLIC_LIVE_URL || 
+                (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+  
+  // Ensure the URL has a protocol
+  if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+    baseUrl = 'https://' + baseUrl;
+  }
+  
+  // Remove trailing slash if present
+  return baseUrl.replace(/\/$/, '');
+};
+
+const base_url = getBaseUrl();
 
 function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
   const router = useRouter();

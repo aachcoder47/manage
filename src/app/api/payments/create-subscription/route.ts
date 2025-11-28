@@ -121,11 +121,11 @@ export async function POST(req: NextRequest) {
     // Create Razorpay subscription
     const subscription = await RazorpayService.createSubscription(planKey, customerId);
 
-    // Store subscription in database (pending status)
+    // Store subscription in database (pending status until payment verification)
     if (existingSubscription) {
       await SubscriptionService.updateSubscription(organizationId, {
         plan_type: planKey as any,
-        status: 'active',
+        status: 'pending', // Changed from 'active' to 'pending'
         razorpay_subscription_id: subscription.id,
         razorpay_customer_id: customerId,
       });
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
       await SubscriptionService.createSubscription({
         organization_id: organizationId,
         plan_type: planKey as any,
-        status: 'active',
+        status: 'pending', // Changed from 'active' to 'pending'
         razorpay_subscription_id: subscription.id,
         razorpay_customer_id: customerId,
       });
