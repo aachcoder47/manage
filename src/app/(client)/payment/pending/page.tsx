@@ -54,7 +54,7 @@ export default function PaymentPendingPage() {
       const Razorpay = (await import('razorpay')).default;
       
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_...', // Fallback for testing
         subscription_id: subscription.razorpay_subscription_id,
         name: "FoloUp",
         description: "Complete your subscription payment",
