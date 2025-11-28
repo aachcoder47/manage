@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "../globals.css";
+import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/providers";
 import { Toaster } from "sonner";
@@ -27,10 +27,34 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MarketingLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <html lang="en">
+      <head>
+        <link rel="icon" href="/browser-client-icon.ico" />
+      </head>
+      <body className={cn(inter.className, "antialiased min-h-screen")}>
+        <ClerkProvider>
+          <Providers>
+            {children}
+            <Toaster
+              toastOptions={{
+                classNames: {
+                  toast: "bg-white",
+                  title: "text-black",
+                  description: "text-muted-foreground",
+                  actionButton: "bg-indigo-600 text-white",
+                  cancelButton: "bg-secondary text-secondary-foreground",
+                },
+              }}
+            />
+          </Providers>
+        </ClerkProvider>
+      </body>
+    </html>
+  );
 }

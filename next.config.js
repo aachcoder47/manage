@@ -5,15 +5,7 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/dashboard",
-        permanent: true,
-      },
-    ];
-  },
+
   images: {
     remotePatterns: [
       {
