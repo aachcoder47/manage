@@ -53,9 +53,10 @@ fetchInterviewer();
 useEffect(() => {
 const fetchAIData = async () => {
 if (!id) return;
-try {
-const assessmentsResponse = await fetch("/api/skill-assessments?interviewId=${id}");
-const assessmentsData = assessmentsResponse.ok ? await assessmentsResponse.json() : { assessments: [] };
+
+  try {
+    const assessmentsResponse = await fetch(`/api/skill-assessments?interviewId=${id}`);
+    const assessmentsData = assessmentsResponse.ok ? await assessmentsResponse.json() : { assessments: [] };
 
     const responsesResponse = await fetch(`/api/responses?interviewId=${id}`);
     const responsesData = responsesResponse.ok ? await responsesResponse.json() : { responses: [] };
@@ -93,8 +94,7 @@ const fetchResponses = async () => {
 try {
 const responses = await ResponseService.getAllResponses(id);
 setResponseCount(responses.length);
-
-    setIsFetching(true);
+setIsFetching(true);
 
     for (const response of responses) {
       if (!response.is_analysed) {
@@ -106,6 +106,7 @@ setResponseCount(responses.length);
         }
       }
     }
+
     setIsFetching(false);
   } catch (error) {
     console.error(error);
@@ -117,7 +118,9 @@ fetchResponses();
 }, [id]);
 
 const copyToClipboard = () => {
-navigator.clipboard.writeText("${base_url}/call/${readableSlug || url}").then(
+navigator.clipboard
+.writeText(readableSlug ? "${base_url}/call/${readableSlug}" : url)
+.then(
 () => {
 setCopied(true);
 toast.success("The link to your interview has been copied to your clipboard.", {
@@ -126,14 +129,14 @@ duration: 3000,
 });
 setTimeout(() => setCopied(false), 2000);
 },
-(err) => console.error("Failed to copy:", err.message)
+(err) => console.error("Failed to copy", err.message)
 );
 };
 
 const handleJumpToInterview = (event: React.MouseEvent) => {
 event.stopPropagation();
 event.preventDefault();
-const interviewUrl = "/call/${readableSlug || url}";
+const interviewUrl = readableSlug ? "/call/${readableSlug}" : "/call/${url}";
 window.open(interviewUrl, "_blank");
 };
 
@@ -158,26 +161,34 @@ router.push("/interviews/${id}/analytics");
 return (
 <a
 href={"/interviews/${id}"}
-style={{ pointerEvents: isFetching ? "none" : "auto", cursor: isFetching ? "default" : "pointer" }}
+style={{
+pointerEvents: isFetching ? "none" : "auto",
+cursor: isFetching ? "default" : "pointer",
+}}
 >
 <Card className="group relative h-72 w-full rounded-xl overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300">
 <CardContent className={"p-0 h-full flex flex-col ${isFetching ? "opacity-60" : ""}"}>
-{/* Header */}
 <div className="w-full h-28 overflow-hidden relative">
 <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/90 to-purple-600/90 group-hover:scale-105 transition-transform duration-500" />
 <div className="relative z-10 p-4 flex flex-col h-full justify-between">
 <div className="flex justify-between items-start">
-<CardTitle className="text-white text-lg font-semibold leading-tight line-clamp-2 text-left">{name}</CardTitle>
+<CardTitle className="text-white text-lg font-semibold leading-tight line-clamp-2 text-left">
+{name}
+</CardTitle>
 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-<Button size="icon" className="h-7 w-7 bg-white/20 hover:bg-white/30 border-none text-white backdrop-blur-md" onClick={handleJumpToInterview}>
+<Button
+size="icon"
+className="h-7 w-7 bg-white/20 hover:bg-white/30 border-none text-white backdrop-blur-md"
+onClick={handleJumpToInterview}
+>
 <ArrowUpRight size={14} />
 </Button>
 <Button
 size="icon"
-className={"h-7 w-7 bg-white/20 hover:bg-white/30 border-none text-white backdrop-blur-md ${copied ? "bg-white/40" : ""}"}
-onClick={(e) => {
-e.stopPropagation();
-e.preventDefault();
+className={"h-7 w-7 bg-white/20 hover:bg-white/30 border-none text-white backdrop-blur-md ${ copied ? "bg-white/40" : "" }"}
+onClick={(event) => {
+event.stopPropagation();
+event.preventDefault();
 copyToClipboard();
 }}
 >
@@ -188,7 +199,8 @@ copyToClipboard();
 <div className="flex gap-2">
 {hasAssessments && (
 <div className="bg-white/20 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
-<Brain className="h-3 w-3" /> AI Active
+<Brain className="h-3 w-3" />
+AI Active
 </div>
 )}
 {averageScore !== null && (
@@ -200,27 +212,48 @@ Avg: {averageScore}%
 </div>
 </div>
 
-      {/* Content */}
       <div className="flex-1 p-4 flex flex-col justify-between bg-background/50">
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-background shadow-sm">
             <Image src={img} alt="Interviewer" fill className="object-cover" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Responses</span>
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+              Responses
+            </span>
             <span className="text-lg font-bold text-foreground">{responseCount?.toString() || 0}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2 mt-4">
-          <Button variant="outline" className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors" onClick={handleCreateAssessment} title="Create Skill Assessment">
-            <Brain className="h-3.5 w-3.5" /> Assess
+          <Button
+            variant="outline"
+            className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors"
+            onClick={handleCreateAssessment}
+            title="Create Skill Assessment"
+          >
+            <Brain className="h-3.5 w-3.5" />
+            Assess
           </Button>
-          <Button variant="outline" className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors" onClick={handleFilterCandidates} title="Filter Candidates" disabled={responseCount === 0}>
-            <Filter className="h-3.5 w-3.5" /> Filter
+          <Button
+            variant="outline"
+            className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors"
+            onClick={handleFilterCandidates}
+            title="Filter Candidates"
+            disabled={responseCount === 0}
+          >
+            <Filter className="h-3.5 w-3.5" />
+            Filter
           </Button>
-          <Button variant="outline" className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors" onClick={handleViewAnalytics} title="View Analytics" disabled={responseCount === 0}>
-            <BarChart3 className="h-3.5 w-3.5" /> Analytics
+          <Button
+            variant="outline"
+            className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors"
+            onClick={handleViewAnalytics}
+            title="View Analytics"
+            disabled={responseCount === 0}
+          >
+            <BarChart3 className="h-3.5 w-3.5" />
+            Analytics
           </Button>
         </div>
       </div>
