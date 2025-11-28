@@ -96,34 +96,40 @@ export class SubscriptionService {
       }
     }
     
-    // Check if subscription is active
-    if (subscription.status !== 'active') {
-      return false;
-    }
+    // Allow interview creation for active subscriptions and pending payments (freemium model)
+    if (subscription.status === 'active' || subscription.status === 'pending') {
+      // Get interview limits from config
+      const { PRICING_PLANS } = await import('@/config/pricing.config');
+      let plan = PRICING_PLANS[subscription.plan_type];
+      
+      // For pending subscriptions, give them free plan limits as a freemium model
+      if (subscription.status === 'pending') {
+        plan = PRICING_PLANS['free'];
+      }
+      
+      if (plan.interviews === -1) {
+        return true; // Unlimited
+      }
 
-    // Get interview limits from config
-    const { PRICING_PLANS } = await import('@/config/pricing.config');
-    const plan = PRICING_PLANS[subscription.plan_type];
+      // Count interviews created this month
+      const supabase = createClientComponentClient();
+      const { count, error } = await supabase
+        .from('interview')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', organizationId)
+        .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
+
+      if (error) {
+        console.error('Error counting interviews:', error);
+        // If we can't count, allow creation (fail open)
+        return true;
+      }
+
+      return (count || 0) < plan.interviews;
+    }
     
-    if (plan.interviews === -1) {
-      return true; // Unlimited
-    }
-
-    // Count interviews created this month
-    const supabase = createClientComponentClient();
-    const { count, error } = await supabase
-      .from('interview')
-      .select('*', { count: 'exact', head: true })
-      .eq('organization_id', organizationId)
-      .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
-
-    if (error) {
-      console.error('Error counting interviews:', error);
-      // If we can't count, allow creation (fail open)
-      return true;
-    }
-
-    return (count || 0) < plan.interviews;
+    // For cancelled or expired subscriptions, deny creation
+    return false;
   }
 
   /**

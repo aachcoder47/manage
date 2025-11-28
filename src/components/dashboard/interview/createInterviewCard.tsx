@@ -45,13 +45,10 @@ function CreateInterviewCard() {
       return;
     }
 
-    // Check if user has pending subscription
+    // Check if user has pending subscription - allow them to create interviews with free limits
     if (subscription && subscription.status === 'pending') {
-      toast.info("Redirecting to payment page...", {
-        duration: 2000,
-      });
-      router.push('/payment/pending');
-      return;
+      // Allow them to proceed, but they'll be limited by the free plan limits in canCreateInterview
+      // Don't redirect to payment, let them use the freemium model
     }
 
     try {
@@ -116,7 +113,7 @@ function CreateInterviewCard() {
             {subscription && subscription.status === 'active' && subscription.plan_type !== 'free'
               ? 'Subscribed Plan'
               : subscription && subscription.status === 'pending'
-              ? 'Complete Payment'
+              ? 'Create Interview'
               : 'Create New Interview'
             }
           </CardTitle>
@@ -130,7 +127,7 @@ function CreateInterviewCard() {
             {subscription && subscription.status === 'active' && subscription.plan_type !== 'free'
               ? 'Access managed by subscription'
               : subscription && subscription.status === 'pending'
-              ? 'Click to complete payment'
+              ? 'Free plan limits apply'
               : 'Set up a new AI-conducted interview in seconds'
             }
           </p>
