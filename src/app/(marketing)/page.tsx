@@ -92,11 +92,11 @@ export default function LandingPage() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link href="#demo">
+            <a href="https://youtu.be/XNwXcghrJQs?si=jJKCsej6cHglL00u" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="lg" className="h-12 px-8 text-lg hover:bg-secondary/50">
                 View Demo
               </Button>
-            </Link>
+            </a>
           </div>
 
           {/* Hero Image / Dashboard Preview */}
