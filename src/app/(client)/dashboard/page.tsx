@@ -10,6 +10,7 @@ import { ClientService } from "@/services/clients.service";
 import { ResponseService } from "@/services/responses.service";
 import { useInterviews } from "@/contexts/interviews.context";
 import Modal from "@/components/dashboard/Modal";
+import SubscriptionStats from "@/components/dashboard/SubscriptionStats";
 import { Gem, Plus, Sparkles, Building2, ArrowUpLeft } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -127,6 +128,13 @@ function Interviews() {
             Manage your interviews and track candidate responses.
           </p>
         </div>
+
+        {/* Subscription Status Section */}
+        {organization?.id && (
+          <div className="w-full">
+            <SubscriptionStats organizationId={organization.id} />
+          </div>
+        )}
 
         <motion.div 
           variants={container}

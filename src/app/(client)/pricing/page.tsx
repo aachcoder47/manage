@@ -69,9 +69,10 @@ export default function PricingPage() {
 
           if (verifyResponse.ok) {
             toast.success('Subscription activated successfully!');
-            window.location.href = '/dashboard';
+            window.location.href = '/payment/success';
           } else {
             toast.error('Payment verification failed');
+            window.location.href = '/payment/failed';
           }
         },
         prefill: {
@@ -81,9 +82,18 @@ export default function PricingPage() {
         theme: {
           color: '#4F46E5',
         },
+        modal: {
+          ondismiss: function() {
+            setLoading(null);
+          }
+        }
       };
 
       const razorpay = new (window as any).Razorpay(options);
+      razorpay.on('payment.failed', function (response: any){
+        toast.error(response.error.description);
+        window.location.href = '/payment/failed';
+      });
       razorpay.open();
     } catch (error: any) {
       toast.error(error.message || 'Failed to initiate payment');

@@ -23,14 +23,13 @@ export class SubscriptionService {
       .from('subscription')
       .select('*')
       .eq('organization_id', organizationId)
-      .single();
+      .limit(1);
 
     if (error) {
-      if (error.code === 'PGRST116') return null; // No rows found
       throw new Error(error.message);
     }
 
-    return data;
+    return data && data.length > 0 ? data[0] : null;
   }
 
   /**
@@ -63,14 +62,17 @@ export class SubscriptionService {
       .from('subscription')
       .update({ ...updates, updated_at: new Date() })
       .eq('organization_id', organizationId)
-      .select()
-      .single();
+      .select();
 
     if (error) {
       throw new Error(error.message);
     }
 
-    return data;
+    if (!data || data.length === 0) {
+      throw new Error('Subscription not found');
+    }
+
+    return data[0];
   }
 
   /**
