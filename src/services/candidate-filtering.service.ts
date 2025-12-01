@@ -183,7 +183,9 @@ export class CandidateFilteringService {
   }
 
   private static calculateOverallScore(assessments: CandidateAssessment[]): number {
-    if (assessments.length === 0) return 0;
+    if (assessments.length === 0) {
+      return 0;
+    }
 
     const totalScore = assessments.reduce((sum, assessment) => {
       const score = assessment.score || 0;
@@ -300,12 +302,18 @@ Consider:
   private static applyFilters(candidates: EnhancedCandidate[], criteria: FilterCriteria): EnhancedCandidate[] {
     return candidates.filter(candidate => {
       // Score filters
-      if (criteria.minScore && (candidate.overall_score || 0) < criteria.minScore) return false;
-      if (criteria.maxScore && (candidate.overall_score || 0) > criteria.maxScore) return false;
+      if (criteria.minScore && (candidate.overall_score || 0) < criteria.minScore) {
+        return false;
+      }
+      if (criteria.maxScore && (candidate.overall_score || 0) > criteria.maxScore) {
+        return false;
+      }
       
       // Status filter
       if (criteria.status && criteria.status.length > 0 && 
-          !criteria.status.includes(candidate.candidate_status as CandidateStatus)) return false;
+          !criteria.status.includes(candidate.candidate_status as CandidateStatus)) {
+        return false;
+      }
       
       // Skills filter
       if (criteria.skills && criteria.skills.length > 0) {
@@ -315,14 +323,20 @@ Consider:
             candidateSkill.toLowerCase().includes(skill.toLowerCase())
           )
         );
-        if (!hasRequiredSkills) return false;
+        if (!hasRequiredSkills) {
+          return false;
+        }
       }
       
       // Experience filter
       if (criteria.experienceYears) {
         const experience = candidate.candidate_profile?.experience_years;
-        if (criteria.experienceYears.min && (!experience || experience < criteria.experienceYears.min)) return false;
-        if (criteria.experienceYears.max && (!experience || experience > criteria.experienceYears.max)) return false;
+        if (criteria.experienceYears.min && (!experience || experience < criteria.experienceYears.min)) {
+          return false;
+        }
+        if (criteria.experienceYears.max && (!experience || experience > criteria.experienceYears.max)) {
+          return false;
+        }
       }
       
       // Location filter
@@ -331,7 +345,9 @@ Consider:
         const locationMatch = criteria.location.some(loc => 
           candidateLocation.includes(loc.toLowerCase())
         );
-        if (!locationMatch) return false;
+        if (!locationMatch) {
+          return false;
+        }
       }
       
       // Assessment type filter - temporarily disabled due to data structure limitations
@@ -340,8 +356,12 @@ Consider:
       // Time spent filter
       if (criteria.timeSpent) {
         const totalTime = candidate.candidate_assessments?.reduce((sum, a) => sum + (a.time_spent || 0), 0) || 0;
-        if (criteria.timeSpent.min && totalTime < criteria.timeSpent.min) return false;
-        if (criteria.timeSpent.max && totalTime > criteria.timeSpent.max) return false;
+        if (criteria.timeSpent.min && totalTime < criteria.timeSpent.min) {
+          return false;
+        }
+        if (criteria.timeSpent.max && totalTime > criteria.timeSpent.max) {
+          return false;
+        }
       }
       
       return true;
@@ -404,7 +424,9 @@ Consider:
         })
         .eq("id", responseId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Log status change
       await this.logStatusChange(responseId, newStatus, reason);
@@ -448,7 +470,9 @@ Consider:
         .select("*")
         .eq("is_active", true);
 
-      if (!integrations || integrations.length === 0) return;
+      if (!integrations || integrations.length === 0) {
+        return;
+      }
 
       // Get candidate's ATS mapping
       const { data: syncLogs } = await supabase
@@ -458,7 +482,9 @@ Consider:
         .eq("sync_type", "candidate_create")
         .eq("status", "success");
 
-      if (!syncLogs || syncLogs.length === 0) return;
+      if (!syncLogs || syncLogs.length === 0) {
+        return;
+      }
 
       // Update status in each ATS
       for (const integration of integrations) {
