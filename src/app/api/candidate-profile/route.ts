@@ -73,7 +73,9 @@ export async function POST(req: NextRequest) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     logger.info(`Created/updated candidate profile for response ${responseId}`);
 
@@ -119,7 +121,9 @@ export async function PUT(req: NextRequest) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     logger.info(`Updated candidate profile for response ${responseId}`);
 

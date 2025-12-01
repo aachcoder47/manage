@@ -45,7 +45,9 @@ export default function SubscriptionStats({ organizationId }: SubscriptionStatsP
     return <SubscriptionStatsSkeleton />;
   }
 
-  if (!subscription) return null;
+  if (!subscription) {
+    return null;
+  }
 
   const planKey = subscription.plan_type;
   const planConfig = subscription.status === 'pending' ? PRICING_PLANS['free'] : PRICING_PLANS[planKey] || PRICING_PLANS['free'];
