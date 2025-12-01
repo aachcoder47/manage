@@ -74,6 +74,72 @@ export default function TakeAssessmentPage() {
   });
   const [showCandidateForm, setShowCandidateForm] = useState(false);
 
+  const handleSubmit = useCallback(async () => {
+    if (!assessment || !responseId) {
+      return;
+    }
+
+    // Log current submission state before submitting
+    console.log('🔍 Current submission state:', {
+      submission,
+      codeSubmissionsCount: Object.keys(submission.codeSubmissions).length,
+      answersCount: Object.keys(submission.answers).length,
+      currentQuestion,
+      totalQuestions: questions.length
+    });
+
+    // Check if there's any actual submission data
+    const hasCodeSubmission = Object.keys(submission.codeSubmissions).length > 0 && 
+      Object.values(submission.codeSubmissions).some(code => code && code.trim().length > 0);
+    
+    const hasAnswerSubmission = Object.keys(submission.answers).length > 0 && 
+      Object.values(submission.answers).some(answer => answer && answer.trim().length > 0);
+
+    if (!hasCodeSubmission && !hasAnswerSubmission) {
+      toast.error("Please provide at least one answer before submitting");
+      return;
+    }
+
+    setSubmitted(true);
+    setStarted(false);
+
+    try {
+      console.log('📤 Submitting assessment...');
+      console.log('📋 Submission data:', {
+        assessmentId,
+        responseId: responseId, // Use numeric response ID
+        submissionData: submission
+      });
+
+      const response = await fetch('/api/conduct-assessment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assessmentId,
+          responseId: responseId, // Use numeric response ID
+          submissionData: submission
+        })
+      });
+
+      console.log('📡 Response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Submission result:', result);
+        setResults(result);
+        toast.success("Assessment submitted successfully!");
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Submission failed:', response.status, errorText);
+        throw new Error(`Failed to submit assessment: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error submitting assessment:", error);
+      toast.error("Failed to submit assessment");
+      setSubmitted(false);
+    }
+  }, [assessment, responseId, submission]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (started && !submitted && timeLeft > 0) {
@@ -229,72 +295,6 @@ export default function TakeAssessmentPage() {
     });
     toast.success("Assessment started! Good luck!");
   };
-
-  const handleSubmit = useCallback(async () => {
-    if (!assessment || !responseId) {
-      return;
-    }
-
-    // Log current submission state before submitting
-    console.log('🔍 Current submission state:', {
-      submission,
-      codeSubmissionsCount: Object.keys(submission.codeSubmissions).length,
-      answersCount: Object.keys(submission.answers).length,
-      currentQuestion,
-      totalQuestions: questions.length
-    });
-
-    // Check if there's any actual submission data
-    const hasCodeSubmission = Object.keys(submission.codeSubmissions).length > 0 && 
-      Object.values(submission.codeSubmissions).some(code => code && code.trim().length > 0);
-    
-    const hasAnswerSubmission = Object.keys(submission.answers).length > 0 && 
-      Object.values(submission.answers).some(answer => answer && answer.trim().length > 0);
-
-    if (!hasCodeSubmission && !hasAnswerSubmission) {
-      toast.error("Please provide at least one answer before submitting");
-      return;
-    }
-
-    setSubmitted(true);
-    setStarted(false);
-
-    try {
-      console.log('📤 Submitting assessment...');
-      console.log('📋 Submission data:', {
-        assessmentId,
-        responseId: responseId, // Use numeric response ID
-        submissionData: submission
-      });
-
-      const response = await fetch('/api/conduct-assessment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          assessmentId,
-          responseId: responseId, // Use numeric response ID
-          submissionData: submission
-        })
-      });
-
-      console.log('📡 Response status:', response.status);
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('✅ Submission result:', result);
-        setResults(result);
-        toast.success("Assessment submitted successfully!");
-      } else {
-        const errorText = await response.text();
-        console.error('❌ Submission failed:', response.status, errorText);
-        throw new Error(`Failed to submit assessment: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Error submitting assessment:", error);
-      toast.error("Failed to submit assessment");
-      setSubmitted(false);
-    }
-  }, [assessment, responseId, submission]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
