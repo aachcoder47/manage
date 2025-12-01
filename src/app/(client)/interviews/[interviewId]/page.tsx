@@ -78,13 +78,17 @@ function InterviewHome({ params, searchParams }: Props) {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
 
   const seeInterviewPreviewPage = () => {
-    const protocol = base_url?.includes("localhost") ? "http" : "https";
+    const currentBaseUrl = process.env.NEXT_PUBLIC_LIVE_URL || 
+      (typeof window !== 'undefined' ? window.location.origin.replace(/^https?:\/\//, '') : 'localhost:3000');
+    const cleanBaseUrl = currentBaseUrl.replace(/\/$/, '');
+    const protocol = typeof window !== 'undefined' && window.location.protocol ? window.location.protocol.replace(':', '') : (cleanBaseUrl.includes("localhost") ? "http" : "https");
+
     if (interview?.url) {
       const url = interview?.readable_slug
-        ? `${protocol}://${base_url}/call/${interview?.readable_slug}`
+        ? `${protocol}://${cleanBaseUrl}/call/${interview?.readable_slug}`
         : interview.url.startsWith("http")
           ? interview.url
-          : `https://${interview.url}`;
+          : `${protocol}://${interview.url}`; // Assuming interview.url is just domain/path if not http
       window.open(url, "_blank");
     } else {
       toast.error("Interview URL not found");

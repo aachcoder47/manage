@@ -371,7 +371,9 @@ Format as JSON with the following structure:
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         savedAssessment = data;
         break; // Success, exit retry loop
       } catch (error: any) {
