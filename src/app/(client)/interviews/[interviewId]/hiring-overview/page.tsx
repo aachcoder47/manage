@@ -67,9 +67,7 @@ export default function HiringOverviewPage() {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchHiringData();
-  }, [interviewId]);
+
 
   const handleCandidateAction = async (candidateId: number, action: 'hire' | 'consider' | 'reject') => {
     try {
@@ -117,13 +115,15 @@ export default function HiringOverviewPage() {
     }
   };
 
-  const fetchHiringData = async () => {
+  const fetchHiringData = React.useCallback(async () => {
     try {
       setLoading(true);
       
       // Get all responses (interview candidates)
       const responsesResponse = await fetch(`/api/responses?interviewId=${interviewId}`);
-      if (!responsesResponse.ok) throw new Error('Failed to fetch responses');
+      if (!responsesResponse.ok) {
+        throw new Error('Failed to fetch responses');
+      }
       
       const responsesData = await responsesResponse.json();
       const responses = responsesData.responses || [];
@@ -227,7 +227,11 @@ export default function HiringOverviewPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [interviewId]);
+
+  useEffect(() => {
+    fetchHiringData();
+  }, [fetchHiringData]);
 
   const getRecommendationIcon = (recommendation?: string) => {
     switch (recommendation) {
@@ -284,9 +288,9 @@ export default function HiringOverviewPage() {
       {/* Header */}
       <div className="mb-6">
         <Button
-          variant="outline"
-          onClick={() => router.back()}
           className="mb-4"
+          onClick={() => router.back()}
+          variant="outline"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Interview
