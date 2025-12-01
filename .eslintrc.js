@@ -3,7 +3,7 @@ module.exports = {
   extends: ["next/core-web-vitals", "prettier"],
   rules: {
     curly: "error",
-    "newline-before-return": "error",
+    "newline-before-return": "off",
     "no-restricted-exports": [
       "error",
       {

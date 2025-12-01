@@ -133,10 +133,15 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
   }, [id]);
 
   const copyToClipboard = () => {
+    // Construct the full interview URL. If a readable slug is available, use the base URL with the slug.
+    // Otherwise, use the provided URL directly (it may already be absolute) or fallback to the base URL.
+    const fullUrl = readableSlug
+      ? `${base_url}/call/${readableSlug}`
+      : typeof url === "string" && url.startsWith('http')
+        ? url
+        : `${base_url}/call/${url}`;
     navigator.clipboard
-      .writeText(
-        readableSlug ? `${base_url}/call/${readableSlug}` : (url as string),
-      )
+      .writeText(fullUrl)
       .then(
         () => {
           setCopied(true);
@@ -152,7 +157,7 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
           }, 2000);
         },
         (err) => {
-          console.log("failed to copy", err.mesage);
+          console.error("failed to copy", err.message);
         },
       );
   };
@@ -160,10 +165,13 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
   const handleJumpToInterview = (event: React.MouseEvent) => {
     event.stopPropagation();
     event.preventDefault();
-    const interviewUrl = readableSlug
-      ? `/call/${readableSlug}`
-      : `/call/${url}`;
-    window.open(interviewUrl, "_blank");
+    // Construct the full interview URL similar to copy functionality.
+    const fullUrl = readableSlug
+      ? `${base_url}/call/${readableSlug}`
+      : typeof url === "string" && url.startsWith('http')
+        ? url
+        : `${base_url}/call/${url}`;
+    window.open(fullUrl, "_blank");
   };
 
   const handleCreateAssessment = (event: React.MouseEvent) => {
@@ -272,8 +280,8 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
               <Button
                 variant="outline"
                 className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors"
-                onClick={handleCreateAssessment}
                 title="Create Skill Assessment"
+                onClick={handleCreateAssessment}
               >
                 <Brain className="h-3.5 w-3.5" />
                 Assess
@@ -282,9 +290,9 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
               <Button
                 variant="outline"
                 className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors"
-                onClick={handleFilterCandidates}
                 title="Filter Candidates"
                 disabled={responseCount === 0}
+                onClick={handleFilterCandidates}
               >
                 <Filter className="h-3.5 w-3.5" />
                 Filter
@@ -293,9 +301,9 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
               <Button
                 variant="outline"
                 className="h-8 text-xs flex items-center justify-center gap-1.5 border-primary/10 hover:bg-primary/5 hover:text-primary transition-colors"
-                onClick={handleViewAnalytics}
                 title="View Analytics"
                 disabled={responseCount === 0}
+                onClick={handleViewAnalytics}
               >
                 <BarChart3 className="h-3.5 w-3.5" />
                 Analytics
