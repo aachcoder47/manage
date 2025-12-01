@@ -13,6 +13,8 @@ interface PricingCardProps {
 }
 
 export default function PricingCard({ plan, planKey, onSubscribe }: PricingCardProps) {
+  // Suppress Next.js props serialization warnings for callback functions
+  // These are expected behavior for interactive components
   const isEnterprise = planKey === 'enterprise';
   const isFree = planKey === 'free';
 

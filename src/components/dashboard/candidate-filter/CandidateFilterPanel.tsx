@@ -39,6 +39,9 @@ export function CandidateFilterPanel({
   onExport, 
   loading = false 
 }: CandidateFilterPanelProps) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // Suppress Next.js props serialization warnings for callback functions
+  // These are expected behavior for interactive components
   const [criteria, setCriteria] = useState<FilterCriteria>({});
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState("");
