@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,11 +52,7 @@ export default function InterviewFilterPage() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [insights, setInsights] = useState<any>(null);
 
-  useEffect(() => {
-    fetchCandidates();
-  }, [interviewId]);
-
-  const fetchCandidates = async () => {
+  const fetchCandidates = useCallback(async () => {
     try {
       // Fetch real responses from your database
       const response = await fetch(`/api/responses?interviewId=${interviewId}`);
@@ -108,7 +104,11 @@ export default function InterviewFilterPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [interviewId]);
+
+  useEffect(() => {
+    fetchCandidates();
+  }, [fetchCandidates]);
 
   const extractRealSkills = (response: any, details: any): string[] => {
     const skills: string[] = [];
@@ -126,7 +126,9 @@ export default function InterviewFilterPage() {
       ];
       
       techSkills.forEach(skill => {
-        if (text.includes(skill)) skills.push(skill);
+        if (text.includes(skill)) {
+          skills.push(skill);
+        }
       });
     }
     
@@ -141,7 +143,9 @@ export default function InterviewFilterPage() {
           ];
           
           techSkills.forEach(skill => {
-            if (text.includes(skill) && !skills.includes(skill)) skills.push(skill);
+            if (text.includes(skill) && !skills.includes(skill)) {
+              skills.push(skill);
+            }
           });
         }
       });
@@ -206,7 +210,9 @@ export default function InterviewFilterPage() {
   };
 
   const mapCandidateStatus = (status: string | null): CandidateStatus => {
-    if (!status) return CandidateStatus.PENDING;
+    if (!status) {
+      return CandidateStatus.PENDING;
+    }
     
     const statusMap: Record<string, CandidateStatus> = {
       'pending': CandidateStatus.PENDING,
@@ -440,8 +446,8 @@ export default function InterviewFilterPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -454,8 +460,8 @@ export default function InterviewFilterPage() {
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
-            onClick={() => router.back()}
             className="flex items-center gap-2"
+            onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -468,8 +474,8 @@ export default function InterviewFilterPage() {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={() => handleExport('csv')}
             className="flex items-center gap-2"
+            onClick={() => handleExport('csv')}
           >
             <Download className="h-4 w-4" />
             Export CSV
@@ -519,7 +525,7 @@ export default function InterviewFilterPage() {
                 <h4 className="font-semibold mb-2">AI Recommendations:</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   {insights.recommendations.map((rec: string, index: number) => (
-                    <li key={index}>• {rec}</li>
+                    <li key={`recommendation-${index}`}>• {rec}</li>
                   ))}
                 </ul>
               </div>
@@ -533,9 +539,9 @@ export default function InterviewFilterPage() {
         {showFilterPanel && (
           <div className="lg:col-span-1">
             <CandidateFilterPanel
+              loading={filtering}
               onFilter={handleFilter}
               onExport={handleExport}
-              loading={filtering}
             />
           </div>
         )}
@@ -618,7 +624,7 @@ export default function InterviewFilterPage() {
                             {candidate.skills && candidate.skills.length > 0 && (
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {candidate.skills.map((skill, index) => (
-                                  <Badge key={index} variant="secondary" className="text-xs">
+                                  <Badge key={`skill-${index}`} variant="secondary" className="text-xs">
                                     {skill}
                                   </Badge>
                                 ))}

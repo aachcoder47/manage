@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -75,10 +75,6 @@ export default function TakeAssessmentPage() {
   const [showCandidateForm, setShowCandidateForm] = useState(false);
 
   useEffect(() => {
-    fetchAssessment();
-  }, [assessmentId]);
-
-  useEffect(() => {
     let interval: NodeJS.Timeout;
     if (started && !submitted && timeLeft > 0) {
       interval = setInterval(() => {
@@ -92,9 +88,9 @@ export default function TakeAssessmentPage() {
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [started, submitted, timeLeft]);
+  }, [started, submitted, timeLeft, handleSubmit]);
 
-  const fetchAssessment = async () => {
+  const fetchAssessment = useCallback(async () => {
     try {
       const apiResponse = await fetch(`/api/conduct-assessment?assessmentId=${assessmentId}&responseId=preview`);
       if (apiResponse.ok) {
@@ -116,7 +112,11 @@ export default function TakeAssessmentPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [assessmentId]);
+
+  useEffect(() => {
+    fetchAssessment();
+  }, [fetchAssessment]);
 
   const getOrCreateResponse = async (interviewId: string) => {
     try {
@@ -230,8 +230,10 @@ export default function TakeAssessmentPage() {
     toast.success("Assessment started! Good luck!");
   };
 
-  const handleSubmit = async () => {
-    if (!assessment || !responseId) return;
+  const handleSubmit = useCallback(async () => {
+    if (!assessment || !responseId) {
+      return;
+    }
 
     // Log current submission state before submitting
     console.log('🔍 Current submission state:', {
@@ -292,7 +294,7 @@ export default function TakeAssessmentPage() {
       toast.error("Failed to submit assessment");
       setSubmitted(false);
     }
-  };
+  }, [assessment, responseId, submission]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -324,8 +326,8 @@ export default function TakeAssessmentPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -337,8 +339,8 @@ export default function TakeAssessmentPage() {
         <div className="mb-6">
           <Button
             variant="outline"
-            onClick={() => router.back()}
             className="mb-4"
+            onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Assessments
@@ -465,8 +467,8 @@ export default function TakeAssessmentPage() {
         <div className="mb-6">
           <Button
             variant="outline"
-            onClick={() => router.back()}
             className="mb-4"
+            onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Assessments
@@ -600,8 +602,8 @@ export default function TakeAssessmentPage() {
       <div className="mb-6">
         <Button
           variant="outline"
-          onClick={() => router.back()}
           className="mb-4"
+          onClick={() => router.back()}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Assessments
@@ -683,7 +685,7 @@ export default function TakeAssessmentPage() {
               <h3 className="font-semibold mb-2">Important Notice:</h3>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                 <p className="text-sm text-yellow-800">
-                  <strong>One attempt only:</strong> You can only take this assessment once. Make sure you're ready before starting.
+                  <strong>One attempt only:</strong> You can only take this assessment once. Make sure you&apos;re ready before starting.
                 </p>
                 <p className="text-sm text-yellow-800 mt-2">
                   <strong>Unique credentials:</strong> Each person must use a unique name and email. Duplicate entries will be blocked.
@@ -692,9 +694,9 @@ export default function TakeAssessmentPage() {
             </div>
 
             <Button 
-              onClick={handleStart}
               className="w-full"
               size="lg"
+              onClick={handleStart}
             >
               <Play className="h-4 w-4 mr-2" />
               Start Assessment
@@ -717,7 +719,7 @@ export default function TakeAssessmentPage() {
                 <div 
                   className="bg-blue-600 h-2 rounded-full transition-all" 
                   style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
-                ></div>
+                />
               </div>
             </CardContent>
           </Card>
@@ -749,6 +751,9 @@ export default function TakeAssessmentPage() {
                     <label className="block text-sm font-medium mb-2">Your Solution:</label>
                     <Textarea
                       value={submission.codeSubmissions[currentQuestion] || questions[currentQuestion].starter_code || ''}
+                      placeholder="Write your solution here..."
+                      className="font-mono"
+                      rows={12}
                       onChange={(e) => {
                         const newCode = e.target.value;
                         console.log('💻 Code changed for question', currentQuestion, ':', newCode.substring(0, 50) + '...');
@@ -761,9 +766,6 @@ export default function TakeAssessmentPage() {
                           }
                         });
                       }}
-                      placeholder="Write your solution here..."
-                      className="font-mono"
-                      rows={12}
                     />
                   </div>
                 ) : (
@@ -771,6 +773,8 @@ export default function TakeAssessmentPage() {
                     <label className="block text-sm font-medium mb-2">Your Answer:</label>
                     <Textarea
                       value={submission.answers[currentQuestion] || ''}
+                      placeholder="Type your answer here..."
+                      rows={6}
                       onChange={(e) => setSubmission({
                         ...submission,
                         answers: {
@@ -778,8 +782,6 @@ export default function TakeAssessmentPage() {
                           [currentQuestion]: e.target.value
                         }
                       })}
-                      placeholder="Type your answer here..."
-                      rows={6}
                     />
                   </div>
                 )}
@@ -791,8 +793,8 @@ export default function TakeAssessmentPage() {
           <div className="flex justify-between">
             <Button
               variant="outline"
-              onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
               disabled={currentQuestion === 0}
+              onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
             >
               Previous
             </Button>
@@ -800,7 +802,7 @@ export default function TakeAssessmentPage() {
             <div className="flex gap-2">
               {questions.map((_, index) => (
                 <Button
-                  key={index}
+                  key={`question-${index}`}
                   variant={index === currentQuestion ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCurrentQuestion(index)}
@@ -811,8 +813,8 @@ export default function TakeAssessmentPage() {
             </div>
 
             <Button
-              onClick={currentQuestion === questions.length - 1 ? handleSubmit : () => setCurrentQuestion(Math.min(questions.length - 1, currentQuestion + 1))}
               variant={currentQuestion === questions.length - 1 ? "default" : "outline"}
+              onClick={currentQuestion === questions.length - 1 ? handleSubmit : () => setCurrentQuestion(Math.min(questions.length - 1, currentQuestion + 1))}
             >
               {currentQuestion === questions.length - 1 ? (
                 <>

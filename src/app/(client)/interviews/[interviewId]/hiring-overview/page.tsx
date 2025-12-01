@@ -276,8 +276,8 @@ export default function HiringOverviewPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -288,9 +288,9 @@ export default function HiringOverviewPage() {
       {/* Header */}
       <div className="mb-6">
         <Button
+          variant="outline"
           className="mb-4"
           onClick={() => router.back()}
-          variant="outline"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Interview
@@ -306,7 +306,7 @@ export default function HiringOverviewPage() {
               Complete analysis of interview and assessment performance
             </p>
           </div>
-          <Button onClick={fetchHiringData} variant="outline">
+          <Button variant="outline" onClick={fetchHiringData}>
             Refresh Data
           </Button>
         </div>
@@ -399,7 +399,7 @@ export default function HiringOverviewPage() {
                 <div 
                   className="bg-blue-600 h-2 rounded-full" 
                   style={{ width: '100%' }}
-                ></div>
+                />
               </div>
             </div>
 
@@ -412,7 +412,7 @@ export default function HiringOverviewPage() {
                 <div 
                   className="bg-yellow-600 h-2 rounded-full" 
                   style={{ width: `${(stats.assessmentCompleted / stats.totalCandidates) * 100}%` }}
-                ></div>
+                />
               </div>
             </div>
 
@@ -425,7 +425,7 @@ export default function HiringOverviewPage() {
                 <div 
                   className="bg-green-600 h-2 rounded-full" 
                   style={{ width: `${(stats.passedAssessment / stats.totalCandidates) * 100}%` }}
-                ></div>
+                />
               </div>
             </div>
 
@@ -438,7 +438,7 @@ export default function HiringOverviewPage() {
                 <div 
                   className="bg-purple-600 h-2 rounded-full" 
                   style={{ width: `${(stats.recommendedForHire / stats.totalCandidates) * 100}%` }}
-                ></div>
+                />
               </div>
             </div>
           </CardContent>
