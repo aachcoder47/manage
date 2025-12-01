@@ -4,9 +4,10 @@ import { useInterviews } from "@/contexts/interviews.context";
 import { useEffect, useState } from "react";
 import Call from "@/components/call";
 import Image from "next/image";
-import { ArrowUpRightSquareIcon } from "lucide-react";
+import { ArrowUpRightSquareIcon, Copy, ArrowUpRight } from "lucide-react";
 import { Interview } from "@/types/interview";
 import LoaderWithText from "@/components/loaders/loader-with-text/loaderWithText";
+import { toast } from "sonner";
 
 type Props = {
   params: {
@@ -81,22 +82,19 @@ function PopUpMessage({ title, description, image }: PopupProps) {
 }
 
 function InterviewInterface({ params }: Props) {
-  const [interview, setInterview] = useState<Interview>();
+  const [interview, setInterview] = useState<Interview | null>(null);
   const [isActive, setIsActive] = useState(true);
   const { getInterviewById } = useInterviews();
   const [interviewNotFound, setInterviewNotFound] = useState(false);
-  useEffect(() => {
-    if (interview) {
-      setIsActive(interview?.is_active === true);
-    }
-  }, [interview, params.interviewId]);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const fetchinterview = async () => {
+    const fetchInterview = async () => {
       try {
         const response = await getInterviewById(params.interviewId);
         if (response) {
           setInterview(response);
+          setIsActive(response.is_active === true);
           document.title = response.name;
         } else {
           setInterviewNotFound(true);
@@ -106,10 +104,28 @@ function InterviewInterface({ params }: Props) {
         setInterviewNotFound(true);
       }
     };
-
-    fetchinterview();
+    fetchInterview();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleCopyLink = () => {
+    if (!interview) return;
+    const url = `${window.location.origin}/call/${interview.readableSlug}`;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setCopied(true);
+        toast.success("Interview link copied!");
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((err) => console.error("Failed to copy:", err));
+  };
+
+  const handleJumpToInterview = () => {
+    if (!interview) return;
+    const url = `${window.location.origin}/call/${interview.readableSlug}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div>
@@ -131,25 +147,45 @@ function InterviewInterface({ params }: Props) {
             image="/closed.png"
           />
         ) : (
-          <Call interview={interview} />
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-end gap-2 mb-4">
+              <button
+                className={`px-3 py-1 rounded border bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition ${
+                  copied ? "bg-green-500" : ""
+                }`}
+                onClick={handleCopyLink}
+              >
+                {copied ? "Copied!" : "Copy Interview Link"} <Copy size={14} />
+              </button>
+              <button
+                className="px-3 py-1 rounded border bg-gray-200 text-gray-800 text-sm hover:bg-gray-300 transition flex items-center gap-1"
+                onClick={handleJumpToInterview}
+              >
+                Jump to Interview <ArrowUpRight size={14} />
+              </button>
+            </div>
+            <Call interview={interview} />
+          </div>
         )}
       </div>
-      <div className=" md:hidden flex flex-col items-center md:h-[0px] justify-center  my-auto">
+
+      <div className="md:hidden flex flex-col items-center md:h-[0px] justify-center my-auto">
         <div className="mt-48 px-3">
           <p className="text-center my-5 text-md font-semibold">
             {interview?.name}
           </p>
           <p className="text-center text-gray-600 my-5">
             Please use a PC to respond to the interview. Apologies for any
-            inconvenience caused.{" "}
+            inconvenience caused.
           </p>
         </div>
         <div className="text-center text-md font-semibold mr-2 my-5">
           Powered by{" "}
           <a
             className="font-bold underline"
-            href="www.folo-up.co"
+            href="https://www.folo-up.co"
             target="_blank"
+            rel="noopener noreferrer"
           >
             Folo<span className="text-indigo-600">Up</span>
           </a>
