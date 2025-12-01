@@ -102,17 +102,17 @@ export function CandidateFilterPanel({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onExport('csv')}
               className="flex items-center gap-1"
+              onClick={() => onExport('csv')}
             >
               <Download className="h-4 w-4" />
               Export CSV
             </Button>
             <Button
+              className="flex items-center gap-1"
               variant="outline"
               size="sm"
               onClick={handleReset}
-              className="flex items-center gap-1"
             >
               <RotateCcw className="h-4 w-4" />
               Reset
@@ -176,9 +176,9 @@ export function CandidateFilterPanel({
             <Input
               placeholder="Add a skill..."
               value={skillInput}
+              className="flex-1"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSkillInput(e.target.value)}
               onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleAddSkill()}
-              className="flex-1"
             />
             <Button onClick={handleAddSkill} size="sm">
               Add
@@ -292,9 +292,9 @@ export function CandidateFilterPanel({
 
         {/* Apply Filter Button */}
         <Button 
-          onClick={handleApplyFilter} 
           className="w-full" 
           disabled={loading}
+          onClick={handleApplyFilter} 
         >
           {loading ? (
             "Filtering..."

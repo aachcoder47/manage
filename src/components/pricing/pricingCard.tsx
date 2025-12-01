@@ -53,7 +53,7 @@ export default function PricingCard({ plan, planKey, onSubscribe }: PricingCardP
       <CardContent className="space-y-6">
         <ul className="space-y-3">
           {plan.features.map((feature, index) => (
-            <li key={index} className="flex items-start gap-2">
+            <li key={`feature-${index}`} className="flex items-start gap-2">
               <Check className="h-5 w-5 text-indigo-600 flex-shrink-0 mt-0.5" />
               <span className="text-sm">{feature}</span>
             </li>
@@ -61,14 +61,14 @@ export default function PricingCard({ plan, planKey, onSubscribe }: PricingCardP
         </ul>
 
         <Button
-          onClick={() => onSubscribe(planKey)}
           className={`w-full ${
             plan.popular
               ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'
               : isFree
               ? 'bg-muted hover:bg-muted/80 text-foreground'
-              : 'bg-indigo-600 hover:bg-indigo-700'
+              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
           }`}
+          onClick={() => onSubscribe(planKey)}
           size="lg"
         >
           {plan.cta}

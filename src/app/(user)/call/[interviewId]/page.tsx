@@ -109,8 +109,10 @@ function InterviewInterface({ params }: Props) {
   }, []);
 
   const handleCopyLink = () => {
-    if (!interview) return;
-    const url = `${window.location.origin}/call/${interview.readableSlug}`;
+    if (!interview) {
+      return;
+    }
+    const url = `${window.location.origin}/call/${interview.readable_slug}`;
     navigator.clipboard
       .writeText(url)
       .then(() => {
@@ -122,8 +124,10 @@ function InterviewInterface({ params }: Props) {
   };
 
   const handleJumpToInterview = () => {
-    if (!interview) return;
-    const url = `${window.location.origin}/call/${interview.readableSlug}`;
+    if (!interview) {
+      return;
+    }
+    const url = `${window.location.origin}/call/${interview.readable_slug}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
