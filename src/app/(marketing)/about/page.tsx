@@ -51,7 +51,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold text-foreground pt-8">Get in Touch</h2>
             <p>
               Want to learn more about how Futuristic HR can transform your hiring process? 
-              We'd love to hear from you.
+              We&apos;d love to hear from you.
             </p>
             
             <div className="pt-4">

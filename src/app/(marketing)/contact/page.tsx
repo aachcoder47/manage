@@ -47,7 +47,7 @@ export default function ContactPage() {
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Get in Touch</h1>
             <p className="text-xl text-muted-foreground">
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
             </p>
           </div>
 
@@ -107,9 +107,9 @@ export default function ContactPage() {
                     id="name"
                     type="text"
                     required
+                    placeholder="Your name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Your name"
                   />
                 </div>
 
@@ -121,9 +121,9 @@ export default function ContactPage() {
                     id="email"
                     type="email"
                     required
+                    placeholder="your@email.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="your@email.com"
                   />
                 </div>
 
@@ -134,9 +134,9 @@ export default function ContactPage() {
                   <Input
                     id="company"
                     type="text"
+                    placeholder="Company name"
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    placeholder="Company name"
                   />
                 </div>
 
@@ -148,9 +148,9 @@ export default function ContactPage() {
                     id="message"
                     required
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Tell us about your needs..."
                     rows={6}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   />
                 </div>
 

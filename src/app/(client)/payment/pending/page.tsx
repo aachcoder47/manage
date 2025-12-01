@@ -225,9 +225,9 @@ export default function PaymentPendingPage() {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
-                  onClick={handleRetryPayment}
                   disabled={processing}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-8"
+                  onClick={handleRetryPayment}
                 >
                   {processing ? (
                     <>
@@ -244,8 +244,8 @@ export default function PaymentPendingPage() {
                 
                 <Button
                   variant="outline"
-                  onClick={handleCheckStatus}
                   disabled={loading}
+                  onClick={handleCheckStatus}
                 >
                   <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                   Check Status
