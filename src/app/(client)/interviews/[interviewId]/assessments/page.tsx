@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,11 +52,7 @@ export default function InterviewAssessmentsPage() {
     passing_score: 70
   });
 
-  useEffect(() => {
-    fetchAssessments();
-  }, [interviewId]);
-
-  const fetchAssessments = async () => {
+  const fetchAssessments = useCallback(async () => {
     try {
       // Fetch real skill assessments from your database
       const response = await fetch(`/api/skill-assessments?interviewId=${interviewId}`);
@@ -75,7 +71,11 @@ export default function InterviewAssessmentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [interviewId]);
+
+  useEffect(() => {
+    fetchAssessments();
+  }, [fetchAssessments]);
 
   const checkTakenAssessments = async (assessments: any[]) => {
     try {
@@ -325,7 +325,9 @@ export default function InterviewAssessmentsPage() {
   };
 
   const handleDelete = async (assessmentId: string) => {
-    if (!confirm("Are you sure you want to delete this assessment?")) return;
+    if (!confirm("Are you sure you want to delete this assessment?")) {
+      return;
+    }
     
     try {
       const response = await fetch(`/api/skill-assessments?id=${assessmentId}`, {
@@ -369,8 +371,8 @@ export default function InterviewAssessmentsPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -383,8 +385,8 @@ export default function InterviewAssessmentsPage() {
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
-            onClick={() => router.back()}
             className="flex items-center gap-2"
+            onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -395,8 +397,8 @@ export default function InterviewAssessmentsPage() {
           </div>
         </div>
         <Button
-          onClick={() => setShowCreateForm(true)}
           className="flex items-center gap-2"
+          onClick={() => setShowCreateForm(true)}
         >
           <Plus className="h-4 w-4" />
           Create Assessment
@@ -484,8 +486,8 @@ export default function InterviewAssessmentsPage() {
                     <Input
                       id="ai-job-role"
                       value={aiFormData.jobRole}
-                      onChange={(e) => setAiFormData({ ...aiFormData, jobRole: e.target.value })}
                       placeholder="e.g., Senior Frontend Developer"
+                      onChange={(e) => setAiFormData({ ...aiFormData, jobRole: e.target.value })}
                     />
                   </div>
 
@@ -494,21 +496,21 @@ export default function InterviewAssessmentsPage() {
                     <Textarea
                       id="ai-skills"
                       value={aiFormData.skills.join(', ')}
-                      onChange={(e) => setAiFormData({ ...aiFormData, skills: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
                       placeholder="e.g., JavaScript, React, Node.js, AWS"
                       rows={2}
+                      onChange={(e) => setAiFormData({ ...aiFormData, skills: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
                     />
                   </div>
 
                   <Button
                     type="button"
-                    onClick={handleAIGenerate}
                     disabled={generating}
                     className="w-full"
+                    onClick={handleAIGenerate}
                   >
                     {generating ? (
                       <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                         Generating Assessment...
                       </>
                     ) : (
@@ -531,9 +533,9 @@ export default function InterviewAssessmentsPage() {
                   <Input
                     id="title"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g., JavaScript Fundamentals"
                     required
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   />
                 </div>
                 <div>
@@ -560,9 +562,9 @@ export default function InterviewAssessmentsPage() {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Describe what candidates will be tested on..."
                   rows={3}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
               </div>
 
@@ -652,13 +654,13 @@ export default function InterviewAssessmentsPage() {
                 </div>
               </div>
               <Button 
-                onClick={() => generateCodingQuestions()}
-                className="w-full bg-blue-600 hover:bg-blue-700"
                 disabled={generating}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                onClick={() => generateCodingQuestions()}
               >
                 {generating ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                     Generating...
                   </>
                 ) : (
@@ -681,13 +683,13 @@ export default function InterviewAssessmentsPage() {
                 </div>
               </div>
               <Button 
-                onClick={() => generateMCQQuestions()}
-                className="w-full bg-green-600 hover:bg-green-700"
                 disabled={generating}
+                className="w-full bg-green-600 hover:bg-green-700"
+                onClick={() => generateMCQQuestions()}
               >
                 {generating ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                     Generating...
                   </>
                 ) : (
@@ -767,9 +769,9 @@ export default function InterviewAssessmentsPage() {
                   <div className="flex items-center gap-2">
                     <Button
                       size="sm"
-                      onClick={() => router.push(`/interviews/${interviewId}/assessments/${assessment.id}/take`)}
-                      className={takenAssessments.has(assessment.id) ? "bg-gray-400 hover:bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}
                       disabled={takenAssessments.has(assessment.id)}
+                      className={takenAssessments.has(assessment.id) ? "bg-gray-400 hover:bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}
+                      onClick={() => router.push(`/interviews/${interviewId}/assessments/${assessment.id}/take`)}
                     >
                       {takenAssessments.has(assessment.id) ? (
                         <>
@@ -793,8 +795,8 @@ export default function InterviewAssessmentsPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleDelete(assessment.id)}
                       className="text-red-600 hover:text-red-700"
+                      onClick={() => handleDelete(assessment.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

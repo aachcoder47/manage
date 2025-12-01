@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,11 +62,7 @@ export default function InterviewAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | 'all'>('all');
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [interviewId, timeRange]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -95,7 +91,11 @@ export default function InterviewAnalyticsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [interviewId]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics, timeRange]);
 
   const calculateRealAnalytics = (responses: any[], assessments: any[], candidateAssessments: any[]): AnalyticsData => {
     const totalResponses = responses.length;
@@ -137,10 +137,15 @@ export default function InterviewAnalyticsPage() {
     const scoreDistribution = scoredResponses.reduce((acc, r) => {
       const analytics = typeof r.analytics === 'string' ? JSON.parse(r.analytics) : r.analytics;
       const score = analytics.overall_score || 0;
-      if (score >= 80) acc.excellent++;
-      else if (score >= 60) acc.good++;
-      else if (score >= 40) acc.average++;
-      else acc.poor++;
+      if (score >= 80) {
+        acc.excellent++;
+      } else if (score >= 60) {
+        acc.good++;
+      } else if (score >= 40) {
+        acc.average++;
+      } else {
+        acc.poor++;
+      }
       return acc;
     }, { excellent: 0, good: 0, average: 0, poor: 0 });
     
@@ -165,10 +170,14 @@ export default function InterviewAnalyticsPage() {
       // Extract text from details JSONB
       if (response.details) {
         const details = typeof response.details === 'string' ? JSON.parse(response.details) : response.details;
-        if (details.transcript) textContent.push(details.transcript);
+        if (details.transcript) {
+          textContent.push(details.transcript);
+        }
         if (details.answers) {
           Object.values(details.answers).forEach((answer: any) => {
-            if (typeof answer === 'string') textContent.push(answer);
+            if (typeof answer === 'string') {
+              textContent.push(answer);
+            }
           });
         }
       }
@@ -466,7 +475,7 @@ export default function InterviewAnalyticsPage() {
               <p className="text-sm text-muted-foreground">User Satisfaction</p>
               <div className="flex justify-center mt-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-3 w-3 ${i < Math.floor(analytics.aiMetrics.satisfaction / 20) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                  <Star key={`star-${i}`} className={`h-3 w-3 ${i < Math.floor(analytics.aiMetrics.satisfaction / 20) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
                 ))}
               </div>
             </div>
@@ -621,7 +630,7 @@ export default function InterviewAnalyticsPage() {
           <CardContent>
             <div className="space-y-3">
               {analytics.recommendations.map((recommendation, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                <div key={`recommendation-${index}`} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
                   <Brain className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-blue-900">{recommendation}</p>
                 </div>

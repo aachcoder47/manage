@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,11 +40,7 @@ export default function AssessmentAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateAssessment | null>(null);
 
-  useEffect(() => {
-    fetchCandidateAssessments();
-  }, [interviewId]);
-
-  const fetchCandidateAssessments = async () => {
+  const fetchCandidateAssessments = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -115,21 +111,34 @@ export default function AssessmentAnalyticsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [interviewId]);
+
+  useEffect(() => {
+    fetchCandidateAssessments();
+  }, [fetchCandidateAssessments]);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 bg-green-100';
-    if (score >= 60) return 'text-yellow-600 bg-yellow-100';
+    if (score >= 80) {
+      return 'text-green-600 bg-green-100';
+    }
+    if (score >= 60) {
+      return 'text-yellow-600 bg-yellow-100';
+    }
     return 'text-red-600 bg-red-100';
   };
 
   const getDifficultyColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800';
-      case 'intermediate': return 'bg-blue-100 text-blue-800';
-      case 'advanced': return 'bg-orange-100 text-orange-800';
-      case 'expert': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'beginner':
+        return 'bg-green-100 text-green-800';
+      case 'intermediate':
+        return 'bg-blue-100 text-blue-800';
+      case 'advanced':
+        return 'bg-orange-100 text-orange-800';
+      case 'expert':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -149,7 +158,7 @@ export default function AssessmentAnalyticsPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
         </div>
       </div>
     );
@@ -161,8 +170,8 @@ export default function AssessmentAnalyticsPage() {
       <div className="mb-6">
         <Button
           variant="outline"
-          onClick={() => router.back()}
           className="mb-4"
+          onClick={() => router.back()}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Assessments
@@ -229,7 +238,7 @@ export default function AssessmentAnalyticsPage() {
               <Brain className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-semibold mb-2">No Assessment Results Yet</h3>
               <p className="text-muted-foreground">
-                Candidates haven't taken any assessments yet. Share the assessment link to get started.
+                Candidates haven&apos;t taken any assessments yet. Share the assessment link to get started.
               </p>
             </div>
           ) : (

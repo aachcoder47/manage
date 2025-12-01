@@ -195,7 +195,7 @@ function Interviews() {
                   Upgrade to Pro
                 </h3>
                 <p className="text-muted-foreground max-w-sm">
-                  You've reached the limit of your free trial. Unlock unlimited potential with our Pro plan.
+                  You&apos;ve reached the limit of your free trial. Unlock unlimited potential with our Pro plan.
                 </p>
               </div>
 
