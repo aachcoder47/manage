@@ -12,7 +12,7 @@ export default function PaymentFailedPage() {
       
       <h1 className="text-3xl font-bold mb-2">Payment Failed</h1>
       <p className="text-muted-foreground max-w-md mb-8">
-        We couldn't process your payment. Please try again or contact support if the problem persists.
+        We couldn&apos;t process your payment. Please try again or contact support if the problem persists.
       </p>
 
       <div className="flex gap-4">
