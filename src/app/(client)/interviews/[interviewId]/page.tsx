@@ -300,8 +300,8 @@ function InterviewHome({ params, searchParams }: Props) {
                 <div
                 className="w-8 h-8 rounded-full border-2 border-white shadow-md transition-transform hover:scale-110 cursor-pointer"
                 style={{ backgroundColor: iconColor }}
-                onClick={() => setShowColorPicker(true)}
                 title="Change Theme Color"
+                onClick={() => setShowColorPicker(true)}
                 />
                 <div>
                     <h1 className="font-bold text-xl tracking-tight">{interview?.name}</h1>
@@ -385,9 +385,9 @@ function InterviewHome({ params, searchParams }: Props) {
                     </span>
                     <Switch
                         checked={isActive}
-                        onCheckedChange={handleToggle}
                         className="scale-75 data-[state=checked]:bg-green-600"
                         disabled={currentPlan === "free_trial_over"}
+                        onCheckedChange={handleToggle}
                     />
                 </div>
             </div>
@@ -430,16 +430,16 @@ function InterviewHome({ params, searchParams }: Props) {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 key={response?.id}
-                                onClick={() => {
-                                    router.push(`/interviews/${params.interviewId}?call=${response.call_id}`);
-                                    handleResponseClick(response);
-                                }}
                                 className={`
                                     group relative p-3 rounded-xl border transition-all duration-200 cursor-pointer
                                     ${searchParams.call == response.call_id 
                                         ? "bg-indigo-50/80 border-indigo-200 shadow-sm" 
                                         : "bg-background border-transparent hover:bg-muted/50 hover:border-border/50"}
                                 `}
+                                onClick={() => {
+                                    router.push(`/interviews/${params.interviewId}?call=${response.call_id}`);
+                                    handleResponseClick(response);
+                                }}
                             >
                                 <div className="flex items-start gap-3">
                                     <div className={`w-1.5 h-10 rounded-full flex-shrink-0 ${getStatusColor(response.candidate_status || "")}`} />
