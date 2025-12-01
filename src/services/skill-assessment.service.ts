@@ -23,7 +23,9 @@ export class SkillAssessmentService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error creating skill assessment:", error);
@@ -40,7 +42,9 @@ export class SkillAssessmentService {
         .eq("is_active", true)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error("Error fetching skill assessments:", error);
@@ -57,7 +61,9 @@ export class SkillAssessmentService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error updating skill assessment:", error);
@@ -84,7 +90,9 @@ export class SkillAssessmentService {
         .delete()
         .eq("id", id);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return true;
     } catch (error) {
       console.error("Error deleting skill assessment:", error);
@@ -101,7 +109,9 @@ export class SkillAssessmentService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error creating coding challenge:", error);
@@ -117,7 +127,9 @@ export class SkillAssessmentService {
         .eq("skill_assessment_id", skillAssessmentId)
         .order("order_index", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error("Error fetching coding challenges:", error);
@@ -134,7 +146,9 @@ export class SkillAssessmentService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error creating candidate assessment:", error);
@@ -151,7 +165,9 @@ export class SkillAssessmentService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error updating candidate assessment:", error);
@@ -169,7 +185,9 @@ export class SkillAssessmentService {
         `)
         .eq("response_id", responseId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error("Error fetching candidate assessments:", error);
