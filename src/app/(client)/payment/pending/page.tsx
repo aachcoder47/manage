@@ -204,8 +204,8 @@ export default function PaymentPendingPage() {
           <CardContent>
             <ul className="space-y-2">
               {planConfig.features.map((feature: string, index: number) => (
-                <li key={index} className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                <li key={`feature-${index}`} className="flex items-center gap-2 text-sm">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full" />
                   {feature}
                 </li>
               ))}
