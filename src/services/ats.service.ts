@@ -385,7 +385,9 @@ export class ATSIntegrationService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error creating ATS integration:", error);
@@ -401,7 +403,9 @@ export class ATSIntegrationService {
         .eq("organization_id", organizationId)
         .eq("is_active", true);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error("Error fetching ATS integrations:", error);
@@ -412,7 +416,9 @@ export class ATSIntegrationService {
   static async validateATSConnection(integrationId: string): Promise<boolean> {
     try {
       const integration = await this.getATSIntegrationById(integrationId);
-      if (!integration) return false;
+      if (!integration) {
+        return false;
+      }
 
       const provider = this.getProviderInstance(integration);
       return await provider.validateConnection();
@@ -537,7 +543,9 @@ export class ATSIntegrationService {
         .eq("id", integrationId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error fetching ATS integration:", error);
@@ -564,7 +572,9 @@ export class ATSIntegrationService {
         .from("ats_sync_log")
         .insert(logData);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     } catch (error) {
       console.error("Error logging ATS sync:", error);
     }
@@ -585,7 +595,9 @@ export class ATSIntegrationService {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error("Error fetching ATS sync logs:", error);
