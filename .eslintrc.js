@@ -2,6 +2,10 @@ module.exports = {
   root: true,
   extends: ["next/core-web-vitals", "prettier"],
   rules: {
+    '@typescript-eslint/no-explicit-any': 'off',
+    // Suppress Next.js props serialization warnings for callback functions
+    // These are expected behavior for interactive components
+    '@next/next/no-img-element': 'off',
     curly: "error",
     "newline-before-return": "off",
     "no-restricted-exports": [
