@@ -301,7 +301,9 @@ export class CandidateStatusService {
       })
       .eq("id", responseId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Log the status change
     await this.logStatusChange(responseId, fromStatus, toStatus, changedBy, reason, isAutomatic);
@@ -336,7 +338,9 @@ export class CandidateStatusService {
       .select("id")
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data.id;
   }
 
@@ -372,7 +376,9 @@ export class CandidateStatusService {
   ): Promise<void> {
     try {
       const transition = this.validateStatusTransition(fromStatus, toStatus);
-      if (!transition?.notification_settings) return;
+      if (!transition?.notification_settings) {
+        return;
+      }
 
       // Get candidate and response details
       const { data: response } = await supabase
@@ -388,7 +394,9 @@ export class CandidateStatusService {
         .eq("id", responseId)
         .single();
 
-      if (!response) return;
+      if (!response) {
+        return;
+      }
 
       // Send candidate notification if required
       if (transition.notification_settings.notify_candidate && response.email) {
@@ -448,7 +456,9 @@ export class CandidateStatusService {
         .select("*")
         .eq("is_active", true);
 
-      if (!integrations || integrations.length === 0) return;
+      if (!integrations || integrations.length === 0) {
+        return;
+      }
 
       // Get existing ATS mappings
       const { data: syncLogs } = await supabase
@@ -458,7 +468,9 @@ export class CandidateStatusService {
         .eq("sync_type", 'candidate_create')
         .eq("status", 'success');
 
-      if (!syncLogs || syncLogs.length === 0) return;
+      if (!syncLogs || syncLogs.length === 0) {
+        return;
+      }
 
       // Update status in each ATS
       for (const integration of integrations) {
@@ -485,7 +497,9 @@ export class CandidateStatusService {
         .eq("response_id", responseId)
         .order("changed_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error("Error fetching status history:", error);
@@ -517,7 +531,9 @@ export class CandidateStatusService {
 
       const { data, error } = await query.order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data || [];
     } catch (error) {
       console.error("Error fetching pending status changes:", error);
@@ -534,7 +550,9 @@ export class CandidateStatusService {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const responses = data || [];
       const totalCandidates = responses.length;
@@ -602,7 +620,9 @@ export class CandidateStatusService {
         `)
         .in("candidate_status", [CandidateStatus.PENDING]);
 
-      if (!candidates) return;
+      if (!candidates) {
+        return;
+      }
 
       for (const candidate of candidates) {
         const shouldTransition = await this.evaluateAutoTransitionConditions(candidate);
@@ -731,7 +751,9 @@ Consider:
   }
 
   private static calculateOverallScore(assessments: any[]): number {
-    if (assessments.length === 0) return 0;
+    if (assessments.length === 0) {
+      return 0;
+    }
 
     const totalScore = assessments.reduce((sum, assessment) => {
       const score = assessment.score || 0;
