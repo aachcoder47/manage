@@ -125,7 +125,7 @@ export default function PaymentPendingPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
       </div>
     );
   }
@@ -134,7 +134,7 @@ export default function PaymentPendingPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 text-center">
         <h1 className="text-2xl font-bold mb-4">No Pending Payment</h1>
-        <p className="text-muted-foreground mb-6">You don't have any pending payments.</p>
+        <p className="text-muted-foreground mb-6">You don&apos;t have any pending payments.</p>
         <Link href="/dashboard">
           <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
             Go to Dashboard
