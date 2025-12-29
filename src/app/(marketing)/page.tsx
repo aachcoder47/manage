@@ -237,6 +237,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/about" className="hover:text-foreground">About Us</Link></li>
                 <li><Link href="/contact" className="hover:text-foreground">Contact</Link></li>
+                <li><a href="https://calendly.com/aachcoder47/ritwikraj8908" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Book a Meeting</a></li>
               </ul>
             </div>
             <div>
@@ -248,7 +249,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="pt-8 border-t border-border/50 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Futuristic HR. All rights reserved.
+            © {new Date().getFullYear()} Futuristic HR. All rights reserved. Created by Ritwik Raj.
           </div>
         </div>
       </footer>
