@@ -113,4 +113,46 @@ export class RazorpayService {
       throw new Error(error.message || 'Failed to fetch subscription');
     }
   }
+
+  /**
+   * Create a Razorpay Order for one-time payment
+   */
+  static async createOrder(amount: number, currency: string = "USD", receipt: string) {
+    try {
+      const options = {
+        amount: amount * 100, // Amount in smallest currency unit (cents)
+        currency,
+        receipt,
+        payment_capture: 1, // Auto capture
+      };
+      
+      const order = await razorpay.orders.create(options);
+      return order;
+    } catch (error: any) {
+      console.error('Razorpay order creation failed:', error);
+      throw new Error(error.message || 'Failed to create order');
+    }
+  }
+
+  /**
+   * Verify Razorpay Order signature (Single Payment)
+   */
+  static verifyOrderSignature(
+      razorpayOrderId: string,
+      razorpayPaymentId: string,
+      razorpaySignature: string
+    ): boolean {
+      try {
+        const crypto = require('crypto');
+        const generatedSignature = crypto
+          .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+          .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+          .digest('hex');
+  
+        return generatedSignature === razorpaySignature;
+      } catch (error) {
+        console.error('Signature verification failed:', error);
+        return false;
+      }
+  }
 }

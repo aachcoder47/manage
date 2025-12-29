@@ -99,6 +99,19 @@ const deactivateInterviewsByOrgId = async (organizationId: string) => {
   }
 };
 
+const getInterviewsByJobId = async (jobId: string) => {
+  const { data, error } = await supabase
+    .from("interview")
+    .select(`*`)
+    .eq("job_id", jobId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data || []) as Interview[];
+};
+
 export const InterviewService = {
   getAllInterviews,
   getInterviewById,
@@ -107,4 +120,5 @@ export const InterviewService = {
   getAllRespondents,
   createInterview,
   deactivateInterviewsByOrgId,
+  getInterviewsByJobId,
 };

@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Mistral } from '@mistralai/mistralai';
 import { createClient } from '@supabase/supabase-js';
 
-// Use anon key instead of service role key
+// Use service role key for backend operations to bypass RLS
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('📤 Assessment submission received...');
     
-    const { assessmentId, responseId, submissionData } = await request.json();
+    const { assessmentId, responseId, submissionData, applicationId } = await request.json();
     
     console.log('📋 Submission details:', {
       assessmentId,
@@ -222,7 +222,8 @@ Respond with JSON structure:
         passed: evaluation.passed || (evaluation.overall_score >= assessment.passing_score),
         submission_data: submissionData,
         evaluation_details: evaluation,
-        time_spent: timeSpent
+        time_spent: timeSpent,
+        job_application_id: applicationId
       })
       .select()
       .single();

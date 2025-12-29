@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { PlayCircleIcon, SpeechIcon } from "lucide-react";
+import { PlayCircleIcon, SpeechIcon, BriefcaseIcon, SearchIcon, UserIcon, ClipboardCheckIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 function SideMenu() {
@@ -24,7 +24,8 @@ function SideMenu() {
             <PlayCircleIcon className="font-thin	 mr-2" />
             <p className="font-medium ">Interviews</p>
           </div>
-          <div
+          
+            <div
             className={`flex flex-row p-3 rounded-md hover:bg-slate-200 cursor-pointer ${
               pathname.endsWith("/interviewers")
                 ? "bg-indigo-200"
@@ -34,6 +35,50 @@ function SideMenu() {
           >
             <SpeechIcon className="font-thin mr-2" />
             <p className="font-medium ">Interviewers</p>
+          </div>
+                    <div
+            className={`flex flex-row p-3 rounded-md hover:bg-slate-200 cursor-pointer ${
+              pathname.includes("/jobs")
+                ? "bg-indigo-200"
+                : "bg-slate-100"
+            }`}
+            onClick={() => router.push("/jobs")}
+          >
+            <BriefcaseIcon className="font-thin mr-2" />
+            <p className="font-medium ">Manage Jobs</p>
+          </div>
+          <div
+            className={`flex flex-row p-3 rounded-md hover:bg-slate-200 cursor-pointer ${
+              pathname.includes("/find-jobs")
+                ? "bg-indigo-200"
+                : "bg-slate-100"
+            }`}
+            onClick={() => router.push("/find-jobs")}
+          >
+            <SearchIcon className="font-thin mr-2" />
+            <p className="font-medium ">Find Jobs</p>
+          </div>
+          <div
+            className={`flex flex-row p-3 rounded-md hover:bg-slate-200 cursor-pointer ${
+              pathname.includes("/my-applications")
+                ? "bg-indigo-200"
+                : "bg-slate-100"
+            }`}
+            onClick={() => router.push("/my-applications")}
+          >
+            <UserIcon className="font-thin mr-2" />
+            <p className="font-medium ">My Applications</p>
+          </div>
+          <div
+            className={`flex flex-row p-3 rounded-md hover:bg-slate-200 cursor-pointer ${
+              pathname.includes("/trials")
+                ? "bg-indigo-200"
+                : "bg-slate-100"
+            }`}
+            onClick={() => router.push("/trials")}
+          >
+            <ClipboardCheckIcon className="font-thin mr-2" />
+            <p className="font-medium ">Work Trials</p>
           </div>
         </div>
       </div>

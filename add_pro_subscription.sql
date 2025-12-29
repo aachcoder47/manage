@@ -20,13 +20,14 @@ BEGIN
     RAISE NOTICE 'Found Organization ID: %', v_org_id;
 
     -- 2. Upsert the subscription
-    -- Check if subscription exists for this organization
+    -- Force update existing or insert new
     IF EXISTS (SELECT 1 FROM public.subscription WHERE organization_id = v_org_id) THEN
         -- UPDATE existing
         UPDATE public.subscription
         SET 
             plan_type = 'pro',
             status = 'active',
+            razorpay_subscription_id = NULL, -- Clear this to stop pending payment logic
             current_period_start = NOW(),
             current_period_end = NOW() + INTERVAL '1 year',
             updated_at = NOW()

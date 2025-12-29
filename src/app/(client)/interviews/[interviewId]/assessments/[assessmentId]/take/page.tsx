@@ -105,10 +105,14 @@ export default function TakeAssessmentPage() {
 
     try {
       console.log('📤 Submitting assessment...');
+      const searchParams = new URLSearchParams(window.location.search);
+      const applicationId = searchParams.get('appId');
+
       console.log('📋 Submission data:', {
         assessmentId,
-        responseId: responseId, // Use numeric response ID
-        submissionData: submission
+        responseId: responseId,
+        submissionData: submission,
+        applicationId
       });
 
       const response = await fetch('/api/conduct-assessment', {
@@ -116,8 +120,9 @@ export default function TakeAssessmentPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           assessmentId,
-          responseId: responseId, // Use numeric response ID
-          submissionData: submission
+          responseId: responseId,
+          submissionData: submission,
+          applicationId
         })
       });
 

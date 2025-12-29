@@ -175,7 +175,7 @@ export class SkillAssessmentService {
     }
   }
 
-  static async getCandidateAssessmentsByResponse(responseId: number) {
+  static async getCandidateAssessmentsByApplication(applicationId: string) {
     try {
       const { data, error } = await supabase
         .from("candidate_assessment")
@@ -183,16 +183,48 @@ export class SkillAssessmentService {
           *,
           skill_assessment:skill_assessment_id(id, title, description, assessment_type, difficulty_level, time_limit, passing_score)
         `)
-        .eq("response_id", responseId);
+        .eq("job_application_id", applicationId);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       return data || [];
     } catch (error) {
-      console.error("Error fetching candidate assessments:", error);
+      console.error("Error fetching candidate assessments by app:", error);
       return [];
     }
+  }
+
+  static async getAssessmentsByJob(jobId: string) {
+      try {
+          // Find linked interview
+          const { data: interview } = await supabase
+            .from("interview")
+            .select("id")
+            .eq("job_id", jobId)
+            .single();
+
+          if (!interview) return [];
+
+          return this.getSkillAssessmentsByInterview(interview.id);
+      } catch (error) {
+          console.error("Error fetching assessments by job:", error);
+          return [];
+      }
+  }
+
+  static async getResultsForJobApplications(applicationIds: string[]) {
+      try {
+          if (applicationIds.length === 0) return [];
+          const { data, error } = await supabase
+            .from("candidate_assessment")
+            .select(`*`)
+            .in("job_application_id", applicationIds);
+
+          if (error) throw error;
+          return data || [];
+      } catch (error) {
+          console.error("Error fetching results for job apps:", error);
+          return [];
+      }
   }
 }
 
