@@ -39,10 +39,11 @@ export interface JobApplicationEventData {
   jobTitle?: string;
   organizationId?: string;
   organizationName?: string;
-  candidateId?: string;
+  candidateId: string;
   candidateEmail: string;
   candidateName?: string;
   candidatePhone?: string;
+  sourcePlatform?: string;
 }
 
 export interface ApplicationStatusEventData {
@@ -205,6 +206,7 @@ export class EmailService {
           job_title: data.jobTitle,
           organization_id: data.organizationId,
           organization_name: data.organizationName,
+          source_platform: data.sourcePlatform,
         },
       },
       this.GROUP_APPLICATION_SUBMITTED
@@ -225,6 +227,7 @@ export class EmailService {
           organization_name: data.organizationName,
           candidate_email: data.candidateEmail,
           candidate_phone: data.candidatePhone,
+          source_platform: data.sourcePlatform,
         },
       },
       this.GROUP_NEW_APPLICANT_EMPLOYER

@@ -44,10 +44,20 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
 
-    if (error && error.message.includes("Could not find the 'email' column")) {
+    if (
+      error &&
+      (error.message.includes("Could not find the 'email' column") ||
+        error.message.includes("Could not find the 'phone' column") ||
+        error.message.includes("Could not find the 'source_platform' column"))
+    ) {
       console.warn('Email/Phone columns missing in job_application table, retrying without them...');
       
-      const { email: _e, phone: _p, ...fallbackPayload } = payload;
+      const {
+        email: _e,
+        phone: _p,
+        source_platform: _s,
+        ...fallbackPayload
+      } = payload;
       const retry = await supabase
         .from('job_application')
         .insert(fallbackPayload)

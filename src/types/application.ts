@@ -10,6 +10,7 @@ export type JobApplication = {
     screening_notes?: string;
     email?: string;
     phone?: string;
+    source_platform?: 'linkedin' | 'indeed' | 'google' | 'google_jobs' | 'wellfound' | 'referral' | 'other';
     
     // Join fields (optional)
     job?: {

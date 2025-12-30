@@ -192,6 +192,13 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
     );
   };
 
+  const getPublicApplyUrl = () => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+    return `${window.location.origin}/find-jobs/${params.jobId}`;
+  };
+
   return (
     <main className="max-w-7xl mx-auto p-6 md:p-10 pb-32">
       <Link href="/jobs" className="flex items-center text-sm text-muted-foreground hover:text-indigo-600 mb-6 transition-colors">
@@ -208,9 +215,24 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                   <span>{applications.length} Applicants</span>
               </div>
           </div>
-          <Link href={`/jobs/${params.jobId}/edit`}>
-            <Button variant="outline">Edit Job</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                const url = getPublicApplyUrl();
+                navigator.clipboard.writeText(url);
+                toast.success("Public apply link copied!", {
+                  description: "Paste this into LinkedIn/Indeed as 'Apply on company website'.",
+                  duration: 4000,
+                });
+              }}
+            >
+              Copy Apply Link
+            </Button>
+            <Link href={`/jobs/${params.jobId}/edit`}>
+              <Button variant="outline">Edit Job</Button>
+            </Link>
+          </div>
       </div>
 
       {selectedIds.length > 0 && (
