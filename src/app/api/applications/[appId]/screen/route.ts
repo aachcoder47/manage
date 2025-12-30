@@ -1,18 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@supabase/supabase-js";
 import { Mistral } from "@mistralai/mistralai";
 import { parsePdfFromBuffer } from "@/actions/parse-pdf";
 import axios from "axios";
 
 export const dynamic = 'force-dynamic';
 
-// Lazy initialization helpers
 function getSupabase() {
-  return createClientComponentClient();
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
 
 function getMistral() {
-  return new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+  const apiKey = process.env.MISTRAL_API_KEY;
+  if (!apiKey) return null;
+  return new Mistral({ apiKey });
 }
 
 export async function POST(
@@ -22,6 +26,10 @@ export async function POST(
   try {
     const supabase = getSupabase();
     const mistral = getMistral();
+
+    if (!supabase || !mistral) {
+      return NextResponse.json({ error: "Server configuration error: Missing credentials" }, { status: 500 });
+    }
 
     // 1. Fetch Application
     const { data: application, error: appError } = await supabase

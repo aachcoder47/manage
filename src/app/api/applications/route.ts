@@ -3,17 +3,28 @@ import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
-// Lazy initialization helper
 function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!url || !key) {
+    console.warn('Supabase credentials missing during initialization');
+    return null;
+  }
+  
+  return createClient(url, key);
 }
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = getSupabase();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Server configuration error: Missing database credentials' },
+        { status: 500 }
+      );
+    }
+
     const payload = await request.json();
     const { candidate_id, email } = payload;
 
@@ -21,7 +32,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'candidate_id is required' }, { status: 400 });
     }
 
-    // 1. Ensure user exists in the "user" table to satisfy foreign key constraints
+    // 1. Ensure user exists
     const { error: userError } = await supabase
       .from('user')
       .upsert({ 
