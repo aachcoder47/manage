@@ -193,6 +193,24 @@ export class SkillAssessmentService {
     }
   }
 
+  static async getCandidateAssessmentsByResponse(responseId: number) {
+    try {
+      const { data, error } = await supabase
+        .from("candidate_assessment")
+        .select(`
+          *,
+          skill_assessment:skill_assessment_id(id, title, description, assessment_type, difficulty_level, time_limit, passing_score)
+        `)
+        .eq("response_id", responseId);
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error("Error fetching candidate assessments by response:", error);
+      return [];
+    }
+  }
+
   static async getAssessmentsByJob(jobId: string) {
       try {
           // Find linked interview
@@ -415,7 +433,9 @@ ${JSON.stringify(candidateAssessments.map(a => ({
   score: a.score,
   max_score: a.max_score,
   passed: a.passed,
-  evaluation: a.evaluation_details
+  evaluation_details: a.evaluation_details,
+  time_spent: a.time_spent,
+  job_application_id: a.job_application_id,
 })), null, 2)}
 
 Please provide:

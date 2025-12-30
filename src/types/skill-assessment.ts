@@ -77,6 +77,7 @@ export interface CandidateAssessment {
   submission_data?: Record<string, any>;
   evaluation_details?: EvaluationDetails;
   time_spent?: number; // in seconds
+  job_application_id?: string;
 }
 
 export interface EvaluationDetails {
