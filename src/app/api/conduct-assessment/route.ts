@@ -10,6 +10,8 @@ const supabase = createClient(
 
 const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
 
+export const dynamic = 'force-dynamic';
+
 // Helper function to debug available responses
 async function getAvailableResponses(interviewId: string) {
   try {
