@@ -36,7 +36,7 @@ const createContract = async (payload: Partial<Contract>) => {
 const getContractById = async (id: string) => {
   const { data, error } = await supabase
     .from("contract")
-    .select(`*, candidate:user!candidate_id(email), employer:user!employer_id(email, organization(name))`)
+    .select(`*, candidate:user!candidate_id(email), employer:user!employer_id(email, organization!organization_id(name))`)
     .eq("id", id)
     .single();
 
@@ -65,7 +65,7 @@ const updateContract = async (id: string, payload: Partial<Contract>) => {
 const getContractByApplicationId = async (applicationId: string) => {
   const { data, error } = await supabase
     .from("contract")
-    .select(`*, employer:user!employer_id(email, organization(name))`)
+    .select(`*, employer:user!employer_id(email, organization!organization_id(name))`)
     .eq("job_application_id", applicationId)
     .single();
 

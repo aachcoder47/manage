@@ -79,7 +79,7 @@ const updateTrial = async (id: string, payload: Partial<WorkTrial>) => {
 const getTrialByApplicationId = async (applicationId: string) => {
   const { data, error } = await supabase
     .from("work_trial")
-    .select(`*, employer:user!employer_id(email, organization(name))`)
+    .select(`*, employer:user!employer_id(email, organization!organization_id(name))`)
     .eq("job_application_id", applicationId)
     .single();
 

@@ -56,11 +56,17 @@ export default function ApplicationDetailPage() {
         setApplication(appData);
 
         // Fetch associated entities in parallel
-        const [trialData, contractData, interviewData] = await Promise.all([
+        // Fetch associated entities in parallel
+        // We use allSettled to prevent one failure from blocking everything
+        const [trialResult, contractResult, interviewResult] = await Promise.allSettled([
             TrialsService.getTrialByApplicationId(appId as string),
             ContractsService.getContractByApplicationId(appId as string),
             InterviewService.getInterviewsByJobId(appData.job_id)
         ]);
+
+        const trialData = trialResult.status === 'fulfilled' ? trialResult.value : null;
+        const contractData = contractResult.status === 'fulfilled' ? contractResult.value : null;
+        const interviewData = interviewResult.status === 'fulfilled' ? interviewResult.value : [];
 
         setTrial(trialData);
         setContract(contractData);
