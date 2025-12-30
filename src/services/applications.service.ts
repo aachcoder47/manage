@@ -5,17 +5,20 @@ import { JobApplication } from "@/types/application";
 const supabase = createClientComponentClient();
 
 const createApplication = async (payload: Partial<JobApplication>) => {
-  const { data, error } = await supabase
-    .from("job_application")
-    .insert(payload)
-    .select()
-    .single();
+  const response = await fetch("/api/applications", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-  if (error) {
-    throw new Error(error.message);
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to create application");
   }
 
-  return data as JobApplication;
+  return await response.json() as JobApplication;
 };
 
 const getApplicationsByCandidate = async (candidateId: string) => {
