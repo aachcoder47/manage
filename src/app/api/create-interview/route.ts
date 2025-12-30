@@ -1,5 +1,7 @@
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
+
+export const dynamic = 'force-dynamic';
 import { InterviewService } from "@/services/interviews.service";
 import { logger } from "@/lib/logger";
 

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RazorpayService } from '@/services/razorpay.service';
+
+export const dynamic = 'force-dynamic';
 import { SubscriptionService } from '@/services/subscription.service';
 import { getAuth } from '@clerk/nextjs/server';
 

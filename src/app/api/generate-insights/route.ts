@@ -1,5 +1,7 @@
 import { Mistral } from "@mistralai/mistralai";
 import { Interview, Question } from "@/types/interview";
+
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 import { ResponseService } from "@/services/responses.service";
 import { InterviewService } from "@/services/interviews.service";

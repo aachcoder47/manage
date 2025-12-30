@@ -1,5 +1,7 @@
 import { Mistral } from "@mistralai/mistralai";
 import { NextResponse } from "next/server";
+
+export const dynamic = 'force-dynamic';
 import { logger } from "@/lib/logger";
 import {
   SYSTEM_PROMPT,
