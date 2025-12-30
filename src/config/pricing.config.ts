@@ -2,6 +2,7 @@ export interface PricingPlan {
   name: string;
   interviews: number; // -1 means unlimited
   price: number | null; // null for enterprise (custom pricing)
+  currency: string; // Currency code (e.g., 'INR', 'USD')
   features: string[];
   popular?: boolean;
   cta: string;
@@ -12,6 +13,7 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
     name: 'Free',
     interviews: 1,
     price: 0,
+    currency: 'INR',
     features: [
       '1 Interview',
       'Basic AI Analysis',
@@ -23,7 +25,8 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   basic: {
     name: 'Basic',
     interviews: 50,
-    price: 49,
+    price: 3999,
+    currency: 'INR',
     features: [
       '50 Interviews/month',
       'AI Analysis',
@@ -36,7 +39,8 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   pro: {
     name: 'Pro',
     interviews: 300,
-    price: 199,
+    price: 15999,
+    currency: 'INR',
     features: [
       '300 Interviews/month',
       'Advanced AI Analysis',
@@ -51,7 +55,8 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   advanced: {
     name: 'Advanced',
     interviews: 1000,
-    price: 499,
+    price: 39999,
+    currency: 'INR',
     features: [
       '1000 Interviews/month',
       'Premium AI Features',
@@ -67,6 +72,7 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
     name: 'Enterprise',
     interviews: -1,
     price: null,
+    currency: 'INR',
     features: [
       'Unlimited Interviews',
       'Custom AI Training',

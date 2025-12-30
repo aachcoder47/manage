@@ -117,10 +117,10 @@ export class RazorpayService {
   /**
    * Create a Razorpay Order for one-time payment
    */
-  static async createOrder(amount: number, currency: string = "USD", receipt: string) {
+  static async createOrder(amount: number, currency: string = "INR", receipt: string) {
     try {
       const options = {
-        amount: amount * 100, // Amount in smallest currency unit (cents)
+        amount: amount * 100, // Amount in smallest currency unit (paisa for INR)
         currency,
         receipt,
         payment_capture: 1, // Auto capture

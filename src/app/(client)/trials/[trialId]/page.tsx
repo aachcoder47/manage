@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { TrialsService, WorkTrial } from "@/services/trials.service";
-import { Loader2, DollarSign, Calendar, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, IndianRupee, Calendar, Clock, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ChatBox from "@/components/chat/ChatBox";
+import RazorpayPaymentButton from "@/components/payments/RazorpayPaymentButton";
 
 export default function TrialDetailsPage({ params }: { params: { trialId: string } }) {
   const { user } = useUser();
@@ -78,69 +79,6 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
       }
   };
 
-  const handlePayment = async () => {
-    setUpdating(true);
-    try {
-        // 1. Create Order
-        const res = await fetch('/api/payments/create-order', {
-            method: 'POST',
-            body: JSON.stringify({
-                amount: trial?.payment_amount || 0,
-                receipt: `trial_${trial?.id}`
-            })
-        });
-        const order = await res.json();
-
-        if (!order.id) throw new Error('Order creation failed');
-
-        // 2. Open Razorpay
-        const options = {
-            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_1DP5mmOlF5G5ag", // Fallback for demo
-            amount: order.amount,
-            currency: order.currency,
-            name: "Work Trial Escrow",
-            description: `Fund trial: ${trial?.title}`,
-            order_id: order.id,
-            handler: async function (response: any) {
-                // 3. Verify
-                const verifyRes = await fetch('/api/payments/verify-order', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_signature: response.razorpay_signature,
-                        trialId: trial?.id
-                    })
-                });
-                
-                if (verifyRes.ok) {
-                    toast.success("Payment successful! Trial active.");
-                    setTrial(prev => prev ? ({ ...prev, status: 'in_progress' }) : null);
-                } else {
-                    toast.error("Payment verification failed");
-                }
-            },
-            prefill: {
-                name: user?.fullName,
-                email: user?.emailAddresses[0].emailAddress
-            },
-            theme: {
-                color: "#4f46e5"
-            }
-        };
-
-        // @ts-ignore
-        const rzp1 = new window.Razorpay(options);
-        rzp1.open();
-
-    } catch (error) {
-        console.error(error);
-        toast.error("Payment initialization failed");
-    } finally {
-        setUpdating(false);
-    }
-  };
-
   if (loading) return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;
   if (!trial) return <div className="p-10 text-center">Trial not found</div>;
 
@@ -167,7 +105,7 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
         </div>
         <div className="text-right">
              <div className="text-2xl font-bold text-green-600 flex items-center justify-end gap-1">
-                <DollarSign className="w-6 h-6" />
+                <IndianRupee className="w-6 h-6" />
                 {trial.payment_amount}
              </div>
              <p className="text-xs text-muted-foreground uppercase tracking-wide">Bounty</p>
@@ -207,9 +145,20 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
                                   <div className="text-center py-6">
                                       <p className="text-muted-foreground mb-4">Trial is pending activation.</p>
                                       {isEmployer && (
-                                          <Button onClick={handlePayment} disabled={updating} className="bg-green-600 hover:bg-green-700">
-                                              Fund & Activate Trial
-                                          </Button>
+                                          <RazorpayPaymentButton
+                                              trialId={trial.id}
+                                              amount={trial.payment_amount || 0}
+                                              onSuccess={() => {
+                                                  toast.success("Payment successful! Trial activated.");
+                                                  setTrial(prev => prev ? ({ ...prev, status: 'in_progress' }) : null);
+                                              }}
+                                              onError={(error) => {
+                                                  toast.error(error);
+                                              }}
+                                              className="bg-green-600 hover:bg-green-700"
+                                          >
+                                              Fund & Activate Trial (₹{trial.payment_amount})
+                                          </RazorpayPaymentButton>
                                       )}
                                       {isCandidate && <p className="text-sm text-yellow-600">Waiting for employer to fund escrow.</p>}
                                   </div>

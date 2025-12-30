@@ -133,13 +133,13 @@ export default function CreateTrialPage() {
 
         <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-                <Label htmlFor="payment">Payment Amount ($)</Label>
+                <Label htmlFor="payment">Payment Amount (₹)</Label>
                 <Input 
                     id="payment" 
                     type="number"
                     value={formData.payment_amount} 
                     onChange={(e) => setFormData({...formData, payment_amount: e.target.value})}
-                    placeholder="50.00"
+                    placeholder="500.00"
                     required
                 />
             </div>
