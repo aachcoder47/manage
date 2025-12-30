@@ -3,23 +3,21 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 const supabase = createClientComponentClient();
 
 const uploadResume = async (file: File): Promise<string> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-    const filePath = `${fileName}`;
+    const formData = new FormData();
+    formData.append('file', file);
 
-    const { error: uploadError } = await supabase.storage
-        .from('resumes')
-        .upload(filePath, file);
+    const response = await fetch('/api/upload-resume', {
+        method: 'POST',
+        body: formData,
+    });
 
-    if (uploadError) {
-        throw new Error(uploadError.message);
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to upload resume');
     }
 
-    const { data } = supabase.storage
-        .from('resumes')
-        .getPublicUrl(filePath);
-
-    return data.publicUrl;
+    const data = await response.json();
+    return data.url;
 };
 
 export const StorageService = {
