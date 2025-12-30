@@ -3,53 +3,59 @@ import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  
-  if (!url || !key) {
-    console.warn('Supabase credentials missing during initialization');
-    return null;
-  }
-  
-  return createClient(url, key);
-}
-
 export async function POST(request: NextRequest) {
-  try {
-    const supabase = getSupabase();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Server configuration error: Missing database credentials' },
-        { status: 500 }
-      );
-    }
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+  if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.json(
+      { error: 'Server configuration error: Missing database credentials' },
+      { status: 500 }
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  try {
     const payload = await request.json();
-    const { candidate_id, email } = payload;
+    const { candidate_id, email, phone } = payload;
 
     if (!candidate_id) {
-        return NextResponse.json({ error: 'candidate_id is required' }, { status: 400 });
+      return NextResponse.json({ error: 'candidate_id is required' }, { status: 400 });
     }
 
-    // 1. Ensure user exists
-    const { error: userError } = await supabase
-      .from('user')
-      .upsert({ 
-        id: candidate_id,
-        email: email || null
-      }, { onConflict: 'id' });
-
-    if (userError) {
-      console.error('Error ensuring user exists:', userError);
+    // 1. Ensure user exists and has email
+    if (email) {
+      await supabase
+        .from('user')
+        .upsert({ 
+          id: candidate_id,
+          email: email
+        }, { onConflict: 'id' });
     }
 
-    // 2. Create the application
-    const { data, error } = await supabase
+    // 2. Prepare the application payload
+    // We try to insert all fields. If it fails because columns like 'email' or 'phone' 
+    // are missing in the schema, we retry without them.
+    let { data, error } = await supabase
       .from('job_application')
       .insert(payload)
       .select()
       .single();
+
+    if (error && error.message.includes("Could not find the 'email' column")) {
+      console.warn('Email/Phone columns missing in job_application table, retrying without them...');
+      
+      const { email: _e, phone: _p, ...fallbackPayload } = payload;
+      const retry = await supabase
+        .from('job_application')
+        .insert(fallbackPayload)
+        .select()
+        .single();
+      
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error) {
       console.error('Error creating application:', error);
