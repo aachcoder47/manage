@@ -67,13 +67,15 @@ const getSubscriptionByOrgId = async (organizationId: string): Promise<Subscript
     .from("subscription")
     .select("*")
     .eq("organization_id", organizationId)
-    .maybeSingle();
+    .order("created_at", { ascending: false })
+    .limit(1);
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return (data as Subscription) || null;
+  const first = (data as Subscription[] | null)?.[0];
+  return first || null;
 };
 
 const createSubscription = async (payload: CreateSubscriptionInput): Promise<Subscription> => {
@@ -94,19 +96,27 @@ const createSubscription = async (payload: CreateSubscriptionInput): Promise<Sub
     .from("subscription")
     .insert(insertPayload)
     .select()
-    .single();
+    .limit(1);
 
   if (error) {
     const retryPayload = { ...insertPayload };
     delete retryPayload.trial_end;
-    const retry = await supabase.from("subscription").insert(retryPayload).select().single();
+    const retry = await supabase.from("subscription").insert(retryPayload).select().limit(1);
     if (retry.error) {
       throw new Error(retry.error.message);
     }
-    return retry.data as Subscription;
+    const first = (retry.data as Subscription[] | null)?.[0];
+    if (!first) {
+      throw new Error("Failed to create subscription");
+    }
+    return first;
   }
 
-  return data as Subscription;
+  const first = (data as Subscription[] | null)?.[0];
+  if (!first) {
+    throw new Error("Failed to create subscription");
+  }
+  return first;
 };
 
 const updateSubscription = async (organizationId: string, updates: UpdateSubscriptionInput): Promise<Subscription> => {
@@ -131,7 +141,7 @@ const updateSubscription = async (organizationId: string, updates: UpdateSubscri
     .update(updatePayload)
     .eq("organization_id", organizationId)
     .select()
-    .single();
+    .limit(1);
 
   if (error) {
     const retryPayload = { ...updatePayload };
@@ -141,14 +151,22 @@ const updateSubscription = async (organizationId: string, updates: UpdateSubscri
       .update(retryPayload)
       .eq("organization_id", organizationId)
       .select()
-      .single();
+      .limit(1);
     if (retry.error) {
       throw new Error(retry.error.message);
     }
-    return retry.data as Subscription;
+    const first = (retry.data as Subscription[] | null)?.[0];
+    if (!first) {
+      throw new Error("Subscription not found");
+    }
+    return first;
   }
 
-  return data as Subscription;
+  const first = (data as Subscription[] | null)?.[0];
+  if (!first) {
+    throw new Error("Subscription not found");
+  }
+  return first;
 };
 
 const getMonthlyInterviewCount = async (organizationId: string): Promise<number> => {
