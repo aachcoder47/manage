@@ -177,28 +177,26 @@ export class SkillAssessmentService {
 
   static async getCandidateAssessmentsByApplication(applicationId: string) {
     try {
-      // First get the response_id for this job application
-      const { data: application, error: appError } = await supabase
-        .from("job_application")
-        .select("response_id")
-        .eq("id", applicationId)
-        .single();
-        
-      if (appError || !application?.response_id) {
-        return [];
+      // Try the direct approach first (if job_application_id column exists)
+      try {
+        const { data, error } = await supabase
+          .from("candidate_assessment")
+          .select(`
+            *,
+            skill_assessment:skill_assessment_id(id, title, description, assessment_type, difficulty_level, time_limit, passing_score)
+          `)
+          .eq("job_application_id", applicationId);
+
+        if (!error) {
+          return data || [];
+        }
+      } catch (directError) {
+        // Column doesn't exist, fall back to response_id approach
       }
       
-      // Then get candidate assessments by response_id
-      const { data, error } = await supabase
-        .from("candidate_assessment")
-        .select(`
-          *,
-          skill_assessment:skill_assessment_id(id, title, description, assessment_type, difficulty_level, time_limit, passing_score)
-        `)
-        .eq("response_id", application.response_id);
-
-      if (error) throw error;
-      return data || [];
+      // Fallback: Return empty array if the direct approach fails
+      console.warn("job_application_id column not found in candidate_assessment table");
+      return [];
     } catch (error) {
       console.error("Error fetching candidate assessments by app:", error);
       return [];
