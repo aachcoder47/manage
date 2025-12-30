@@ -32,32 +32,33 @@ const getInterviewById = async (id: string) => {
 };
 
 const updateInterview = async (payload: Partial<Interview>, id: string) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .update({ ...payload })
-    .eq("id", id)
-    .select()
-    .single();
+  const response = await fetch(`/api/interviews/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-  if (error) {
-    throw new Error(error.message);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || "Failed to update interview");
   }
 
-  return data as Interview;
+  return (await response.json()) as Interview;
 };
 
 const deleteInterview = async (id: string) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .delete()
-    .eq("id", id)
-    .select();
+  const response = await fetch(`/api/interviews/${id}`, {
+    method: "DELETE",
+  });
 
-  if (error) {
-    throw new Error(error.message);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || "Failed to delete interview");
   }
 
-  return data;
+  return await response.json();
 };
 
 const getAllRespondents = async (interviewId: string) => {

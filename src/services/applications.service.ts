@@ -50,18 +50,20 @@ const getApplicationsByJob = async (jobId: string) => {
 };
 
 const updateApplicationStatus = async (id: string, status: string) => {
-  const { data, error } = await supabase
-    .from("job_application")
-    .update({ status })
-    .eq("id", id)
-    .select()
-    .single();
+  const response = await fetch(`/api/applications/${id}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
 
-  if (error) {
-    throw new Error(error.message);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || "Failed to update status");
   }
 
-  return data as JobApplication;
+  return (await response.json()) as JobApplication;
 };
 
 const advanceStage = async (id: string, stage: string) => {

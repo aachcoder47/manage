@@ -67,6 +67,23 @@ export interface InterviewCreatedEventData {
   employerName?: string;
 }
 
+export interface InterviewUpdatedEventData {
+  interviewId: string;
+  organizationId?: string;
+  organizationName?: string;
+  employerEmail: string;
+  employerName?: string;
+  changes?: Record<string, any>;
+}
+
+export interface InterviewDeletedEventData {
+  interviewId: string;
+  organizationId?: string;
+  organizationName?: string;
+  employerEmail: string;
+  employerName?: string;
+}
+
 export class EmailService {
   private static readonly API_BASE = 'https://connect.mailerlite.com/api';
   private static readonly API_KEY = process.env.MAILERLITE_API_KEY;
@@ -77,6 +94,8 @@ export class EmailService {
   private static readonly GROUP_APPLICATION_STATUS_UPDATED = process.env.MAILERLITE_GROUP_APPLICATION_STATUS_UPDATED || 'Application Status Updated';
   private static readonly GROUP_INTERVIEW_LINK_READY = process.env.MAILERLITE_GROUP_INTERVIEW_LINK_READY || 'Interview Link Ready';
   private static readonly GROUP_INTERVIEW_CREATED = process.env.MAILERLITE_GROUP_INTERVIEW_CREATED || 'Interview Created';
+  private static readonly GROUP_INTERVIEW_UPDATED = process.env.MAILERLITE_GROUP_INTERVIEW_UPDATED || 'Interview Updated';
+  private static readonly GROUP_INTERVIEW_DELETED = process.env.MAILERLITE_GROUP_INTERVIEW_DELETED || 'Interview Deleted';
 
   private static groupIdCache = new Map<string, string>();
 
@@ -268,6 +287,41 @@ export class EmailService {
         },
       },
       this.GROUP_INTERVIEW_CREATED
+    );
+  }
+
+  static async trackInterviewUpdated(data: InterviewUpdatedEventData): Promise<void> {
+    if (!data.employerEmail) return;
+
+    await this.addSubscriberToGroup(
+      {
+        email: data.employerEmail,
+        name: data.employerName,
+        fields: {
+          organization_id: data.organizationId,
+          organization_name: data.organizationName,
+          interview_id: data.interviewId,
+          changes: data.changes,
+        },
+      },
+      this.GROUP_INTERVIEW_UPDATED
+    );
+  }
+
+  static async trackInterviewDeleted(data: InterviewDeletedEventData): Promise<void> {
+    if (!data.employerEmail) return;
+
+    await this.addSubscriberToGroup(
+      {
+        email: data.employerEmail,
+        name: data.employerName,
+        fields: {
+          organization_id: data.organizationId,
+          organization_name: data.organizationName,
+          interview_id: data.interviewId,
+        },
+      },
+      this.GROUP_INTERVIEW_DELETED
     );
   }
 

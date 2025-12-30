@@ -46,17 +46,20 @@ const getJobById = async (id: string) => {
 };
 
 const createJob = async (payload: Partial<Job>) => {
-  const { data, error } = await supabase
-    .from("job")
-    .insert(payload)
-    .select()
-    .single();
+  const response = await fetch("/api/jobs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-  if (error) {
-    throw new Error(error.message);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || "Failed to create job");
   }
 
-  return data as Job;
+  return (await response.json()) as Job;
 };
 
 const updateJob = async (id: string, payload: Partial<Job>) => {
