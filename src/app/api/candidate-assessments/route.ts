@@ -3,6 +3,8 @@ import { SkillAssessmentService } from "@/services/skill-assessment.service";
 import { CodeEvaluationService } from "@/services/skill-assessment.service";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

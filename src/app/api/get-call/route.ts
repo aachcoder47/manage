@@ -5,11 +5,15 @@ import { Response } from "@/types/response";
 import { NextResponse } from "next/server";
 import Retell from "retell-sdk";
 
-const retell = new Retell({
-  apiKey: process.env.RETELL_API_KEY || "",
-});
+export const dynamic = 'force-dynamic';
 
-export async function POST(req: Request, res: Response) {
+function getRetell() {
+  return new Retell({
+    apiKey: process.env.RETELL_API_KEY || "",
+  });
+}
+
+export async function POST(req: Request) {
   logger.info("get-call request received");
   const body = await req.json();
 
@@ -26,6 +30,7 @@ export async function POST(req: Request, res: Response) {
       { status: 200 },
     );
   }
+  const retell = getRetell();
   const callOutput = await retell.call.retrieve(body.id);
   const interviewId = callDetails?.interview_id;
   callResponse = callOutput;

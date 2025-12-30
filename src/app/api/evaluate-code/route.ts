@@ -3,6 +3,7 @@ import { CodeEvaluationService } from "@/services/skill-assessment.service";
 import { logger } from "@/lib/logger";
 
 export const maxDuration = 120; // Increase timeout for code evaluation
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {

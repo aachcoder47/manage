@@ -4,14 +4,25 @@ import { Mistral } from "@mistralai/mistralai";
 import { parsePdfFromBuffer } from "@/actions/parse-pdf";
 import axios from "axios";
 
-const supabase = createClientComponentClient();
-const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+export const dynamic = 'force-dynamic';
+
+// Lazy initialization helpers
+function getSupabase() {
+  return createClientComponentClient();
+}
+
+function getMistral() {
+  return new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+}
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { appId: string } }
 ) {
   try {
+    const supabase = getSupabase();
+    const mistral = getMistral();
+
     // 1. Fetch Application
     const { data: application, error: appError } = await supabase
       .from("job_application")
@@ -67,7 +78,11 @@ export async function POST(
       responseFormat: { type: "json_object" }
     });
 
-    const result = JSON.parse(completion.choices[0]?.message?.content as string || "{}");
+    const resultBody = completion.choices[0]?.message?.content;
+    if (!resultBody || typeof resultBody !== 'string') {
+        throw new Error("Invalid response from AI");
+    }
+    const result = JSON.parse(resultBody);
 
     // 4. Update Application
     const { error: updateError } = await supabase

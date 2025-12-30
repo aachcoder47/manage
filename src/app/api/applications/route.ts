@@ -3,14 +3,17 @@ import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
-// Use service role key for backend operations to bypass RLS
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy initialization helper
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabase();
     const payload = await request.json();
     const { candidate_id, email } = payload;
 
@@ -19,7 +22,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Ensure user exists in the "user" table to satisfy foreign key constraints
-    // Since we are using Clerk, we use the Clerk ID as the primary key in our "user" table.
     const { error: userError } = await supabase
       .from('user')
       .upsert({ 
@@ -29,8 +31,6 @@ export async function POST(request: NextRequest) {
 
     if (userError) {
       console.error('Error ensuring user exists:', userError);
-      // We don't necessarily want to fail here if the user might already exist, 
-      // but if it's a real error (like table missing), it's good to know.
     }
 
     // 2. Create the application

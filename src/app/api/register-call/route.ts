@@ -3,11 +3,15 @@ import { InterviewerService } from "@/services/interviewers.service";
 import { NextResponse } from "next/server";
 import Retell from "retell-sdk";
 
-const retellClient = new Retell({
-  apiKey: process.env.RETELL_API_KEY || "",
-});
+export const dynamic = 'force-dynamic';
 
-export async function POST(req: Request, res: Response) {
+function getRetell() {
+  return new Retell({
+    apiKey: process.env.RETELL_API_KEY || "",
+  });
+}
+
+export async function POST(req: Request) {
   logger.info("register-call request received");
 
   const body = await req.json();
@@ -15,6 +19,7 @@ export async function POST(req: Request, res: Response) {
   const interviewerId = body.interviewer_id;
   const interviewer = await InterviewerService.getInterviewer(interviewerId);
 
+  const retellClient = getRetell();
   const registerCallResponse = await retellClient.call.createWebCall({
     agent_id: interviewer?.agent_id,
     retell_llm_dynamic_variables: body.dynamic_data,

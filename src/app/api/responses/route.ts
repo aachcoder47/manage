@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Use anon key instead of service role key
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+export const dynamic = 'force-dynamic';
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabase();
     const { searchParams } = new URL(request.url);
     const interviewId = searchParams.get('interviewId');
 
@@ -76,6 +80,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabase();
     const body = await request.json();
     const { interviewId, candidateData, analytics } = body;
 
