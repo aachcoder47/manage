@@ -37,6 +37,20 @@ export default function RazorpayPaymentButton({
 
     setLoading(true);
     try {
+      // Free trial: skip Razorpay and activate directly
+      if (amount === 0) {
+        const response = await fetch("/api/payments/work-trial/activate-free", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trialId }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Failed to activate free trial");
+        toast.success("Free trial activated!");
+        onSuccess?.();
+        return;
+      }
+
       // Load Razorpay script if not already loaded
       if (!window.Razorpay) {
         const script = document.createElement("script");
@@ -141,6 +155,8 @@ export default function RazorpayPaymentButton({
           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
           Processing...
         </>
+      ) : amount === 0 ? (
+        "Start Free Trial"
       ) : (
         children || `Pay ₹${amount}`
       )}
