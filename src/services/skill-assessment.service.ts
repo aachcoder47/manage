@@ -177,13 +177,25 @@ export class SkillAssessmentService {
 
   static async getCandidateAssessmentsByApplication(applicationId: string) {
     try {
+      // First get the response_id for this job application
+      const { data: application, error: appError } = await supabase
+        .from("job_application")
+        .select("response_id")
+        .eq("id", applicationId)
+        .single();
+        
+      if (appError || !application?.response_id) {
+        return [];
+      }
+      
+      // Then get candidate assessments by response_id
       const { data, error } = await supabase
         .from("candidate_assessment")
         .select(`
           *,
           skill_assessment:skill_assessment_id(id, title, description, assessment_type, difficulty_level, time_limit, passing_score)
         `)
-        .eq("job_application_id", applicationId);
+        .eq("response_id", application.response_id);
 
       if (error) throw error;
       return data || [];
@@ -232,10 +244,28 @@ export class SkillAssessmentService {
   static async getResultsForJobApplications(applicationIds: string[]) {
       try {
           if (applicationIds.length === 0) return [];
+          
+          // First get the response_ids for these job applications
+          const { data: applications, error: appError } = await supabase
+            .from("job_application")
+            .select("id, response_id")
+            .in("id", applicationIds);
+            
+          if (appError) throw appError;
+          
+          if (!applications || applications.length === 0) return [];
+          
+          const responseIds = applications
+            .filter(app => app.response_id)
+            .map(app => app.response_id);
+            
+          if (responseIds.length === 0) return [];
+          
+          // Then get candidate assessments by response_ids
           const { data, error } = await supabase
             .from("candidate_assessment")
             .select(`*`)
-            .in("job_application_id", applicationIds);
+            .in("response_id", responseIds);
 
           if (error) throw error;
           return data || [];
