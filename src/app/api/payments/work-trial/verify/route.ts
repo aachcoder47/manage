@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { RazorpayService } from "@/services/razorpay.service";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
+import { getAuth } from "@clerk/nextjs/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
+    const { userId } = getAuth(req);
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { 
       razorpay_order_id, 
