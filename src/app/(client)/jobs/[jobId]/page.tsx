@@ -38,6 +38,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isBulkLoading, setIsBulkLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +66,20 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
 
     fetchData();
   }, [params.jobId]);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const res = await fetch("/api/admin/me");
+        if (!res.ok) return;
+        const data = await res.json();
+        setIsAdmin(Boolean(data?.isAdmin));
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, []);
 
   const handleStatusChange = async (appId: string, status: string) => {
       try {
@@ -216,6 +231,25 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
               </div>
           </div>
           <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  const ok = window.confirm("Delete this job? This will also delete related applications/trials.");
+                  if (!ok) return;
+                  const res = await fetch(`/api/admin/jobs/${params.jobId}`, { method: "DELETE" });
+                  const data = await res.json().catch(() => ({}));
+                  if (!res.ok) {
+                    toast.error(data.error || "Failed to delete job");
+                    return;
+                  }
+                  toast.success("Job deleted");
+                  window.location.href = "/jobs";
+                }}
+              >
+                Admin Delete
+              </Button>
+            )}
             <Button
               variant="secondary"
               onClick={() => {
