@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing trialId or amount" }, { status: 400 });
     }
 
-    const receipt = `trial_${trialId}_${Date.now()}`;
+    const receipt = `trial_${trialId.slice(-12)}_${Date.now().toString(36)}`.slice(0, 40);
     const order = await RazorpayService.createOrder(amount, "INR", receipt);
 
     const insertAttempt = await supabase.from("payment_transaction").insert({
