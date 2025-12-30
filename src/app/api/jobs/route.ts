@@ -31,14 +31,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "organization_id is required" }, { status: 400 });
     }
 
-    const { data: userRow, error: userErr } = await supabase
+    let userRow = (await supabase
       .from("user")
       .select("id, organization_id, email")
       .eq("id", userId)
-      .single();
+      .single()).data;
 
-    if (userErr || !userRow) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!userRow) {
+      // Auto-create user record if missing
+      const { data: newUser, error: insertErr } = await supabase
+        .from("user")
+        .insert({
+          id: userId,
+          organization_id: organizationId,
+          email: (await req.json()).user_email || null,
+        })
+        .select()
+        .single();
+      if (insertErr) {
+        return NextResponse.json({ error: insertErr.message }, { status: 500 });
+      }
+      userRow = newUser;
     }
 
     if (userRow.organization_id !== organizationId) {
