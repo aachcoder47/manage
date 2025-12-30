@@ -130,7 +130,7 @@ export class RazorpayService {
       return order;
     } catch (error: any) {
       console.error('Razorpay order creation failed:', error);
-      throw new Error(error.message || 'Failed to create order');
+      throw new Error(error.error?.description || error.message || 'Failed to create order');
     }
   }
 

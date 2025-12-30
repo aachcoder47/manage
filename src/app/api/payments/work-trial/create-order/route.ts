@@ -27,8 +27,7 @@ export async function POST(req: NextRequest) {
     const receipt = `trial_${trialId}_${Date.now()}`;
     const order = await RazorpayService.createOrder(amount, "INR", receipt);
 
-    // Store payment transaction record
-    await supabase.from("payment_transaction").insert({
+    const insertAttempt = await supabase.from("payment_transaction").insert({
       sender_id: userId,
       entity_type: "work_trial",
       entity_id: trialId,
@@ -39,11 +38,28 @@ export async function POST(req: NextRequest) {
       razorpay_order_id: order.id,
     });
 
+    if (insertAttempt.error && insertAttempt.error.message.includes("razorpay_order_id")) {
+      const retry = await supabase.from("payment_transaction").insert({
+        sender_id: userId,
+        entity_type: "work_trial",
+        entity_id: trialId,
+        amount,
+        currency: "INR",
+        type: "trial_fee",
+        status: "pending",
+      });
+      if (retry.error) {
+        return NextResponse.json({ error: retry.error.message }, { status: 500 });
+      }
+    } else if (insertAttempt.error) {
+      return NextResponse.json({ error: insertAttempt.error.message }, { status: 500 });
+    }
+
     return NextResponse.json(order);
   } catch (error: any) {
     console.error("Work trial payment creation error:", error);
     return NextResponse.json(
-      { error: error.message || "Payment creation failed" },
+      { error: error?.message || "Payment creation failed" },
       { status: 500 }
     );
   }

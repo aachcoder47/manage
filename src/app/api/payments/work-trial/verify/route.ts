@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Update payment transaction record
-    await supabase
+    const updateAttempt = await supabase
       .from("payment_transaction")
       .update({
         status: "released",
@@ -49,6 +49,25 @@ export async function POST(req: NextRequest) {
         razorpay_signature,
       })
       .eq("razorpay_order_id", razorpay_order_id);
+
+    if (updateAttempt.error && (updateAttempt.error.message.includes("razorpay_order_id") || updateAttempt.error.message.includes("razorpay_signature"))) {
+      if (trialId) {
+        const retry = await supabase
+          .from("payment_transaction")
+          .update({
+            status: "released",
+            razorpay_payment_id,
+          })
+          .eq("entity_type", "work_trial")
+          .eq("entity_id", trialId)
+          .eq("sender_id", userId);
+        if (retry.error) {
+          return NextResponse.json({ error: retry.error.message }, { status: 500 });
+        }
+      }
+    } else if (updateAttempt.error) {
+      return NextResponse.json({ error: updateAttempt.error.message }, { status: 500 });
+    }
 
     // Update work trial status to in_progress if payment is successful
     if (trialId) {
