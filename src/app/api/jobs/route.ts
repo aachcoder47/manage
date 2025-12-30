@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
 
     const payload = await req.json();
     const organizationId = payload?.organization_id;
+    const userEmail = payload?.user_email;
 
     if (!organizationId) {
       return NextResponse.json({ error: "organization_id is required" }, { status: 400 });
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
         .insert({
           id: userId,
           organization_id: organizationId,
-          email: (await req.json()).user_email || null,
+          email: userEmail || null,
         })
         .select()
         .single();
