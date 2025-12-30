@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { CandidateStatusService } from "@/services/candidate-status.service";
 import { logger } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
@@ -38,9 +40,9 @@ export async function PUT(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
+    const searchParams = req.nextUrl.searchParams;
     const responseId = searchParams.get("responseId");
-    const type = searchParams.get("type"); // 'history' or 'pending' or 'metrics'
+    const type = searchParams.get("type");
     const interviewId = searchParams.get("interviewId");
 
     let result;
