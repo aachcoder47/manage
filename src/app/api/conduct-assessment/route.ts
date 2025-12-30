@@ -2,19 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Mistral } from '@mistralai/mistralai';
 import { createClient } from '@supabase/supabase-js';
 
-// Use service role key for backend operations to bypass RLS
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
-
 export const dynamic = 'force-dynamic';
+
+// Lazy initialization helpers
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
+function getMistral() {
+  return new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+}
 
 // Helper function to debug available responses
 async function getAvailableResponses(interviewId: string) {
   try {
+    const supabase = getSupabase();
     const { data } = await supabase
       .from('response')
       .select('id, interview_id, created_at')
@@ -41,6 +46,9 @@ export async function POST(request: NextRequest) {
       answersCount: submissionData?.answers ? Object.keys(submissionData.answers).length : 0,
       codeSubmissionsCount: submissionData?.codeSubmissions ? Object.keys(submissionData.codeSubmissions).length : 0
     });
+
+    const supabase = getSupabase();
+    const mistral = getMistral();
 
     // Get assessment details
     const { data: assessment, error: assessmentError } = await supabase
@@ -295,6 +303,8 @@ export async function GET(request: NextRequest) {
     if (!assessmentId || !responseId) {
       return NextResponse.json({ error: 'Missing assessmentId or responseId' }, { status: 400 });
     }
+
+    const supabase = getSupabase();
 
     // Get existing assessment result
     console.log('🔍 Checking for existing attempts...');
