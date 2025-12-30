@@ -48,13 +48,13 @@ export async function POST(req: NextRequest) {
         })
         .select()
         .single();
-      if (insertErr) {
-        return NextResponse.json({ error: insertErr.message }, { status: 500 });
+      if (insertErr || !newUser) {
+        return NextResponse.json({ error: insertErr?.message || "Failed to create user" }, { status: 500 });
       }
       userRow = newUser;
     }
 
-    if (userRow.organization_id !== organizationId) {
+    if (!userRow || userRow.organization_id !== organizationId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
