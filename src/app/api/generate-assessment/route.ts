@@ -34,6 +34,8 @@ supabase.from('interview').select('count').then(result => {
 
 const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   // Check if environment variables are set
   if (!supabaseUrl || !supabaseKey) {
