@@ -38,7 +38,10 @@ export default function RootLayout({
         <link rel="icon" href="/browser-client-icon.ico" />
       </head>
       <body className={cn(inter.className, "antialiased min-h-screen")}>
-        <ClerkProvider>
+        <ClerkProvider
+          signInForceRedirectUrl="/dashboard"
+          signUpForceRedirectUrl="/dashboard"
+        >
           <Providers>
             {children}
             <Toaster
