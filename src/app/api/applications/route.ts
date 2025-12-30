@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { EmailService } from '@/services/email.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,73 +72,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    try {
-      const jobId = data.job_id;
-      const { data: job } = await supabase
-        .from('job')
-        .select('id, title, organization_id, organization(name)')
-        .eq('id', jobId)
-        .single();
-
-      const organizationName = ((job as any)?.organization?.[0]?.name ?? (job as any)?.organization?.name) as
-        | string
-        | undefined;
-
-      const candidateEmail = email || data.email;
-      const candidatePhone = phone || data.phone;
-
-      if (candidateEmail) {
-        await EmailService.trackJobApplicationSubmitted({
-          applicationId: data.id,
-          jobId: jobId,
-          jobTitle: job?.title,
-          organizationId: job?.organization_id,
-          organizationName,
-          candidateId: candidate_id,
-          candidateEmail,
-          candidatePhone,
-        });
-      }
-
-      if (job?.organization_id) {
-        let employerEmail: string | undefined;
-
-        const employerByRole = await supabase
-          .from('user')
-          .select('email')
-          .eq('organization_id', job.organization_id)
-          .eq('role', 'employer')
-          .limit(1)
-          .maybeSingle();
-
-        employerEmail = employerByRole.data?.email;
-
-        if (!employerEmail) {
-          const anyUser = await supabase
-            .from('user')
-            .select('email')
-            .eq('organization_id', job.organization_id)
-            .limit(1)
-            .maybeSingle();
-          employerEmail = anyUser.data?.email;
-        }
-
-        if (employerEmail && candidateEmail) {
-          await EmailService.trackEmployerNewApplicant(employerEmail, {
-            applicationId: data.id,
-            jobId: jobId,
-            jobTitle: job?.title,
-            organizationId: job?.organization_id,
-            organizationName,
-            candidateId: candidate_id,
-            candidateEmail,
-            candidatePhone,
-          });
-        }
-      }
-    } catch (e) {
-      console.warn('MailerLite application automations failed:', e);
-    }
+    // MailerLite integration removed
 
     return NextResponse.json(data);
   } catch (error) {

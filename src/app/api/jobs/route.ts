@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getAuth } from "@clerk/nextjs/server";
-import { EmailService } from "@/services/email.service";
 
 export const dynamic = "force-dynamic";
 
@@ -67,24 +66,6 @@ export async function POST(req: NextRequest) {
 
     if (jobErr) {
       return NextResponse.json({ error: jobErr.message }, { status: 500 });
-    }
-
-    const { data: org } = await supabase
-      .from("organization")
-      .select("name")
-      .eq("id", organizationId)
-      .single();
-
-    try {
-      await EmailService.trackJobPosted({
-        employerEmail: userRow.email || "",
-        organizationId,
-        organizationName: org?.name,
-        jobId: job.id,
-        jobTitle: job.title,
-      });
-    } catch (e) {
-      console.warn("MailerLite job-posted trigger failed:", e);
     }
 
     return NextResponse.json(job);

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getAuth } from "@clerk/nextjs/server";
-import { EmailService } from "@/services/email.service";
 
 export const dynamic = "force-dynamic";
 
@@ -64,19 +63,7 @@ export async function PATCH(req: NextRequest, context: { params: { interviewId: 
       .eq("id", existing.organization_id)
       .single();
 
-    try {
-      if (actor.email) {
-        await EmailService.trackInterviewUpdated({
-          interviewId: existing.id,
-          organizationId: existing.organization_id,
-          organizationName: orgRow?.name,
-          employerEmail: actor.email,
-          changes: updates,
-        });
-      }
-    } catch (e) {
-      console.warn("MailerLite interview-updated trigger failed:", e);
-    }
+    // MailerLite integration removed
 
     return NextResponse.json(updated);
   } catch (error: any) {
@@ -137,18 +124,7 @@ export async function DELETE(req: NextRequest, context: { params: { interviewId:
       .eq("id", existing.organization_id)
       .single();
 
-    try {
-      if (actor.email) {
-        await EmailService.trackInterviewDeleted({
-          interviewId: existing.id,
-          organizationId: existing.organization_id,
-          organizationName: orgRow?.name,
-          employerEmail: actor.email,
-        });
-      }
-    } catch (e) {
-      console.warn("MailerLite interview-deleted trigger failed:", e);
-    }
+    // MailerLite integration removed
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

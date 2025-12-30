@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getAuth } from "@clerk/nextjs/server";
-import { EmailService } from "@/services/email.service";
 
 export const dynamic = "force-dynamic";
 
@@ -108,27 +107,7 @@ export async function PATCH(req: NextRequest, context: { params: { appId: string
       }
     }
 
-    try {
-      if (candidateEmail) {
-        const organizationName = ((job as any).organization?.[0]?.name ?? (job as any).organization?.name) as
-          | string
-          | undefined;
-
-        await EmailService.trackApplicationStatusChanged({
-          applicationId: existingApp.id,
-          jobId: existingApp.job_id,
-          jobTitle: job.title,
-          organizationId: job.organization_id,
-          organizationName,
-          candidateEmail,
-          candidatePhone,
-          status,
-          interviewUrl,
-        });
-      }
-    } catch (e) {
-      console.warn("MailerLite application-status trigger failed:", e);
-    }
+    // MailerLite integration removed
 
     return NextResponse.json(updated);
   } catch (error: any) {
