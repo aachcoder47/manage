@@ -44,7 +44,7 @@ export function WeeklySummaryEmail({
   userName, 
   organizationName, 
   weekSummary,
-  dashboardUrl = 'https://app.futuristic-hr.com/dashboard'
+  dashboardUrl = 'https://hr.futuristiccreations.store/dashboard'
 }: WeeklySummaryEmailProps) {
   return (
   <EmailLayout 

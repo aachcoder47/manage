@@ -26,7 +26,7 @@ export const OfferEmail = ({
   acceptanceDeadline,
   contactPerson = 'HR Team',
   contactEmail = 'hr@company.com',
-  dashboardUrl = 'https://app.futuristic-hr.com/offers'
+  dashboardUrl = 'https://hr.futuristiccreations.store/offers'
 }: OfferEmailProps) => {
   return (
     <EmailLayout
