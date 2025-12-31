@@ -37,6 +37,9 @@ function CreateInterviewCard() {
       return;
     }
 
+    console.log("CreateInterviewCard - Organization:", organization?.id);
+    console.log("CreateInterviewCard - Subscription:", subscription);
+
     // Check if user has pending subscription - allow them to create interviews with free limits
     if (subscription && subscription.status === 'pending') {
       // Allow them to proceed, but they'll be limited by the free plan limits in canCreateInterview

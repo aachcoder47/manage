@@ -11,9 +11,13 @@ export async function POST(req: Request, res: Response) {
   try {
     const url_id = nanoid();
     const url = `${base_url}/call/${url_id}`;
-    const body = await req.json();
+    const body = await req.json() as {
+      organizationName?: string;
+      interviewData: any;
+    };
 
     logger.info("create-interview request received");
+    logger.info("Request body:", JSON.stringify(body, null, 2));
 
     const payload = body.interviewData;
 
@@ -25,6 +29,8 @@ export async function POST(req: Request, res: Response) {
         .replace(/\s/g, "-");
       readableSlug = `${orgNameSlug}-${interviewNameSlug}`;
     }
+
+    logger.info("Creating interview with payload:", JSON.stringify(payload, null, 2));
 
     const newInterview = await InterviewService.createInterview({
       ...payload,
@@ -42,10 +48,21 @@ export async function POST(req: Request, res: Response) {
       { status: 200 },
     );
   } catch (err) {
-    logger.error("Error creating interview");
+    const error = err instanceof Error ? err : new Error(String(err));
+    logger.error("Error creating interview:", error);
+    logger.error("Error details:", {
+      message: error.message,
+      stack: error.stack,
+      body: body,
+      timestamp: new Date().toISOString()
+    });
 
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: (err as Error).message || "Internal server error",
+        details: "Failed to create interview",
+        timestamp: new Date().toISOString()
+      },
       { status: 500 },
     );
   }
