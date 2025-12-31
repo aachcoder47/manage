@@ -21,6 +21,14 @@ export async function POST(request: NextRequest) {
         result = await emailTriggerService.sendInterviewInviteEmail(params);
         break;
       
+      case 'rejection':
+        result = await emailTriggerService.sendRejectionEmail(params);
+        break;
+      
+      case 'offer':
+        result = await emailTriggerService.sendOfferEmail(params);
+        break;
+      
       case 'weekly_summary':
         result = await emailTriggerService.sendWeeklySummaryEmail(params);
         break;
