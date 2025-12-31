@@ -31,8 +31,8 @@ export const AdSenseProvider: React.FC<AdSenseProviderProps> = ({
   const [isEnabled, setIsEnabled] = useState(enabled);
 
   useEffect(() => {
-    // Don't load AdSense in development or if disabled
-    if (process.env.NODE_ENV === 'development' || !enabled) {
+    // Load in both development and production for testing
+    if (!enabled) {
       setIsEnabled(false);
       return;
     }
