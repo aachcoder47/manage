@@ -21,7 +21,8 @@ export const ApplicationReceivedEmail = ({
   candidateEmail,
   resumeUrl,
   dashboardUrl = 'https://app.futuristic-hr.com'
-}: ApplicationReceivedEmailProps) => (
+}: ApplicationReceivedEmailProps) => {
+  return (
   <EmailLayout 
     preview={`New application: ${candidateName} for ${positionTitle}`}
     footerText="Stay ahead of the competition with real-time application notifications."
@@ -200,9 +201,10 @@ export const ApplicationReceivedEmail = ({
       
       <div style={{ textAlign: 'center', padding: '24px 0', borderTop: '1px solid #e2e8f0' }}>
         <Text style={{ color: '#64748b', fontSize: '14px', margin: '0' }}>
-          You'll receive another notification once AI analysis is complete.
+          You&apos;ll receive another notification once AI analysis is complete.
         </Text>
       </div>
     </Section>
   </EmailLayout>
-);
+  );
+};
