@@ -38,9 +38,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/browser-client-icon.ico" />
-        <script src="https://www.highperformanceformat.com/fe3895f99206c82f4759859c69595d78/invoke.js"></script>
       </head>
-      <body className={cn(inter.className, "antialiased min-h-screen")}>
+      <body className={cn(inter.className, "antialiased min-h-screen")} suppressHydrationWarning>
         <ClerkProvider
           signInForceRedirectUrl="/dashboard"
           signUpForceRedirectUrl="/dashboard"
