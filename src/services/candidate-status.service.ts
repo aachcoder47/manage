@@ -406,7 +406,8 @@ export class CandidateStatusService {
           response.email,
           toStatus,
           transition.notification_settings.message_template,
-          response.interview?.name
+          response.interview?.name,
+          reason
         );
       }
 
