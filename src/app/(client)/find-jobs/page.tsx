@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
+import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
 
 function FindJobsPage() {
   const [jobs, setJobs] = useState<(Job & { organization: { name: string; image_url: string } })[]>([]);
@@ -70,8 +71,9 @@ function FindJobsPage() {
         </div>
 
         {/* Non-Disturbing Ad - Between search and results */}
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center gap-4">
           <HighPerformanceAd />
+          <EffectiveGateCPMAd />
         </div>
 
         {loading ? (

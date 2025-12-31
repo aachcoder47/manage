@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
+import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
 
 function JobsPage() {
   const { organization, isLoaded } = useOrganization();
@@ -110,8 +111,9 @@ function JobsPage() {
         </div>
 
         {/* Non-Disturbing Ad - Between header and content */}
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center gap-4">
           <HighPerformanceAd />
+          <EffectiveGateCPMAd />
         </div>
 
         <motion.div 

@@ -9,6 +9,7 @@ import { useAuth } from "@clerk/nextjs";
 import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
+import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
 
 export default function LandingPage() {
   const { userId } = useAuth();
@@ -148,8 +149,9 @@ export default function LandingPage() {
           </div>
 
           {/* Non-Disturbing Ad - Between features and how-it-works */}
-          <div className="w-full flex justify-center mt-16">
+          <div className="w-full flex justify-center gap-4">
             <HighPerformanceAd />
+            <EffectiveGateCPMAd />
           </div>
         </div>
       </section>

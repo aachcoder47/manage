@@ -17,6 +17,7 @@ import { motion } from "framer-motion";
 import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
+import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
@@ -141,8 +142,9 @@ function Interviews() {
 
         {/* Non-Disturbing Ad - Only for free users */}
         {currentPlan === "free" && (
-          <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center gap-4">
             <HighPerformanceAd />
+            <EffectiveGateCPMAd />
           </div>
         )}
 
