@@ -15,6 +15,8 @@ import { Gem, Plus, Sparkles, Building2, ArrowUpLeft } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
+import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
+import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
@@ -140,14 +142,7 @@ function Interviews() {
         {/* Non-Disturbing Ad - Only for free users */}
         {currentPlan === "free" && (
           <div className="w-full flex justify-center">
-            <ManualAdSense 
-              adSlot="1234567890" // Replace with your actual ad slot ID
-              style={{ 
-                width: '728px', 
-                height: '90px', 
-                maxWidth: '100%'
-              }}
-            />
+            <HighPerformanceAd />
           </div>
         )}
 

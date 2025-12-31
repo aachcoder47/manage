@@ -262,12 +262,18 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
           <div className="flex-1 p-4 flex flex-col justify-between bg-background/50">
             <div className="flex items-center gap-3">
               <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-background shadow-sm">
-                <Image
-                  src={img}
-                  alt="Interviewer"
-                  className="object-cover"
-                  fill
-                />
+                {img ? (
+                  <Image
+                    src={img}
+                    alt="Interviewer"
+                    className="object-cover"
+                    fill
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <span className="text-xs text-muted-foreground">AI</span>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col">
                 <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Responses</span>

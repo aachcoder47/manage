@@ -38,11 +38,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/browser-client-icon.ico" />
-        <script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8490513657943266"
-          crossOrigin="anonymous"
-        />
+        <script src="https://www.highperformanceformat.com/fe3895f99206c82f4759859c69595d78/invoke.js"></script>
       </head>
       <body className={cn(inter.className, "antialiased min-h-screen")}>
         <ClerkProvider

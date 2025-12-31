@@ -9,6 +9,8 @@ import { Job } from "@/types/job";
 import { Building2, ArrowUpLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
+import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
+import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 
 function JobsPage() {
   const { organization, isLoaded } = useOrganization();
@@ -109,14 +111,7 @@ function JobsPage() {
 
         {/* Non-Disturbing Ad - Between header and content */}
         <div className="w-full flex justify-center">
-          <ManualAdSense 
-            adSlot="0987654321" // Replace with your actual ad slot ID
-            style={{ 
-              width: '728px', 
-              height: '90px', 
-              maxWidth: '100%'
-            }}
-          />
+          <HighPerformanceAd />
         </div>
 
         <motion.div 
