@@ -15,7 +15,8 @@ export const WelcomeEmail = ({
   userEmail, 
   organizationName = 'Your Organization',
   dashboardUrl = 'https://app.futuristic-hr.com/dashboard'
-}: WelcomeEmailProps) => (
+}: WelcomeEmailProps) => {
+  return (
   <EmailLayout 
     preview={`Welcome to Futuristic HR, ${name}! Your AI-powered hiring journey begins`}
     footerText="Welcome to the future of hiring! This email contains important information about your new account."
@@ -47,7 +48,7 @@ export const WelcomeEmail = ({
       </Text>
       
       <Text style={{ color: '#475569', fontSize: '16px', lineHeight: '24px', marginBottom: '24px' }}>
-        Welcome to the future of hiring! We're thrilled to have you join <strong>{organizationName}</strong> on this journey. Your Futuristic HR account is now active and ready to transform your hiring process.
+        Welcome to the future of hiring! We&apos;re thrilled to have you join <strong>{organizationName}</strong> on this journey. Your Futuristic HR account is now active and ready to transform your hiring process.
       </Text>
       
       <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px', marginBottom: '32px' }}>
@@ -149,4 +150,5 @@ export const WelcomeEmail = ({
       </div>
     </Section>
   </EmailLayout>
-);
+  );
+};
