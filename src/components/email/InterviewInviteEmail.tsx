@@ -268,7 +268,7 @@ export function InterviewInviteEmail({
           Questions? Need to reschedule?
         </Text>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-          <a href="mailto:support@futuristic-hr.com" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
+          <a href="mailto:support@futuristiccreations.store" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
             Contact Support
           </a>
           <a href={interviewLink} style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>

@@ -16,7 +16,7 @@ export const RejectionEmail = ({
   positionTitle,
   organizationName = 'Your Organization',
   rejectionReason = 'We have decided to move forward with other candidates whose qualifications more closely match our current needs.',
-  dashboardUrl = 'https://app.futuristic-hr.com/jobs'
+  dashboardUrl = 'https://hr.futuristiccreations.store/jobs'
 }: RejectionEmailProps) => {
   return (
     <EmailLayout
