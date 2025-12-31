@@ -9,8 +9,7 @@ interface AdSenseScriptLoaderProps {
 
 export const AdSenseScriptLoader: React.FC<AdSenseScriptLoaderProps> = ({ children }) => {
   useEffect(() => {
-    // Only load in production and when enabled
-    if (process.env.NODE_ENV === 'development') return;
+    // Load in both development and production for testing
     if (process.env.NEXT_PUBLIC_ADSENSE_ENABLED !== 'true') return;
 
     // Check if script is already loaded
@@ -53,8 +52,7 @@ export const AdSenseScriptLoader: React.FC<AdSenseScriptLoaderProps> = ({ childr
 // Auto Ad Component (for automatic ad placement)
 export const AutoAdSense: React.FC = () => {
   useEffect(() => {
-    // Only show in production and when enabled
-    if (process.env.NODE_ENV === 'development') return;
+    // Show in both development and production for testing
     if (process.env.NEXT_PUBLIC_ADSENSE_ENABLED !== 'true') return;
     
     // Check if user has premium subscription
@@ -96,8 +94,7 @@ export const ManualAdSense: React.FC<ManualAdSenseProps> = ({
   className = ''
 }) => {
   useEffect(() => {
-    // Only show in production and when enabled
-    if (process.env.NODE_ENV === 'development') return;
+    // Show in both development and production for testing
     if (process.env.NEXT_PUBLIC_ADSENSE_ENABLED !== 'true') return;
     
     // Check if user has premium subscription
