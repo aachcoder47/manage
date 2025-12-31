@@ -14,6 +14,8 @@ import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
 import { ProductionAds } from "@/components/ads/ProductionAds";
 import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
+import { CSSResponsiveAds } from "@/components/ads/CSSResponsiveAds";
+import { ProductionDomainResponsiveAds } from "@/components/ads/ProductionDomainAds";
 
 function JobsPage() {
   const { organization, isLoaded } = useOrganization();
@@ -112,11 +114,6 @@ function JobsPage() {
           </p>
         </div>
 
-        {/* Ad space - ads will load in production */}
-        <div className="w-full" style={{ minHeight: '90px' }}>
-          <ProductionAds />
-        </div>
-
         <motion.div 
           variants={container}
           initial="hidden"
@@ -140,18 +137,10 @@ function JobsPage() {
           )}
         </motion.div>
 
-        {/* Additional EffectiveGate CPM Ads - Grid layout */}
+        {/* Production Domain Ads - Only show when there are jobs */}
         {jobs.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4 text-center">Sponsored Opportunities</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-            </div>
+            <ProductionDomainResponsiveAds />
           </div>
         )}
       </div>

@@ -22,6 +22,8 @@ import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
 import { ProductionAds } from "@/components/ads/ProductionAds";
 import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
+import { CSSResponsiveAds } from "@/components/ads/CSSResponsiveAds";
+import { ProductionDomainResponsiveAds } from "@/components/ads/ProductionDomainAds";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
@@ -144,14 +146,6 @@ function Interviews() {
             <SubscriptionStats organizationId={organization.id} />
           </div>
         )}
-
-        {/* Ad space for free users - ads will load in production */}
-        {currentPlan === "free" && (
-          <div className="w-full" style={{ minHeight: '90px' }}>
-            <ProductionAds />
-          </div>
-        )}
-
         <motion.div 
           variants={container}
           initial="hidden"
@@ -209,17 +203,10 @@ function Interviews() {
           )}
         </motion.div>
 
-        {/* Additional EffectiveGate CPM Ads - Sidebar style placement */}
-        {interviews.length > 0 && (
-          <div className="mt-8 flex justify-center">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-              <EffectiveGateCPMAdSolo />
-            </div>
+        {/* Production Domain Ads - Only for free users */}
+        {currentPlan === "free" && interviews.length > 0 && (
+          <div className="mt-8">
+            <ProductionDomainResponsiveAds />
           </div>
         )}
 

@@ -12,6 +12,8 @@ import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
 import { ProductionAds } from "@/components/ads/ProductionAds";
 import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
+import { CSSResponsiveAds } from "@/components/ads/CSSResponsiveAds";
+import { ProductionDomainResponsiveAds } from "@/components/ads/ProductionDomainAds";
 
 function FindJobsPage() {
   const [jobs, setJobs] = useState<(Job & { organization: { name: string; image_url: string } })[]>([]);
@@ -72,11 +74,6 @@ function FindJobsPage() {
           </div>
         </div>
 
-        {/* Ad space - ads will load in production */}
-        <div className="w-full" style={{ minHeight: '90px' }}>
-          <ProductionAds />
-        </div>
-
         {loading ? (
           <JobsLoader />
         ) : (
@@ -93,18 +90,10 @@ function FindJobsPage() {
               )}
             </div>
 
-            {/* Additional EffectiveGate CPM Ads - Job seeker focused */}
+            {/* Production Domain Ads - Only show when there are jobs */}
             {filteredJobs.length > 0 && (
               <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4 text-center">Career Opportunities</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                  <EffectiveGateCPMAdSolo />
-                  <EffectiveGateCPMAdSolo />
-                  <EffectiveGateCPMAdSolo />
-                  <EffectiveGateCPMAdSolo />
-                  <EffectiveGateCPMAdSolo />
-                  <EffectiveGateCPMAdSolo />
-                </div>
+                <ProductionDomainResponsiveAds />
               </div>
             )}
           </>
