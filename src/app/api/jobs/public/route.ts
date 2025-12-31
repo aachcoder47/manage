@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const status = searchParams.get('status');
-    const organizationId = searchParams.get('organizationId');
-    const userId = searchParams.get('userId');
-    const jobId = searchParams.get('jobId');
-    const limit = searchParams.get('limit');
-    const offset = searchParams.get('offset');
+    // Use URL constructor instead of nextUrl.searchParams for static generation
+    const url = new URL(request.url || 'http://localhost:3000');
+    const status = url.searchParams.get('status');
+    const organizationId = url.searchParams.get('organizationId');
+    const userId = url.searchParams.get('userId');
+    const jobId = url.searchParams.get('jobId');
+    const limit = url.searchParams.get('limit');
+    const offset = url.searchParams.get('offset');
 
     // Build the Supabase REST API URL
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -23,8 +26,8 @@ export async function GET(request: NextRequest) {
 
     // Handle single job request
     if (jobId) {
-      const url = `${supabaseUrl}/rest/v1/job?id=eq.${jobId}&select=*,organization(name,image_url)`;
-      const response = await fetch(url, {
+      const apiUrl = `${supabaseUrl}/rest/v1/job?id=eq.${jobId}&select=*,organization(name,image_url)`;
+      const response = await fetch(apiUrl, {
         headers: {
           'apikey': supabaseKey,
           'Authorization': `Bearer ${supabaseKey}`,
@@ -51,31 +54,31 @@ export async function GET(request: NextRequest) {
     }
 
     // Build query for multiple jobs
-    let url = `${supabaseUrl}/rest/v1/job?select=*,organization(name,image_url)`;
+    let apiUrl = `${supabaseUrl}/rest/v1/job?select=*,organization(name,image_url)`;
     
     // Add filters
     if (status) {
-      url += `&status=eq.${status}`;
+      apiUrl += `&status=eq.${status}`;
     }
     if (organizationId) {
-      url += `&organization_id=eq.${organizationId}`;
+      apiUrl += `&organization_id=eq.${organizationId}`;
     }
     if (userId) {
-      url += `&user_id=eq.${userId}`;
+      apiUrl += `&user_id=eq.${userId}`;
     }
 
     // Add ordering
-    url += '&order=created_at.desc';
+    apiUrl += '&order=created_at.desc';
 
     // Add pagination
     if (limit) {
-      url += `&limit=${limit}`;
+      apiUrl += `&limit=${limit}`;
     }
     if (offset) {
-      url += `&offset=${offset}`;
+      apiUrl += `&offset=${offset}`;
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(apiUrl, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`,
