@@ -6,14 +6,6 @@ import { JobsService } from "@/services/jobs.service";
 import { Job } from "@/types/job";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
-import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
-import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
-import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
-import { ProductionAds } from "@/components/ads/ProductionAds";
-import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
-import { CSSResponsiveAds } from "@/components/ads/CSSResponsiveAds";
-import { ProductionDomainResponsiveAds } from "@/components/ads/ProductionDomainAds";
 
 function FindJobsPage() {
   const [jobs, setJobs] = useState<(Job & { organization: { name: string; image_url: string } })[]>([]);
@@ -89,13 +81,6 @@ function FindJobsPage() {
                 </div>
               )}
             </div>
-
-            {/* Production Domain Ads - Only show when there are jobs */}
-            {filteredJobs.length > 0 && (
-              <div className="mt-8">
-                <ProductionDomainResponsiveAds />
-              </div>
-            )}
           </>
         )}
       </div>

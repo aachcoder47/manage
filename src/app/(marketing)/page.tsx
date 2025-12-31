@@ -6,14 +6,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, BarChart3, Users, Zap, Shield } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
-import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
-import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
-import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
-import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
-import { ProductionAds } from "@/components/ads/ProductionAds";
-import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
-import { CSSResponsiveAds } from "@/components/ads/CSSResponsiveAds";
-import { ProductionDomainResponsiveAds } from "@/components/ads/ProductionDomainAds";
 
 export default function LandingPage() {
   const { userId } = useAuth();
@@ -220,13 +212,6 @@ export default function LandingPage() {
           <p className="mt-4 text-sm text-muted-foreground">
             Freemium model available for testing · Start for free today
           </p>
-        </div>
-      </section>
-
-      {/* Production Domain Ads Section */}
-      <section className="py-16 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <ProductionDomainResponsiveAds />
         </div>
       </section>
 

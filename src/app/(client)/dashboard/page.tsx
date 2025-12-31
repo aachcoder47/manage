@@ -16,14 +16,6 @@ import { Gem, Plus, Sparkles, Building2, ArrowUpLeft } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
-import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
-import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
-import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
-import { ProductionAds } from "@/components/ads/ProductionAds";
-import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
-import { CSSResponsiveAds } from "@/components/ads/CSSResponsiveAds";
-import { ProductionDomainResponsiveAds } from "@/components/ads/ProductionDomainAds";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
@@ -202,13 +194,6 @@ function Interviews() {
             ))
           )}
         </motion.div>
-
-        {/* Production Domain Ads - Only for free users */}
-        {currentPlan === "free" && interviews.length > 0 && (
-          <div className="mt-8">
-            <ProductionDomainResponsiveAds />
-          </div>
-        )}
 
         {/* Upgrade Modal */}
         {isModalOpen && (

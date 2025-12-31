@@ -8,14 +8,6 @@ import { JobsService } from "@/services/jobs.service";
 import { Job } from "@/types/job";
 import { Building2, ArrowUpLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
-import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
-import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
-import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
-import { ProductionAds } from "@/components/ads/ProductionAds";
-import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
-import { CSSResponsiveAds } from "@/components/ads/CSSResponsiveAds";
-import { ProductionDomainResponsiveAds } from "@/components/ads/ProductionDomainAds";
 
 function JobsPage() {
   const { organization, isLoaded } = useOrganization();
@@ -136,13 +128,6 @@ function JobsPage() {
             </>
           )}
         </motion.div>
-
-        {/* Production Domain Ads - Only show when there are jobs */}
-        {jobs.length > 0 && (
-          <div className="mt-8">
-            <ProductionDomainResponsiveAds />
-          </div>
-        )}
       </div>
     </main>
   );
