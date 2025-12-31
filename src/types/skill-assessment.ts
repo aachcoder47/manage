@@ -4,6 +4,7 @@ export enum CandidateStatus {
   SELECTED = 'selected',
   REJECTED = 'rejected',
   ON_HOLD = 'on_hold',
+  OFFERED = 'offered',
   WITHDRAWN = 'withdrawn'
 }
 

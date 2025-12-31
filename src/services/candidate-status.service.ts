@@ -479,6 +479,22 @@ export class CandidateStatusService {
           organizationId: response.interview?.organization_id || ''
         });
         console.log(`Selection email sent to: ${email}`);
+      } else if (status === CandidateStatus.OFFERED) {
+        await emailTriggerService.sendOfferEmail({
+          candidateName: email.split('@')[0] || 'Candidate',
+          positionTitle: response.interview?.name || 'Position',
+          organizationName: 'Your Company',
+          recipientEmail: email,
+          userId: response.interview?.user_id || '',
+          organizationId: response.interview?.organization_id || '',
+          salary: '$80,000 - $100,000 per year',
+          startDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+          offerDetails: 'Full-time position with comprehensive benefits package including health insurance, 401(k), and flexible work arrangements.',
+          acceptanceDeadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+          contactPerson: 'HR Team',
+          contactEmail: 'hr@yourcompany.com'
+        });
+        console.log(`Offer email sent to: ${email}`);
       } else {
         // Generic status update email
         console.log(`Sending notification to ${email} for status: ${status}`);
