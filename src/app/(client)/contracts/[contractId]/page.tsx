@@ -34,7 +34,7 @@ export default function ContractDetailsPage({ params }: { params: { contractId: 
   }, [params.contractId]);
 
   const handleSign = async (role: 'employer' | 'candidate') => {
-      if (!contract) return;
+      if (!contract) {return;}
       setProcessing(true);
       try {
           const updates: any = {};
@@ -70,7 +70,7 @@ export default function ContractDetailsPage({ params }: { params: { contractId: 
 
   const handleDownloadPDF = async () => {
     const element = document.getElementById("contract-content");
-    if (!element) return;
+    if (!element) {return;}
     
     setProcessing(true);
     try {
@@ -97,8 +97,8 @@ export default function ContractDetailsPage({ params }: { params: { contractId: 
       window.print();
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;
-  if (!contract) return <div className="p-10 text-center">Contract not found</div>;
+  if (loading) {return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;}
+  if (!contract) {return <div className="p-10 text-center">Contract not found</div>;}
 
   const isCandidate = user?.id === contract.candidate_id;
   const isEmployer = user?.id === contract.employer_id;
@@ -113,18 +113,18 @@ export default function ContractDetailsPage({ params }: { params: { contractId: 
             </Badge>
         </div>
         <div className="flex gap-2">
-            <Button variant="outline" onClick={handleDownloadPDF} disabled={processing}>
+            <Button variant="outline" disabled={processing} onClick={handleDownloadPDF}>
                 <Printer className="w-4 h-4 mr-2" />
                 {processing ? "Generating..." : "Download PDF"}
             </Button>
             {isEmployer && !contract.employer_signed_at && (
-                <Button onClick={() => handleSign('employer')} disabled={processing} className="bg-indigo-600">
+                <Button disabled={processing} className="bg-indigo-600" onClick={() => handleSign('employer')}>
                     <FileSignature className="w-4 h-4 mr-2" />
                     Sign & Send
                 </Button>
             )}
             {isCandidate && !contract.candidate_signed_at && contract.status !== 'draft' && (
-                <Button onClick={() => handleSign('candidate')} disabled={processing} className="bg-green-600">
+                <Button disabled={processing} className="bg-green-600" onClick={() => handleSign('candidate')}>
                     <FileSignature className="w-4 h-4 mr-2" />
                     Accept & Sign
                 </Button>

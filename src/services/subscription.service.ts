@@ -49,8 +49,8 @@ async function getBrowserSupabase() {
 }
 
 function toIso(value: Date | string | null | undefined) {
-  if (!value) return null;
-  if (typeof value === "string") return value;
+  if (!value) {return null;}
+  if (typeof value === "string") {return value;}
   return value.toISOString();
 }
 

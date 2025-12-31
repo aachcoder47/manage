@@ -3713,7 +3713,7 @@
   resolved "https://registry.npmjs.org/@react-email/html/-/html-0.0.12.tgz"
   integrity sha512-KTShZesan+UsreU7PDUV90afrZwU5TLwYlALuCSU0OT+/U8lULNNbAUekg+tGwCnOfIKYtpDPKkAMRdYlqUznw==
 
-"@react-email/img@0.0.12":
+"@react-email/img@^0.0.12", "@react-email/img@0.0.12":
   version "0.0.12"
   resolved "https://registry.npmjs.org/@react-email/img/-/img-0.0.12.tgz"
   integrity sha512-sRCpEARNVTf3FQhZOC+JTvu5r6ubiYWkT0ucYXg8ctkyi4G8QG+jgYPiNUqVeTLA2STOfmPM/nrk1nb84y6CPQ==

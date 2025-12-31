@@ -5,7 +5,6 @@ CREATE TABLE email_preferences (
     organization_id TEXT REFERENCES organization(id) ON DELETE CASCADE,
     product_updates BOOLEAN DEFAULT true,
     hiring_updates BOOLEAN DEFAULT true,
-    marketing BOOLEAN DEFAULT false,
     transactional BOOLEAN DEFAULT true, -- account signup, password reset, etc.
     weekly_summary BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
@@ -30,7 +29,6 @@ CREATE TABLE email_log (
 -- Email types enum
 CREATE TYPE email_type AS ENUM (
     'welcome',
-    'password_reset',
     'application_received',
     'interview_invite',
     'interview_completed',
@@ -39,8 +37,7 @@ CREATE TYPE email_type AS ENUM (
     'trial_result',
     'contract_sent',
     'weekly_summary',
-    'product_update',
-    'marketing'
+    'product_update'
 );
 
 -- Update email_log to use enum

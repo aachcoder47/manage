@@ -10,12 +10,12 @@ interface WelcomeEmailProps {
   dashboardUrl?: string;
 }
 
-export const WelcomeEmail = ({ 
+export function WelcomeEmail({ 
   name, 
   userEmail, 
   organizationName = 'Your Organization',
   dashboardUrl = 'https://app.futuristic-hr.com/dashboard'
-}: WelcomeEmailProps) => {
+}: WelcomeEmailProps) {
   return (
   <EmailLayout 
     preview={`Welcome to Futuristic HR, ${name}! Your AI-powered hiring journey begins`}
@@ -151,4 +151,4 @@ export const WelcomeEmail = ({
     </Section>
   </EmailLayout>
   );
-};
+}

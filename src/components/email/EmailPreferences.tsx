@@ -72,7 +72,7 @@ export function EmailPreferences({ userId, organizationId }: EmailPreferencesPro
           Email Preferences
         </CardTitle>
         <CardDescription>
-          Choose which emails you'd like to receive from Futuristic HR
+          Choose which emails you&apos;d like to receive from Futuristic HR
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -90,8 +90,8 @@ export function EmailPreferences({ userId, organizationId }: EmailPreferencesPro
                 </div>
                 <Switch
                   checked={preferences.transactional}
-                  onCheckedChange={(checked) => handlePreferenceChange('transactional', checked)}
                   disabled={isUpdating}
+                  onCheckedChange={(checked) => handlePreferenceChange('transactional', checked)}
                 />
               </div>
             </div>
@@ -112,8 +112,8 @@ export function EmailPreferences({ userId, organizationId }: EmailPreferencesPro
                 </div>
                 <Switch
                   checked={preferences.hiring_updates}
-                  onCheckedChange={(checked) => handlePreferenceChange('hiring_updates', checked)}
                   disabled={isUpdating}
+                  onCheckedChange={(checked) => handlePreferenceChange('hiring_updates', checked)}
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -125,8 +125,8 @@ export function EmailPreferences({ userId, organizationId }: EmailPreferencesPro
                 </div>
                 <Switch
                   checked={preferences.weekly_summary}
-                  onCheckedChange={(checked) => handlePreferenceChange('weekly_summary', checked)}
                   disabled={isUpdating}
+                  onCheckedChange={(checked) => handlePreferenceChange('weekly_summary', checked)}
                 />
               </div>
             </div>
@@ -147,30 +147,8 @@ export function EmailPreferences({ userId, organizationId }: EmailPreferencesPro
                 </div>
                 <Switch
                   checked={preferences.product_updates}
+                  disabled={isUpdating}
                   onCheckedChange={(checked) => handlePreferenceChange('product_updates', checked)}
-                  disabled={isUpdating}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Marketing */}
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-medium text-sm text-gray-900 mb-3">Marketing</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <label className="text-sm font-medium">Marketing Emails</label>
-                  <p className="text-xs text-gray-500">
-                    Tips, case studies, promotional offers
-                  </p>
-                </div>
-                <Switch
-                  checked={preferences.marketing}
-                  onCheckedChange={(checked) => handlePreferenceChange('marketing', checked)}
-                  disabled={isUpdating}
                 />
               </div>
             </div>
@@ -180,10 +158,10 @@ export function EmailPreferences({ userId, organizationId }: EmailPreferencesPro
         {/* Save Button */}
         <div className="pt-4 border-t">
           <Button
-            onClick={() => window.location.reload()}
             variant="outline"
             size="sm"
             disabled={isUpdating}
+            onClick={() => window.location.reload()}
           >
             Reset to Defaults
           </Button>

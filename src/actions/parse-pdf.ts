@@ -8,10 +8,10 @@ export async function parsePdfFromBuffer(buffer: Buffer | ArrayBuffer, fileName:
         const loader = new PDFLoader(blob, { splitPages: false });
         const docs = await loader.load();
         
-        if (!docs || docs.length === 0) throw new Error("No content found");
+        if (!docs || docs.length === 0) {throw new Error("No content found");}
         
         const fullText = docs.map((doc: any) => doc.pageContent).join("\n").trim();
-         if (!fullText || fullText.length < 10) throw new Error("PDF seems empty");
+         if (!fullText || fullText.length < 10) {throw new Error("PDF seems empty");}
 
         return { success: true, text: fullText };
     } catch (error: any) {
@@ -33,7 +33,7 @@ export async function parsePdf(formData: FormData) {
     // Use the shared function
     const result = await parsePdfFromBuffer(arrayBuffer, file.name);
     
-    if (!result.success) throw new Error(result.error);
+    if (!result.success) {throw new Error(result.error);}
 
     return {
       success: true,

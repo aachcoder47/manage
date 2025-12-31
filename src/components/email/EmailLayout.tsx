@@ -14,7 +14,7 @@ interface EmailLayoutProps {
   footerText?: string;
 }
 
-export const EmailLayout = ({ children, preview, footerText }: EmailLayoutProps) => {
+export function EmailLayout({ children, preview, footerText }: EmailLayoutProps) {
   return (
     <Html>
       <Head>
@@ -170,4 +170,4 @@ export const EmailLayout = ({ children, preview, footerText }: EmailLayoutProps)
       </body>
     </Html>
   );
-};
+}

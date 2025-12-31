@@ -25,10 +25,6 @@ export async function POST(request: NextRequest) {
         result = await emailTriggerService.sendWeeklySummaryEmail(params);
         break;
       
-      case 'password_reset':
-        result = await emailTriggerService.sendPasswordResetEmail(params.email, params.resetLink);
-        break;
-      
       default:
         return NextResponse.json(
           { error: 'Invalid email type' },

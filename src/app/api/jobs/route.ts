@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
 
     if (!supabaseUrl || !supabaseKey) {
       const missing = [];
-      if (!supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL');
-      if (!supabaseKey) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+      if (!supabaseUrl) {missing.push('NEXT_PUBLIC_SUPABASE_URL');}
+      if (!supabaseKey) {missing.push('SUPABASE_SERVICE_ROLE_KEY');}
       return NextResponse.json({ error: `Server configuration error: missing ${missing.join(', ')}` }, { status: 500 });
     }
 

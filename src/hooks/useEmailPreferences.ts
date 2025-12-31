@@ -4,7 +4,6 @@ import { emailService } from '../services/email.service';
 interface EmailPreferences {
   product_updates: boolean;
   hiring_updates: boolean;
-  marketing: boolean;
   transactional: boolean;
   weekly_summary: boolean;
 }
@@ -13,7 +12,6 @@ export const useEmailPreferences = (userId: string, organizationId: string) => {
   const [preferences, setPreferences] = useState<EmailPreferences>({
     product_updates: true,
     hiring_updates: true,
-    marketing: false,
     transactional: true,
     weekly_summary: true,
   });

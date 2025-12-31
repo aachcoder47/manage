@@ -30,7 +30,7 @@ const createPackage = async (payload: Partial<OnboardingPackage>) => {
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {throw new Error(error.message);}
   return data as OnboardingPackage;
 };
 
@@ -41,7 +41,7 @@ const getPackageByContract = async (contractId: string) => {
     .eq("contract_id", contractId)
     .single();
 
-  if (error && error.code !== 'PGRST116') throw new Error(error.message); // Ignore not found
+  if (error && error.code !== 'PGRST116') {throw new Error(error.message);} // Ignore not found
   return data as OnboardingPackage | null;
 };
 
@@ -52,7 +52,7 @@ const getPackageById = async (id: string) => {
     .eq("id", id)
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {throw new Error(error.message);}
   return data as OnboardingPackage;
 };
 
@@ -63,7 +63,7 @@ const addItem = async (payload: Partial<OnboardingItem>) => {
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {throw new Error(error.message);}
   return data as OnboardingItem;
 };
 
@@ -72,7 +72,7 @@ const deleteItem = async (id: string) => {
     .from("onboarding_item")
     .delete()
     .eq("id", id);
-  if (error) throw new Error(error.message);
+  if (error) {throw new Error(error.message);}
 };
 
 const updatePackageStatus = async (id: string, status: string) => {
@@ -82,7 +82,7 @@ const updatePackageStatus = async (id: string, status: string) => {
     .eq("id", id)
     .select()
     .single();
-    if (error) throw new Error(error.message);
+    if (error) {throw new Error(error.message);}
     return data;
 };
 
@@ -93,7 +93,7 @@ const toggleItemCompletion = async (id: string, is_completed: boolean) => {
     .eq("id", id)
     .select()
     .single();
-    if (error) throw new Error(error.message);
+    if (error) {throw new Error(error.message);}
     return data;
 };
 

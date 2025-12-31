@@ -5,7 +5,7 @@ import { getAuth } from "@clerk/nextjs/server";
 export const dynamic = "force-dynamic";
 
 function isAdminUserId(userId: string | null | undefined) {
-  if (!userId) return false;
+  if (!userId) {return false;}
   const raw = process.env.ADMIN_USER_IDS || "";
   const ids = raw
     .split(",")

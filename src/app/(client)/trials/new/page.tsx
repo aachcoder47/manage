@@ -34,7 +34,7 @@ export default function CreateTrialPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {return;}
 
     setLoading(true);
     try {
@@ -93,17 +93,17 @@ export default function CreateTrialPage() {
 
       <h1 className="text-3xl font-bold mb-6">Create Work Trial</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl border shadow-sm">
+      <form className="space-y-6 bg-white p-6 rounded-xl border shadow-sm" onSubmit={handleSubmit}>
         
         <div className="space-y-2">
             <Label htmlFor="candidate">Candidate Email</Label>
             <Input 
                 id="candidate" 
                 value={formData.candidate_email} 
-                onChange={(e) => setFormData({...formData, candidate_email: e.target.value})}
                 placeholder="candidate@example.com"
                 disabled={!!candidateIdParam} // Disable if ID is passed
                 required
+                onChange={(e) => setFormData({...formData, candidate_email: e.target.value})}
             />
             {candidateIdParam && <p className="text-xs text-muted-foreground">Linked from application.</p>}
         </div>
@@ -113,9 +113,9 @@ export default function CreateTrialPage() {
             <Input 
                 id="title" 
                 value={formData.title} 
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
                 placeholder="e.g. Build a React Component"
                 required
+                onChange={(e) => setFormData({...formData, title: e.target.value})}
             />
         </div>
 
@@ -124,10 +124,10 @@ export default function CreateTrialPage() {
             <Textarea 
                 id="description" 
                 value={formData.description} 
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
                 placeholder="Detailed instructions for the candidate..."
                 className="min-h-[150px]"
                 required
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
             />
         </div>
 
@@ -138,9 +138,9 @@ export default function CreateTrialPage() {
                     id="payment" 
                     type="number"
                     value={formData.payment_amount} 
-                    onChange={(e) => setFormData({...formData, payment_amount: e.target.value})}
                     placeholder="500.00"
                     required
+                    onChange={(e) => setFormData({...formData, payment_amount: e.target.value})}
                 />
             </div>
             <div className="space-y-2">
@@ -149,8 +149,8 @@ export default function CreateTrialPage() {
                     id="due_date" 
                     type="date"
                     value={formData.due_date} 
-                    onChange={(e) => setFormData({...formData, due_date: e.target.value})}
                     required
+                    onChange={(e) => setFormData({...formData, due_date: e.target.value})}
                 />
             </div>
         </div>

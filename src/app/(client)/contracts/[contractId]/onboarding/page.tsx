@@ -56,7 +56,7 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
   }, [params.contractId]);
 
   const handleCreatePackage = async () => {
-      if (!contract || !user) return;
+      if (!contract || !user) {return;}
       try {
           const newPkg = await OnboardingService.createPackage({
               contract_id: contract.id,
@@ -73,7 +73,7 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
   };
 
   const handleAddItem = async () => {
-      if (!pkg) return;
+      if (!pkg) {return;}
       try {
           const item = await OnboardingService.addItem({
               package_id: pkg.id,
@@ -101,7 +101,7 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
   };
 
   const handlePublish = async () => {
-      if (!pkg) return;
+      if (!pkg) {return;}
       try {
           await OnboardingService.updatePackageStatus(pkg.id, 'sent');
           setPkg(prev => prev ? ({ ...prev, status: 'sent' }) : null);
@@ -123,14 +123,14 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
       }
   };
 
-  if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin" /></div>;
-  if (!contract) return <div>Contract not found</div>;
+  if (loading) {return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin" /></div>;}
+  if (!contract) {return <div>Contract not found</div>;}
 
   const isEmployer = user?.id === contract.employer_id;
   const isCandidate = user?.id === contract.candidate_id;
 
   // Access Control: Only involved parties
-  if (!isEmployer && !isCandidate) return <div>Unauthorized</div>;
+  if (!isEmployer && !isCandidate) {return <div>Unauthorized</div>;}
 
   return (
     <main className="max-w-5xl mx-auto p-6 md:p-10">
@@ -142,7 +142,7 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
                 </p>
             </div>
             {isEmployer && pkg?.status === 'draft' && (
-                <Button onClick={handlePublish} className="bg-indigo-600">
+                <Button className="bg-indigo-600" onClick={handlePublish}>
                     <Send className="w-4 h-4 mr-2" />
                     Send to Candidate
                 </Button>
@@ -201,8 +201,8 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
                                             <label className="text-sm font-medium">Title</label>
                                             <Input 
                                                 value={newItem.title} 
-                                                onChange={e => setNewItem({...newItem, title: e.target.value})}
                                                 placeholder="e.g. Join Slack Workspace"
+                                                onChange={e => setNewItem({...newItem, title: e.target.value})}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -222,8 +222,8 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
                                             <label className="text-sm font-medium">Description / Credentials</label>
                                             <Textarea 
                                                 value={newItem.description} 
-                                                onChange={e => setNewItem({...newItem, description: e.target.value})}
                                                 placeholder="Details..."
+                                                onChange={e => setNewItem({...newItem, description: e.target.value})}
                                             />
                                         </div>
                                         {newItem.item_type !== 'credential' && (
@@ -231,8 +231,8 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
                                                 <label className="text-sm font-medium">URL (Optional)</label>
                                                 <Input 
                                                     value={newItem.resource_url} 
-                                                    onChange={e => setNewItem({...newItem, resource_url: e.target.value})}
                                                     placeholder="https://..."
+                                                    onChange={e => setNewItem({...newItem, resource_url: e.target.value})}
                                                 />
                                             </div>
                                         )}
@@ -251,8 +251,8 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
                             <Card key={item.id} className={`transition-all ${item.is_completed ? 'bg-slate-50' : 'bg-white'}`}>
                                 <CardContent className="p-4 flex gap-4 items-start">
                                     <button 
-                                        onClick={() => handleToggleComplete(item)}
                                         className="mt-1 text-muted-foreground hover:text-indigo-600 transition-colors"
+                                        onClick={() => handleToggleComplete(item)}
                                     >
                                         {item.is_completed ? <CheckSquare className="w-5 h-5 text-green-600" /> : <Square className="w-5 h-5" />}
                                     </button>
@@ -279,7 +279,7 @@ export default function OnboardingPage({ params }: { params: { contractId: strin
                                     </div>
 
                                     {isEmployer && (
-                                        <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                                        <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteItem(item.id)}>
                                             <Trash2 className="w-4 h-4" />
                                         </Button>
                                     )}

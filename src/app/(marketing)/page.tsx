@@ -106,8 +106,8 @@ export default function LandingPage() {
               <Image 
                 src="/dashboard-preview.png" 
                 alt="Futuristic HR Dashboard Preview" 
-                fill
                 className="object-cover"
+                fill
                 priority
               />
             </div>

@@ -213,7 +213,7 @@ export class SkillAssessmentService {
         `)
         .eq("response_id", responseId);
 
-      if (error) throw error;
+      if (error) {throw error;}
       return data || [];
     } catch (error) {
       console.error("Error fetching candidate assessments by response:", error);
@@ -230,7 +230,7 @@ export class SkillAssessmentService {
             .eq("job_id", jobId)
             .single();
 
-          if (!interview) return [];
+          if (!interview) {return [];}
 
           return this.getSkillAssessmentsByInterview(interview.id);
       } catch (error) {
@@ -241,7 +241,7 @@ export class SkillAssessmentService {
 
   static async getResultsForJobApplications(applicationIds: string[]) {
       try {
-          if (applicationIds.length === 0) return [];
+          if (applicationIds.length === 0) {return [];}
           
           // Try the direct approach first (if job_application_id column exists)
           try {

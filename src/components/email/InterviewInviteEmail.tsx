@@ -20,7 +20,7 @@ interface InterviewInviteEmailProps {
   };
 }
 
-export const InterviewInviteEmail = ({ 
+export function InterviewInviteEmail({ 
   candidateName, 
   positionTitle, 
   interviewDate, 
@@ -36,7 +36,7 @@ export const InterviewInviteEmail = ({
     'Have your resume and any relevant documents ready'
   ],
   calendarLinks
-}: InterviewInviteEmailProps) => {
+}: InterviewInviteEmailProps) {
   return (
   <EmailLayout 
     preview={`Interview invitation: ${positionTitle} at ${organizationName}`}
@@ -279,4 +279,4 @@ export const InterviewInviteEmail = ({
     </Section>
   </EmailLayout>
   );
-};
+}

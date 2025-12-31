@@ -13,7 +13,7 @@ interface ApplicationReceivedEmailProps {
   dashboardUrl?: string;
 }
 
-export const ApplicationReceivedEmail = ({ 
+export function ApplicationReceivedEmail({ 
   candidateName, 
   positionTitle, 
   organizationName,
@@ -21,7 +21,7 @@ export const ApplicationReceivedEmail = ({
   candidateEmail,
   resumeUrl,
   dashboardUrl = 'https://app.futuristic-hr.com'
-}: ApplicationReceivedEmailProps) => {
+}: ApplicationReceivedEmailProps) {
   return (
   <EmailLayout 
     preview={`New application: ${candidateName} for ${positionTitle}`}
@@ -95,19 +95,19 @@ export const ApplicationReceivedEmail = ({
         </Text>
         <div style={{ display: 'grid', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%' }}></div>
+            <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%' }} />
             <Text style={{ color: '#374151', fontSize: '14px', margin: '0' }}>Resume parsing and analysis</Text>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%' }}></div>
+            <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%' }} />
             <Text style={{ color: '#374151', fontSize: '14px', margin: '0' }}>Skills assessment and matching</Text>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%' }}></div>
+            <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%' }} />
             <Text style={{ color: '#374151', fontSize: '14px', margin: '0' }}>Experience verification</Text>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '8px', height: '8px', backgroundColor: '#fbbf24', borderRadius: '50%', animation: 'pulse 2s infinite' }}></div>
+            <div style={{ width: '8px', height: '8px', backgroundColor: '#fbbf24', borderRadius: '50%', animation: 'pulse 2s infinite' }} />
             <Text style={{ color: '#374151', fontSize: '14px', margin: '0' }}>Generating fit score and insights...</Text>
           </div>
         </div>
@@ -207,4 +207,4 @@ export const ApplicationReceivedEmail = ({
     </Section>
   </EmailLayout>
   );
-};
+}

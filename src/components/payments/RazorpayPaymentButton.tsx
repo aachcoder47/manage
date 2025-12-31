@@ -33,7 +33,7 @@ export default function RazorpayPaymentButton({
   const [loading, setLoading] = useState(false);
 
   const handlePayment = async () => {
-    if (loading) return;
+    if (loading) {return;}
 
     setLoading(true);
     try {
@@ -45,7 +45,7 @@ export default function RazorpayPaymentButton({
           body: JSON.stringify({ trialId }),
         });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Failed to activate free trial");
+        if (!response.ok) {throw new Error(data.error || "Failed to activate free trial");}
         toast.success("Free trial activated!");
         onSuccess?.();
         return;
@@ -146,9 +146,9 @@ export default function RazorpayPaymentButton({
 
   return (
     <Button
-      onClick={handlePayment}
       disabled={disabled || loading}
       className={className || "bg-indigo-600 hover:bg-indigo-700"}
+      onClick={handlePayment}
     >
       {loading ? (
         <>

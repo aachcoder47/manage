@@ -49,7 +49,7 @@ export default function ApplicationDetailPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!appId || !user) return;
+      if (!appId || !user) {return;}
       
       try {
         const appData = await ApplicationsService.getApplicationById(appId as string);
@@ -101,8 +101,8 @@ export default function ApplicationDetailPage() {
     fetchData();
   }, [appId, user]);
 
-  if (loading) return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;
-  if (!application) return <div className="p-10 text-center">Application not found</div>;
+  if (loading) {return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;}
+  if (!application) {return <div className="p-10 text-center">Application not found</div>;}
 
   const steps = [
       { id: 'applied', label: 'Applied', icon: ClipboardCheck },
@@ -271,7 +271,7 @@ export default function ApplicationDetailPage() {
                           </CardDescription>
                       </CardHeader>
                       <CardContent>
-                          <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                          <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
                               <a href={interviewUrl} target="_blank">Start AI Interview</a>
                           </Button>
                           <p className="text-[10px] text-center text-muted-foreground mt-3">
@@ -432,7 +432,7 @@ export default function ApplicationDetailPage() {
                           {/* @ts-ignore */}
                           <span className="text-sm font-mono text-indigo-600">{application.job?.salary_range || 'Not specified'}</span>
                       </div>
-                      <Button variant="outline" size="sm" asChild className="w-full mt-4">
+                      <Button variant="outline" size="sm" className="w-full mt-4" asChild>
                           <Link href={`/find-jobs/${application.job_id}`}>
                               View Full Listing <ExternalLink className="w-3 h-3 ml-2" />
                           </Link>

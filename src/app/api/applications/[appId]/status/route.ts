@@ -5,8 +5,8 @@ import { getAuth } from "@clerk/nextjs/server";
 export const dynamic = "force-dynamic";
 
 function ensureProtocol(url: string): string {
-  if (!url) return url;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (!url) {return url;}
+  if (url.startsWith("http://") || url.startsWith("https://")) {return url;}
   return `https://${url}`;
 }
 
@@ -103,7 +103,7 @@ export async function PATCH(req: NextRequest, context: { params: { appId: string
         const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_LIVE_URL || "";
         const base = ensureProtocol(origin);
         const slug = interview.readable_slug || interview.id;
-        if (base) interviewUrl = `${base}/call/${slug}`;
+        if (base) {interviewUrl = `${base}/call/${slug}`;}
       }
     }
 

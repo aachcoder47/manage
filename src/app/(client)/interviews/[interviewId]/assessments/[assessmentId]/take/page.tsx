@@ -557,9 +557,9 @@ export default function TakeAssessmentPage() {
               <input
                 type="text"
                 value={candidateInfo.name}
-                onChange={(e) => setCandidateInfo({ ...candidateInfo, name: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your full name"
+                onChange={(e) => setCandidateInfo({ ...candidateInfo, name: e.target.value })}
               />
             </div>
 
@@ -568,9 +568,9 @@ export default function TakeAssessmentPage() {
               <input
                 type="email"
                 value={candidateInfo.email}
-                onChange={(e) => setCandidateInfo({ ...candidateInfo, email: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your email address"
+                onChange={(e) => setCandidateInfo({ ...candidateInfo, email: e.target.value })}
               />
             </div>
 
@@ -584,14 +584,14 @@ export default function TakeAssessmentPage() {
           <div className="flex gap-3 mt-6">
             <Button
               variant="outline"
-              onClick={() => setShowCandidateForm(false)}
               className="flex-1"
+              onClick={() => setShowCandidateForm(false)}
             >
               Cancel
             </Button>
             <Button
-              onClick={handleCandidateSubmit}
               className="flex-1"
+              onClick={handleCandidateSubmit}
             >
               Start Assessment
             </Button>

@@ -69,8 +69,8 @@ export default function PricingCard({ plan, planKey, onSubscribe }: PricingCardP
               ? 'bg-muted hover:bg-muted/80 text-foreground'
               : 'bg-indigo-600 hover:bg-indigo-700 text-white'
           }`}
-          onClick={() => onSubscribe(planKey)}
           size="lg"
+          onClick={() => onSubscribe(planKey)}
         >
           {plan.cta}
         </Button>

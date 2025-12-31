@@ -87,7 +87,6 @@ export class EmailService {
   async getUserEmailPreferences(userId: string, organizationId: string): Promise<{
     product_updates: boolean;
     hiring_updates: boolean;
-    marketing: boolean;
     transactional: boolean;
     weekly_summary: boolean;
   }> {
@@ -104,7 +103,6 @@ export class EmailService {
         return {
           product_updates: true,
           hiring_updates: true,
-          marketing: false,
           transactional: true,
           weekly_summary: true,
         };
@@ -113,7 +111,6 @@ export class EmailService {
       return {
         product_updates: data.product_updates,
         hiring_updates: data.hiring_updates,
-        marketing: data.marketing,
         transactional: data.transactional,
         weekly_summary: data.weekly_summary,
       };
@@ -122,7 +119,6 @@ export class EmailService {
       return {
         product_updates: true,
         hiring_updates: true,
-        marketing: false,
         transactional: true,
         weekly_summary: true,
       };
@@ -135,7 +131,6 @@ export class EmailService {
     preferences: Partial<{
       product_updates: boolean;
       hiring_updates: boolean;
-      marketing: boolean;
       transactional: boolean;
       weekly_summary: boolean;
     }>
@@ -164,7 +159,7 @@ export class EmailService {
   async canSendEmail(
     userId: string,
     organizationId: string,
-    emailType: 'transactional' | 'product_updates' | 'hiring_updates' | 'marketing' | 'weekly_summary'
+    emailType: 'transactional' | 'product_updates' | 'hiring_updates' | 'weekly_summary'
   ): Promise<boolean> {
     const preferences = await this.getUserEmailPreferences(userId, organizationId);
     return preferences[emailType];

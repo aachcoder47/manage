@@ -9,13 +9,13 @@ export const dynamic = 'force-dynamic';
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
+  if (!url || !key) {return null;}
   return createClient(url, key);
 }
 
 function getMistral() {
   const apiKey = process.env.MISTRAL_API_KEY;
-  if (!apiKey) return null;
+  if (!apiKey) {return null;}
   return new Mistral({ apiKey });
 }
 
@@ -101,7 +101,7 @@ export async function POST(
       })
       .eq("id", params.appId);
 
-    if (updateError) throw updateError;
+    if (updateError) {throw updateError;}
 
     return NextResponse.json({ 
       success: true, 

@@ -181,7 +181,7 @@ export function CandidateFilterPanel({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSkillInput(e.target.value)}
               onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleAddSkill()}
             />
-            <Button onClick={handleAddSkill} size="sm">
+            <Button size="sm" onClick={handleAddSkill}>
               Add
             </Button>
           </div>

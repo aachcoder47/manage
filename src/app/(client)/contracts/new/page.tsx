@@ -49,7 +49,7 @@ Signed: ___________________ (Contractor)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {return;}
 
     setLoading(true);
     try {
@@ -108,16 +108,16 @@ Signed: ___________________ (Contractor)
 
       <h1 className="text-3xl font-bold mb-6">Draft New Contract</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl border shadow-sm">
+      <form className="space-y-6 bg-white p-8 rounded-xl border shadow-sm" onSubmit={handleSubmit}>
         
         <div className="space-y-2">
             <Label>Candidate Email</Label>
             <Input 
                 value={formData.candidate_email} 
-                onChange={(e) => setFormData({...formData, candidate_email: e.target.value})}
                 placeholder="candidate@example.com"
                 disabled={!!candidateIdParam}
                 required
+                onChange={(e) => setFormData({...formData, candidate_email: e.target.value})}
             />
         </div>
 
@@ -125,8 +125,8 @@ Signed: ___________________ (Contractor)
             <Label>Contract Title</Label>
             <Input 
                 value={formData.title} 
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
                 required
+                onChange={(e) => setFormData({...formData, title: e.target.value})}
             />
         </div>
 
@@ -139,8 +139,8 @@ Signed: ___________________ (Contractor)
                         type="number"
                         className="pl-6"
                         value={formData.rate} 
-                        onChange={(e) => setFormData({...formData, rate: e.target.value})}
                         required
+                        onChange={(e) => setFormData({...formData, rate: e.target.value})}
                     />
                 </div>
             </div>
@@ -162,8 +162,8 @@ Signed: ___________________ (Contractor)
                 <Input 
                     type="date"
                     value={formData.start_date} 
-                    onChange={(e) => setFormData({...formData, start_date: e.target.value})}
                     required
+                    onChange={(e) => setFormData({...formData, start_date: e.target.value})}
                 />
             </div>
         </div>
@@ -172,9 +172,9 @@ Signed: ___________________ (Contractor)
             <Label>Contract Terms (Markdown supported)</Label>
             <Textarea 
                 value={formData.content} 
-                onChange={(e) => setFormData({...formData, content: e.target.value})}
                 className="min-h-[300px] font-mono text-sm"
                 required
+                onChange={(e) => setFormData({...formData, content: e.target.value})}
             />
         </div>
 

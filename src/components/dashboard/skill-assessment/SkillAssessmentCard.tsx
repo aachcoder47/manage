@@ -112,11 +112,11 @@ export function SkillAssessmentCard({
           <Button
             variant="ghost"
             size="sm"
+            className="opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
               onEdit?.(assessment.id);
             }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <Settings className="h-4 w-4" />
           </Button>
@@ -162,11 +162,11 @@ export function SkillAssessmentCard({
           {assessment.is_active && onStartAssessment && (
             <Button
               size="sm"
+              className="transition-transform hover:scale-105"
               onClick={(e) => {
                 e.stopPropagation();
                 onStartAssessment(assessment.id);
               }}
-              className="transition-transform hover:scale-105"
             >
               <Play className="h-4 w-4 mr-1" />
               Start

@@ -19,7 +19,7 @@ const getMessages = async (trialId: string) => {
         .eq("work_trial_id", trialId)
         .order("created_at", { ascending: true });
 
-    if (error) throw new Error(error.message);
+    if (error) {throw new Error(error.message);}
     return data as ChatMessage[];
 };
 
@@ -30,7 +30,7 @@ const sendMessage = async (payload: Partial<ChatMessage>) => {
         .select()
         .single();
 
-    if (error) throw new Error(error.message);
+    if (error) {throw new Error(error.message);}
     return data as ChatMessage;
 };
 

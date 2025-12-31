@@ -4,7 +4,6 @@ import { WelcomeEmail } from '../components/email/WelcomeEmail';
 import { ApplicationReceivedEmail } from '../components/email/ApplicationReceivedEmail';
 import { InterviewInviteEmail } from '../components/email/InterviewInviteEmail';
 import { WeeklySummaryEmail } from '../components/email/WeeklySummaryEmail';
-import { PasswordResetEmail } from '../components/email/PasswordResetEmail';
 
 export interface SendWelcomeEmailParams {
   name: string;
@@ -259,48 +258,6 @@ export class EmailTriggerService {
         'failed',
         recipientEmail,
         `Interview invitation for ${positionTitle} at ${organizationName}`,
-        error instanceof Error ? error.message : 'Unknown error'
-      );
-      return false;
-    }
-  }
-
-  async sendPasswordResetEmail(email: string, resetLink: string): Promise<boolean> {
-    try {
-      const emailHtml = await render(
-        PasswordResetEmail({ 
-          resetLink,
-          userEmail: email 
-        })
-      );
-
-      const success = await emailService.sendEmail({
-        to: email,
-        subject: 'Reset your Futuristic HR password',
-        html: emailHtml,
-      });
-
-      // Log the email (no user ID for password reset)
-      await emailService.logEmail(
-        null,
-        null,
-        'password_reset',
-        success ? 'sent' : 'failed',
-        email,
-        'Reset your Futuristic HR password',
-        success ? undefined : 'Failed to send password reset email'
-      );
-
-      return success;
-    } catch (error) {
-      console.error('Error sending password reset email:', error);
-      await emailService.logEmail(
-        null,
-        null,
-        'password_reset',
-        'failed',
-        email,
-        'Reset your Futuristic HR password',
         error instanceof Error ? error.message : 'Unknown error'
       );
       return false;

@@ -54,7 +54,7 @@ export default function ChatBox({ trialId, otherUserId, otherUserName = "User" }
     };
 
     const handleSend = async () => {
-        if (!newMessage.trim() || !user) return;
+        if (!newMessage.trim() || !user) {return;}
         setSending(true);
         try {
             await ChatService.sendMessage({
@@ -72,7 +72,7 @@ export default function ChatBox({ trialId, otherUserId, otherUserName = "User" }
         }
     };
 
-    if (!user) return null;
+    if (!user) {return null;}
 
     return (
         <div className="flex flex-col h-[500px] border rounded-lg bg-white shadow-sm">
@@ -107,12 +107,12 @@ export default function ChatBox({ trialId, otherUserId, otherUserName = "User" }
             <div className="p-3 border-t flex gap-2">
                 <Input 
                     value={newMessage} 
-                    onChange={e => setNewMessage(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSend()}
                     placeholder="Type a message..."
                     className="flex-1"
+                    onChange={e => setNewMessage(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSend()}
                 />
-                <Button size="icon" onClick={handleSend} disabled={sending || !newMessage.trim()}>
+                <Button size="icon" disabled={sending || !newMessage.trim()} onClick={handleSend}>
                     {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </Button>
             </div>

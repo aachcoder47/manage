@@ -40,12 +40,12 @@ interface WeeklySummaryEmailProps {
   dashboardUrl?: string;
 }
 
-export const WeeklySummaryEmail = ({ 
+export function WeeklySummaryEmail({ 
   userName, 
   organizationName, 
   weekSummary,
   dashboardUrl = 'https://app.futuristic-hr.com/dashboard'
-}: WeeklySummaryEmailProps) => {
+}: WeeklySummaryEmailProps) {
   return (
   <EmailLayout 
     preview={`Weekly hiring summary: ${weekSummary.candidatesScreened} candidates screened, ${weekSummary.hiresMade} hires made`}
@@ -339,4 +339,4 @@ export const WeeklySummaryEmail = ({
     </Section>
   </EmailLayout>
   );
-};
+}

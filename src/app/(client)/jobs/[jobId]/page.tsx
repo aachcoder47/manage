@@ -71,7 +71,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
     const checkAdmin = async () => {
       try {
         const res = await fetch("/api/admin/me");
-        if (!res.ok) return;
+        if (!res.ok) {return;}
         const data = await res.json();
         setIsAdmin(Boolean(data?.isAdmin));
       } catch {
@@ -127,14 +127,14 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
           setApplications(apps => apps.map(app => 
               app.id === appId ? { ...app, status: status as any } : app
           ));
-          if (status !== 'interviewing') toast.success("Status updated to " + status);
+          if (status !== 'interviewing') {toast.success("Status updated to " + status);}
       } catch (error) {
           toast.error("Failed to update status");
       }
   };
 
   const handleBulkScreen = async () => {
-    if (selectedIds.length === 0) return;
+    if (selectedIds.length === 0) {return;}
     setIsBulkLoading(true);
     toast.info(`Screening ${selectedIds.length} candidates...`);
     
@@ -161,7 +161,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
   };
 
   const handleBulkInterview = async () => {
-    if (selectedIds.length === 0) return;
+    if (selectedIds.length === 0) {return;}
     setIsBulkLoading(true);
     
     try {
@@ -190,8 +190,8 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;
-  if (!job) return <div className="p-10 text-center">Job not found</div>;
+  if (loading) {return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;}
+  if (!job) {return <div className="p-10 text-center">Job not found</div>;}
 
   const toggleAll = () => {
     if (selectedIds.length === applications.length) {
@@ -236,7 +236,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                 variant="destructive"
                 onClick={async () => {
                   const ok = window.confirm("Delete this job? This will also delete related applications/trials.");
-                  if (!ok) return;
+                  if (!ok) {return;}
                   const res = await fetch(`/api/admin/jobs/${params.jobId}`, { method: "DELETE" });
                   const data = await res.json().catch(() => ({}));
                   if (!res.ok) {
@@ -274,14 +274,14 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
               <span className="text-sm font-medium text-indigo-600">{selectedIds.length} Selected</span>
               <div className="h-4 w-px bg-gray-200" />
               <div className="flex items-center gap-2">
-                  <Button size="sm" onClick={handleBulkScreen} disabled={isBulkLoading} className="bg-indigo-600 hover:bg-indigo-700">
+                  <Button size="sm" disabled={isBulkLoading} className="bg-indigo-600 hover:bg-indigo-700" onClick={handleBulkScreen}>
                       {isBulkLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                       Bulk Run AI Screen
                   </Button>
-                  <Button size="sm" variant="outline" onClick={handleBulkInterview} disabled={isBulkLoading}>
+                  <Button size="sm" variant="outline" disabled={isBulkLoading} onClick={handleBulkInterview}>
                       Move to Interview
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setSelectedIds([])} disabled={isBulkLoading} className="text-muted-foreground">
+                  <Button size="sm" variant="ghost" disabled={isBulkLoading} className="text-muted-foreground" onClick={() => setSelectedIds([])}>
                       Cancel
                   </Button>
               </div>
@@ -364,7 +364,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                               <TableCell>
                                   {(() => {
                                       const results = assessmentResults.filter(r => r.job_application_id === app.id);
-                                      if (results.length === 0) return <span className="text-muted-foreground text-xs italic">N/A</span>;
+                                      if (results.length === 0) {return <span className="text-muted-foreground text-xs italic">N/A</span>;}
                                       const bestScore = Math.max(...results.map(r => r.score));
                                       return (
                                           <div className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
@@ -400,7 +400,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                                               toast.promise(
                                                 fetch(`/api/applications/${app.id}/screen`, { method: 'POST' })
                                                   .then(res => {
-                                                      if (!res.ok) throw new Error("Failed");
+                                                      if (!res.ok) {throw new Error("Failed");}
                                                       return res.json();
                                                   })
                                                   .then(data => {
@@ -438,7 +438,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                                             </Link>
                                           </DropdownMenuItem>
                                           <DropdownMenuSeparator />
-                                          <DropdownMenuItem onClick={() => handleStatusChange(app.id, 'rejected')} className="text-red-600">Reject</DropdownMenuItem>
+                                          <DropdownMenuItem className="text-red-600" onClick={() => handleStatusChange(app.id, 'rejected')}>Reject</DropdownMenuItem>
                                       </DropdownMenuContent>
                                   </DropdownMenu>
                               </TableCell>

@@ -35,8 +35,8 @@ export default function MyApplicationsPage() {
     }
   }, [user]);
 
-  if (!user) return <div className="p-10 text-center">Please sign in.</div>;
-  if (loading) return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;
+  if (!user) {return <div className="p-10 text-center">Please sign in.</div>;}
+  if (loading) {return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;}
 
   return (
     <main className="max-w-7xl mx-auto p-6 md:p-10">

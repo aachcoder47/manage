@@ -34,9 +34,9 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
             .eq("id", params.trialId)
             .single();
         
-        if (error) throw error;
+        if (error) {throw error;}
         setTrial(data as WorkTrial);
-        if (data.submission_url) setSubmissionUrl(data.submission_url);
+        if (data.submission_url) {setSubmissionUrl(data.submission_url);}
       } catch (error) {
         console.error("Error fetching trial:", error);
         toast.error("Trial not found");
@@ -49,7 +49,7 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
   }, [params.trialId]);
 
   const handleSubmitWork = async () => {
-    if (!submissionUrl) return toast.error("Please enter a URL");
+    if (!submissionUrl) {return toast.error("Please enter a URL");}
     setUpdating(true);
     try {
         await TrialsService.updateTrial(params.trialId, {
@@ -79,15 +79,15 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
       }
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;
-  if (!trial) return <div className="p-10 text-center">Trial not found</div>;
+  if (loading) {return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>;}
+  if (!trial) {return <div className="p-10 text-center">Trial not found</div>;}
 
   const isCandidate = user?.id === trial.candidate_id;
   const isEmployer = user?.id === trial.employer_id;
 
   return (
     <main className="max-w-4xl mx-auto p-6 md:p-10">
-      <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
+      <script src="https://checkout.razorpay.com/v1/checkout.js" /> 
       <div className="flex justify-between items-start mb-6">
         <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">{trial.title}</h1>
@@ -135,7 +135,7 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
                                     onChange={(e) => setSubmissionUrl(e.target.value)}
                                   />
                               </div>
-                              <Button onClick={handleSubmitWork} disabled={updating || trial.status === 'submitted'} className="w-full bg-indigo-600">
+                              <Button disabled={updating || trial.status === 'submitted'} className="w-full bg-indigo-600" onClick={handleSubmitWork}>
                                   {updating ? "Submitting..." : (trial.status === 'submitted' ? "Submitted" : "Submit Work")}
                               </Button>
                           </div>
@@ -148,6 +148,7 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
                                           <RazorpayPaymentButton
                                               trialId={trial.id}
                                               amount={trial.payment_amount || 0}
+                                              className="bg-green-600 hover:bg-green-700"
                                               onSuccess={() => {
                                                   toast.success("Payment successful! Trial activated.");
                                                   setTrial(prev => prev ? ({ ...prev, status: 'in_progress' }) : null);
@@ -155,7 +156,6 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
                                               onError={(error) => {
                                                   toast.error(error);
                                               }}
-                                              className="bg-green-600 hover:bg-green-700"
                                           >
                                               Fund & Activate Trial (₹{trial.payment_amount})
                                           </RazorpayPaymentButton>
@@ -208,11 +208,11 @@ export default function TrialDetailsPage({ params }: { params: { trialId: string
                   <Card className="border-indigo-200 bg-indigo-50/50">
                       <CardHeader><CardTitle className="text-sm uppercase text-indigo-900">Actions</CardTitle></CardHeader>
                       <CardContent className="space-y-3">
-                          <Button onClick={() => handleReview('completed')} className="w-full bg-green-600 hover:bg-green-700" disabled={updating}>
+                          <Button className="w-full bg-green-600 hover:bg-green-700" disabled={updating} onClick={() => handleReview('completed')}>
                               <CheckCircle className="w-4 h-4 mr-2" />
                               Accept & Pay
                           </Button>
-                          <Button onClick={() => handleReview('failed')} variant="destructive" className="w-full" disabled={updating}>
+                          <Button variant="destructive" className="w-full" disabled={updating} onClick={() => handleReview('failed')}>
                               <XCircle className="w-4 h-4 mr-2" />
                               Reject
                           </Button>

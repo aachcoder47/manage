@@ -46,7 +46,7 @@ export default function AssessmentAnalyticsPage() {
       
       // Get all responses for the interview
       const responsesResponse = await fetch(`/api/responses?interviewId=${interviewId}`);
-      if (!responsesResponse.ok) throw new Error('Failed to fetch responses');
+      if (!responsesResponse.ok) {throw new Error('Failed to fetch responses');}
       
       const responsesData = await responsesResponse.json();
       const responses = responsesData.responses || [];
@@ -143,7 +143,7 @@ export default function AssessmentAnalyticsPage() {
   };
 
   const getStats = () => {
-    if (candidates.length === 0) return { total: 0, passed: 0, failed: 0, avgScore: 0 };
+    if (candidates.length === 0) {return { total: 0, passed: 0, failed: 0, avgScore: 0 };}
     
     const passed = candidates.filter(c => c.passed).length;
     const failed = candidates.length - passed;

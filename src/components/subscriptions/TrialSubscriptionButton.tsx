@@ -24,7 +24,7 @@ export default function TrialSubscriptionButton({
   const [loading, setLoading] = useState(false);
 
   const handleStartTrial = async () => {
-    if (loading) return;
+    if (loading) {return;}
 
     setLoading(true);
     try {
@@ -106,9 +106,9 @@ export default function TrialSubscriptionButton({
         </div>
 
         <Button 
-          onClick={handleStartTrial}
           disabled={loading}
           className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+          onClick={handleStartTrial}
         >
           {loading ? (
             <>

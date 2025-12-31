@@ -45,17 +45,17 @@ function normalizeSourcePlatform(raw: string | null):
   | "referral"
   | "other"
   | null {
-  if (!raw) return null;
+  if (!raw) {return null;}
   const v = raw.trim().toLowerCase();
 
-  if (v === "linkedin") return "linkedin";
-  if (v === "indeed") return "indeed";
-  if (v === "google") return "google";
+  if (v === "linkedin") {return "linkedin";}
+  if (v === "indeed") {return "indeed";}
+  if (v === "google") {return "google";}
   if (v === "google_jobs" || v === "google-jobs" || v === "googlejobs") {
     return "google_jobs";
   }
-  if (v === "wellfound" || v === "angellist") return "wellfound";
-  if (v === "referral") return "referral";
+  if (v === "wellfound" || v === "angellist") {return "wellfound";}
+  if (v === "referral") {return "referral";}
 
   return "other";
 }
@@ -188,8 +188,8 @@ export default function PublicJobDetailsClient({ job }: Props) {
                       type="email"
                       placeholder="your@email.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
                       required
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
@@ -199,8 +199,8 @@ export default function PublicJobDetailsClient({ job }: Props) {
                       type="tel"
                       placeholder="+1 (555) 000-0000"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
                       required
+                      onChange={(e) => setPhone(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
@@ -216,12 +216,12 @@ export default function PublicJobDetailsClient({ job }: Props) {
                 <DialogFooter>
                   <Button
                     variant="outline"
-                    onClick={() => setDialogOpen(false)}
                     disabled={applying}
+                    onClick={() => setDialogOpen(false)}
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleApply} disabled={applying || !resumeFile}>
+                  <Button disabled={applying || !resumeFile} onClick={handleApply}>
                     {applying ? (
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
                     ) : null}

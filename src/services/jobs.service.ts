@@ -105,7 +105,7 @@ const unlinkInterviewsFromJob = async (jobId: string) => {
         .update({ job_id: null })
         .eq("job_id", jobId);
     
-    if (error) throw new Error(error.message);
+    if (error) {throw new Error(error.message);}
 };
 
 export const JobsService = {

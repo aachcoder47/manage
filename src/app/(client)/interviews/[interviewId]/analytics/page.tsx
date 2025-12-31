@@ -68,7 +68,7 @@ export default function InterviewAnalyticsPage() {
       
       // Fetch real responses data from your database
       const response = await fetch(`/api/responses?interviewId=${interviewId}`);
-      if (!response.ok) throw new Error("Failed to fetch responses");
+      if (!response.ok) {throw new Error("Failed to fetch responses");}
       
       const data = await response.json();
       const responses = data.responses || [];
@@ -333,8 +333,8 @@ export default function InterviewAnalyticsPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -359,8 +359,8 @@ export default function InterviewAnalyticsPage() {
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
-            onClick={() => router.back()}
             className="flex items-center gap-2"
+            onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -373,8 +373,8 @@ export default function InterviewAnalyticsPage() {
         <div className="flex items-center gap-2">
           <select
             value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as any)}
             className="px-3 py-2 border rounded-lg text-sm"
+            onChange={(e) => setTimeRange(e.target.value as any)}
           >
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
@@ -453,7 +453,7 @@ export default function InterviewAnalyticsPage() {
                 <div 
                   className="bg-blue-600 h-2 rounded-full" 
                   style={{ width: `${analytics.aiMetrics.accuracy}%` }}
-                ></div>
+                 />
               </div>
             </div>
             
@@ -507,7 +507,7 @@ export default function InterviewAnalyticsPage() {
                       <div 
                         className="bg-blue-600 h-2 rounded-full" 
                         style={{ width: `${(count / analytics.totalResponses) * 100}%` }}
-                      ></div>
+                       />
                     </div>
                     <span className="text-sm font-medium">
                       {Math.round((count / analytics.totalResponses) * 100)}%
@@ -536,7 +536,7 @@ export default function InterviewAnalyticsPage() {
                     <div 
                       className="bg-green-500 h-2 rounded-full" 
                       style={{ width: `${(analytics.scoreDistribution.excellent / analytics.totalResponses) * 100}%` }}
-                    ></div>
+                     />
                   </div>
                   <span className="text-sm font-medium">{analytics.scoreDistribution.excellent}</span>
                 </div>
@@ -549,7 +549,7 @@ export default function InterviewAnalyticsPage() {
                     <div 
                       className="bg-blue-500 h-2 rounded-full" 
                       style={{ width: `${(analytics.scoreDistribution.good / analytics.totalResponses) * 100}%` }}
-                    ></div>
+                     />
                   </div>
                   <span className="text-sm font-medium">{analytics.scoreDistribution.good}</span>
                 </div>
@@ -562,7 +562,7 @@ export default function InterviewAnalyticsPage() {
                     <div 
                       className="bg-yellow-500 h-2 rounded-full" 
                       style={{ width: `${(analytics.scoreDistribution.average / analytics.totalResponses) * 100}%` }}
-                    ></div>
+                     />
                   </div>
                   <span className="text-sm font-medium">{analytics.scoreDistribution.average}</span>
                 </div>
@@ -575,7 +575,7 @@ export default function InterviewAnalyticsPage() {
                     <div 
                       className="bg-red-500 h-2 rounded-full" 
                       style={{ width: `${(analytics.scoreDistribution.poor / analytics.totalResponses) * 100}%` }}
-                    ></div>
+                     />
                   </div>
                   <span className="text-sm font-medium">{analytics.scoreDistribution.poor}</span>
                 </div>
@@ -609,7 +609,7 @@ export default function InterviewAnalyticsPage() {
                     <div 
                       className="bg-blue-600 h-2 rounded-full" 
                       style={{ width: `${skill.averageScore}%` }}
-                    ></div>
+                     />
                   </div>
                 </div>
               ))}

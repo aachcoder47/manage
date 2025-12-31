@@ -48,7 +48,7 @@ export default function NewJobPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!organization?.id) return;
+    if (!organization?.id) {return;}
 
     setLoading(true);
     try {
@@ -86,14 +86,14 @@ export default function NewJobPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl border shadow-sm">
+      <form className="space-y-6 bg-white p-6 rounded-xl border shadow-sm" onSubmit={handleSubmit}>
         <div className="space-y-2">
           <Label htmlFor="title">Job Title</Label>
           <Input
             id="title"
-            required
             placeholder="e.g. Senior Frontend Engineer"
             value={formData.title}
+            required
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           />
         </div>
@@ -102,10 +102,10 @@ export default function NewJobPage() {
           <Label htmlFor="description">Description</Label>
           <Textarea
             id="description"
-            required
             placeholder="Describe the role and responsibilities..."
             className="min-h-[150px]"
             value={formData.description}
+            required
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
         </div>

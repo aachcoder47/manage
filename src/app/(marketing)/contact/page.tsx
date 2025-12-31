@@ -98,7 +98,7 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
                     Name *
@@ -106,9 +106,9 @@ export default function ContactPage() {
                   <Input
                     id="name"
                     type="text"
-                    required
                     placeholder="Your name"
                     value={formData.name}
+                    required
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                 </div>
@@ -120,9 +120,9 @@ export default function ContactPage() {
                   <Input
                     id="email"
                     type="email"
-                    required
                     placeholder="your@email.com"
                     value={formData.email}
+                    required
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
@@ -146,10 +146,10 @@ export default function ContactPage() {
                   </label>
                   <Textarea
                     id="message"
-                    required
                     value={formData.message}
                     placeholder="Tell us about your needs..."
                     rows={6}
+                    required
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   />
                 </div>
