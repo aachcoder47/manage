@@ -17,8 +17,8 @@ export default function ResponsiveAdTestPage() {
         border: '1px solid #2196F3'
       }}>
         <h3>📱 CSS-Based Responsive Ads</h3>
-        <p><strong>Mobile (≤768px):</strong> Shows 2 ads (1 High Performance + 1 EffectiveGate CPM)</p>
-        <p><strong>Desktop (>768px):</strong> Shows 13 ads (1 High Performance + 12 EffectiveGate CPM)</p>
+        <p><strong>Mobile (&le;768px):</strong> Shows 2 ads (1 High Performance + 1 EffectiveGate CPM)</p>
+        <p><strong>Desktop (&gt;768px):</strong> Shows 13 ads (1 High Performance + 12 EffectiveGate CPM)</p>
         <p><strong>Resize your browser window to see the difference!</strong></p>
       </div>
 
@@ -90,8 +90,8 @@ export default function ResponsiveAdTestPage() {
           fontSize: '14px'
         }}>
           <ul>
-            <li><strong>Mobile (≤768px):</strong> Compact layout, fewer ads for better performance</li>
-            <li><strong>Desktop (>768px):</strong> Full grid layout, maximum ads for revenue</li>
+            <li><strong>Mobile (&le;768px):</strong> Compact layout, fewer ads for better performance</li>
+            <li><strong>Desktop (&gt;768px):</strong> Full grid layout, maximum ads for revenue</li>
             <li><strong>Tablet (768px-1024px):</strong> Responsive grid adapts to screen size</li>
             <li><strong>Real-time:</strong> Ads switch when you resize browser window</li>
           </ul>

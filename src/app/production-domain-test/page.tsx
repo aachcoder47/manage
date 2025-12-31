@@ -89,8 +89,8 @@ if (!isProductionDomain) {
         }}>
           <h4>On hr.futuristiccreations.store:</h4>
           <ul>
-            <li><strong>Mobile (≤768px):</strong> 2 ads (1 High Performance + 1 EffectiveGate CPM)</li>
-            <li><strong>Desktop (>768px):</strong> 13 ads (1 High Performance + 12 EffectiveGate CPM)</li>
+            <li><strong>Mobile (&le;768px):</strong> 2 ads (1 High Performance + 1 EffectiveGate CPM)</li>
+            <li><strong>Desktop (&gt;768px):</strong> 13 ads (1 High Performance + 12 EffectiveGate CPM)</li>
             <li><strong>Real-time:</strong> Ads switch when you resize browser</li>
             <li><strong>Revenue:</strong> Real advertisements will appear</li>
           </ul>
