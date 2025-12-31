@@ -162,36 +162,45 @@ function Interviews() {
                 </div>
               </div>
             </motion.div>
-          ) : interviews.length === 0 && !interviewsLoading ? (
-            <motion.div variants={item}>
-              <div className="h-72 w-full rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm flex items-center justify-center">
-                <div className="text-center">
-                  <Sparkles className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Interviews Yet</h3>
-                  <p className="text-muted-foreground text-sm mb-4">
-                    Create your first AI-powered interview to get started.
-                  </p>
-                  <Button
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                  >
-                    Create Interview
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
           ) : (
-            interviews.map((interview) => (
-              <motion.div key={interview.id} variants={item}>
-                <InterviewCard
-                  name={interview.name || ""}
-                  interviewerId={interview.interviewer_id || BigInt(0)}
-                  id={interview.id}
-                  url={interview.url || ""}
-                  readableSlug={interview.readable_slug || ""}
-                />
+            <>
+              {/* Show Create Interview Card for all users except free_trial_over */}
+              <motion.div variants={item}>
+                <CreateInterviewCard />
               </motion.div>
-            ))
+
+              {interviews.length === 0 && !interviewsLoading ? (
+                <motion.div variants={item}>
+                  <div className="h-72 w-full rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm flex items-center justify-center">
+                    <div className="text-center">
+                      <Sparkles className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">No Interviews Yet</h3>
+                      <p className="text-muted-foreground text-sm mb-4">
+                        Create your first AI-powered interview to get started.
+                      </p>
+                      <Button
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                      >
+                        Create Interview
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                interviews.map((interview) => (
+                  <motion.div key={interview.id} variants={item}>
+                    <InterviewCard
+                      name={interview.name || ""}
+                      interviewerId={interview.interviewer_id || BigInt(0)}
+                      id={interview.id}
+                      url={interview.url || ""}
+                      readableSlug={interview.readable_slug || ""}
+                    />
+                  </motion.div>
+                ))
+              )}
+            </>
           )}
         </motion.div>
 
