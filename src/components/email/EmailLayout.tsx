@@ -152,13 +152,13 @@ export function EmailLayout({ children, preview, footerText }: EmailLayoutProps)
               {footerText || 'This email was sent by Futuristic HR. You received this email because you have an account with us.'}
             </Text>
             <div style={{ marginBottom: '16px' }}>
-              <Link href="https://app.futuristic-hr.com/settings/email" style={{ color: '#667eea', textDecoration: 'none', fontSize: '12px', marginRight: '16px' }}>
+              <Link href="https://hr.futuristiccreations.store/settings/email" style={{ color: '#667eea', textDecoration: 'none', fontSize: '12px', marginRight: '16px' }}>
                 Email Preferences
               </Link>
-              <Link href="https://app.futuristic-hr.com" style={{ color: '#667eea', textDecoration: 'none', fontSize: '12px', marginRight: '16px' }}>
+              <Link href="https://hr.futuristiccreations.store" style={{ color: '#667eea', textDecoration: 'none', fontSize: '12px', marginRight: '16px' }}>
                 Dashboard
               </Link>
-              <Link href="mailto:support@futuristic-hr.com" style={{ color: '#667eea', textDecoration: 'none', fontSize: '12px' }}>
+              <Link href="mailto:support@futuristiccreations.store" style={{ color: '#667eea', textDecoration: 'none', fontSize: '12px' }}>
                 Support
               </Link>
             </div>
