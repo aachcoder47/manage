@@ -89,6 +89,13 @@ function JobsPage() {
              <ArrowUpLeft size={16} />
              <span>Use the switcher in the sidebar to create one</span>
            </div>
+           {/* Debug Info */}
+           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+             <strong>Debug Info:</strong>
+             <div>Organization: {organization ? 'Found' : 'Not found'}</div>
+             <div>User loaded: {isLoaded ? 'Yes' : 'No'}</div>
+             <div>Mounted: {mounted ? 'Yes' : 'No'}</div>
+           </div>
         </div>
       </main>
     );
@@ -104,6 +111,15 @@ function JobsPage() {
           <p className="text-muted-foreground text-lg">
             Create and track your job postings.
           </p>
+        </div>
+
+        {/* Debug Info */}
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+          <strong>Debug Info:</strong>
+          <div>Organization: {organization?.id || 'None'}</div>
+          <div>User loaded: {isLoaded ? 'Yes' : 'No'}</div>
+          <div>Jobs count: {jobs.length}</div>
+          <div>Loading: {loading ? 'Yes' : 'No'}</div>
         </div>
 
         <motion.div 
