@@ -191,7 +191,7 @@ export class CandidateStatusService {
       }
 
       // Execute status change
-      await this.executeStatusChange(responseId, currentStatus, newStatus, reason, requestedBy, false);
+      await this.executeStatusChange(responseId, currentStatus, newStatus, reason || undefined, requestedBy, false);
 
       return { success: true, message: "Status updated successfully" };
     } catch (error) {
@@ -428,7 +428,8 @@ export class CandidateStatusService {
     email: string,
     status: CandidateStatus,
     template?: string,
-    interviewName?: string
+    interviewName?: string,
+    reason?: string
   ): Promise<void> {
     try {
       // Get response details to get job information
