@@ -18,6 +18,8 @@ import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
+import { ProductionAds } from "@/components/ads/ProductionAds";
+import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
@@ -140,11 +142,10 @@ function Interviews() {
           </div>
         )}
 
-        {/* Non-Disturbing Ad - Only for free users */}
+        {/* Ad space for free users - ads will load in production */}
         {currentPlan === "free" && (
-          <div className="w-full flex justify-center gap-4">
-            <HighPerformanceAd />
-            <EffectiveGateCPMAd />
+          <div className="w-full" style={{ minHeight: '90px' }}>
+            <ProductionAds />
           </div>
         )}
 
@@ -156,44 +157,68 @@ function Interviews() {
         >
           {currentPlan == "free_trial_over" ? (
             <motion.div variants={item}>
-              <Card className="group relative flex items-center justify-center border-dashed border-2 border-red-200 bg-red-50/50 hover:bg-red-50 cursor-pointer transition-all duration-300 h-72 w-full rounded-xl overflow-hidden">
-                <CardContent className="flex items-center flex-col mx-auto p-6 text-center">
-                  <div className="flex flex-col justify-center items-center w-16 h-16 rounded-full bg-red-100 mb-4">
-                    <Plus size={32} className="text-red-500" />
-                  </div>
-                  <CardTitle className="text-lg font-medium text-red-900">
-                    Limit Reached
-                  </CardTitle>
-                  <p className="text-xs text-red-600 mt-2">
-                    Upgrade to create more interviews
+              <div className="h-72 w-full rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm flex items-center justify-center">
+                <div className="text-center">
+                  <Sparkles className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Upgrade Required</h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    Your free trial has ended. Upgrade to continue using interviews.
                   </p>
-                </CardContent>
-              </Card>
+                  <Button
+                    onClick={() => router.push("/pricing")}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  >
+                    Upgrade Now
+                  </Button>
+                </div>
+              </div>
             </motion.div>
-          ) : (
+          ) : interviews.length === 0 && !interviewsLoading ? (
             <motion.div variants={item}>
-              <CreateInterviewCard />
+              <div className="h-72 w-full rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm flex items-center justify-center">
+                <div className="text-center">
+                  <Sparkles className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No Interviews Yet</h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    Create your first AI-powered interview to get started.
+                  </p>
+                  <Button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  >
+                    Create Interview
+                  </Button>
+                </div>
+              </div>
             </motion.div>
-          )}
-
-          {interviewsLoading || loading ? (
-            <InterviewsLoader />
           ) : (
-            <>
-              {interviews.map((interview) => (
-                <motion.div key={interview.id} variants={item}>
-                  <InterviewCard
-                    id={interview.id}
-                    interviewerId={interview.interviewer_id}
-                    name={interview.name}
-                    url={interview.url ?? ""}
-                    readableSlug={interview.readable_slug}
-                  />
-                </motion.div>
-              ))}
-            </>
+            interviews.map((interview) => (
+              <motion.div key={interview.id} variants={item}>
+                <InterviewCard
+                  name={interview.name}
+                  interviewerId={interview.interviewerId}
+                  id={interview.id}
+                  url={interview.url}
+                  readableSlug={interview.readableSlug}
+                />
+              </motion.div>
+            ))
           )}
         </motion.div>
+
+        {/* Additional EffectiveGate CPM Ads - Sidebar style placement */}
+        {interviews.length > 0 && (
+          <div className="mt-8 flex justify-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+            </div>
+          </div>
+        )}
 
         {/* Upgrade Modal */}
         {isModalOpen && (

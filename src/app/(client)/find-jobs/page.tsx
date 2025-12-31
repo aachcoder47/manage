@@ -10,6 +10,8 @@ import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
+import { ProductionAds } from "@/components/ads/ProductionAds";
+import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
 
 function FindJobsPage() {
   const [jobs, setJobs] = useState<(Job & { organization: { name: string; image_url: string } })[]>([]);
@@ -70,26 +72,42 @@ function FindJobsPage() {
           </div>
         </div>
 
-        {/* Non-Disturbing Ad - Between search and results */}
-        <div className="w-full flex justify-center gap-4">
-          <HighPerformanceAd />
-          <EffectiveGateCPMAd />
+        {/* Ad space - ads will load in production */}
+        <div className="w-full" style={{ minHeight: '90px' }}>
+          <ProductionAds />
         </div>
 
         {loading ? (
           <JobsLoader />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredJobs.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredJobs.length > 0 ? (
                 filteredJobs.map((job) => (
-                    <PublicJobCard key={job.id} job={job} />
+                  <PublicJobCard key={job.id} job={job} />
                 ))
-            ) : (
-                <div className="col-span-full text-center py-20 text-muted-foreground">
-                    <p>No jobs found matching your search.</p>
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <div className="text-muted-foreground">No jobs found matching your search.</div>
                 </div>
+              )}
+            </div>
+
+            {/* Additional EffectiveGate CPM Ads - Job seeker focused */}
+            {filteredJobs.length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold mb-4 text-center">Career Opportunities</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                  <EffectiveGateCPMAdSolo />
+                  <EffectiveGateCPMAdSolo />
+                  <EffectiveGateCPMAdSolo />
+                  <EffectiveGateCPMAdSolo />
+                  <EffectiveGateCPMAdSolo />
+                  <EffectiveGateCPMAdSolo />
+                </div>
+              </div>
             )}
-          </div>
+          </>
         )}
       </div>
     </main>

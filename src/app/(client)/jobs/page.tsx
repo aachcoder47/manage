@@ -12,6 +12,8 @@ import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
+import { ProductionAds } from "@/components/ads/ProductionAds";
+import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
 
 function JobsPage() {
   const { organization, isLoaded } = useOrganization();
@@ -110,10 +112,9 @@ function JobsPage() {
           </p>
         </div>
 
-        {/* Non-Disturbing Ad - Between header and content */}
-        <div className="w-full flex justify-center gap-4">
-          <HighPerformanceAd />
-          <EffectiveGateCPMAd />
+        {/* Ad space - ads will load in production */}
+        <div className="w-full" style={{ minHeight: '90px' }}>
+          <ProductionAds />
         </div>
 
         <motion.div 
@@ -138,6 +139,21 @@ function JobsPage() {
             </>
           )}
         </motion.div>
+
+        {/* Additional EffectiveGate CPM Ads - Grid layout */}
+        {jobs.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold mb-4 text-center">Sponsored Opportunities</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+              <EffectiveGateCPMAdSolo />
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

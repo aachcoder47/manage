@@ -10,6 +10,8 @@ import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
 import { EffectiveGateCPMAd } from "@/components/ads/EffectiveGateCPMAd";
+import { ProductionAds } from "@/components/ads/ProductionAds";
+import { EffectiveGateCPMAdSolo } from "@/components/ads/EffectiveGateCPMAdSolo";
 
 export default function LandingPage() {
   const { userId } = useAuth();
@@ -148,10 +150,9 @@ export default function LandingPage() {
             />
           </div>
 
-          {/* Non-Disturbing Ad - Between features and how-it-works */}
-          <div className="w-full flex justify-center gap-4">
-            <HighPerformanceAd />
-            <EffectiveGateCPMAd />
+          {/* Ad space - ads will load in production */}
+          <div className="w-full" style={{ minHeight: '90px' }}>
+            <ProductionAds />
           </div>
         </div>
       </section>
@@ -217,6 +218,32 @@ export default function LandingPage() {
           <p className="mt-4 text-sm text-muted-foreground">
             Freemium model available for testing · Start for free today
           </p>
+        </div>
+      </section>
+
+      {/* Additional EffectiveGate CPM Ads - Homepage showcase */}
+      <section className="py-16 bg-secondary/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl font-bold mb-4">Featured Opportunities</h2>
+            <p className="text-muted-foreground text-lg">
+              Discover these exciting career paths and professional development resources.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+            <EffectiveGateCPMAdSolo />
+          </div>
         </div>
       </section>
 
