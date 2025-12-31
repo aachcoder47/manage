@@ -5,6 +5,7 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import InterviewCard from "@/components/dashboard/interview/interviewCard";
 import CreateInterviewCard from "@/components/dashboard/interview/createInterviewCard";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { InterviewService } from "@/services/interviews.service";
 import { ClientService } from "@/services/clients.service";
 import { ResponseService } from "@/services/responses.service";
@@ -14,6 +15,7 @@ import SubscriptionStats from "@/components/dashboard/SubscriptionStats";
 import { Gem, Plus, Sparkles, Building2, ArrowUpLeft } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 import { EffectiveGateAd } from "@/components/ads/EffectiveGateAd";
 import { HighPerformanceAd } from "@/components/ads/HighPerformanceAd";
@@ -25,6 +27,7 @@ function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
   const { organization, isLoaded } = useOrganization();
   const { user } = useUser();
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPlan, setCurrentPlan] = useState<string>("");
   const [allowedResponsesCount, setAllowedResponsesCount] =
@@ -195,11 +198,11 @@ function Interviews() {
             interviews.map((interview) => (
               <motion.div key={interview.id} variants={item}>
                 <InterviewCard
-                  name={interview.name}
-                  interviewerId={interview.interviewerId}
+                  name={interview.name || ""}
+                  interviewerId={interview.interviewer_id || BigInt(0)}
                   id={interview.id}
-                  url={interview.url}
-                  readableSlug={interview.readableSlug}
+                  url={interview.url || ""}
+                  readableSlug={interview.readable_slug || ""}
                 />
               </motion.div>
             ))
