@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { emailTriggerService } from '@/services/email-trigger.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -72,7 +73,50 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // MailerLite integration removed
+    // Send email notification to employer about new application
+    try {
+      // Get job details to find the employer
+      const { data: jobData } = await supabase
+        .from('job')
+        .select('title, organization_id')
+        .eq('id', data.job_id)
+        .single();
+
+      // Get organization details
+      const { data: orgData } = await supabase
+        .from('organization')
+        .select('user_id, name')
+        .eq('id', jobData?.organization_id)
+        .single();
+
+      // Get employer details
+      const { data: userData } = await supabase
+        .from('user')
+        .select('email, name')
+        .eq('id', orgData?.user_id)
+        .single();
+
+      if (userData?.email && jobData?.title) {
+        await emailTriggerService.sendNewApplicationEmail({
+          employerName: userData.name || 'Hiring Manager',
+          candidateName: email?.split('@')[0] || 'Candidate',
+          positionTitle: jobData.title,
+          organizationName: orgData?.name || 'Your Company',
+          recipientEmail: userData.email,
+          userId: orgData?.user_id || '',
+          organizationId: jobData?.organization_id || '',
+          candidateEmail: email || undefined,
+          candidatePhone: phone || undefined,
+          applicationId: data.id,
+          resumeUrl: data.resume_url || undefined,
+          dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/applications`,
+          applicationDate: new Date().toLocaleDateString()
+        });
+        console.log('New application email sent to employer:', userData.email);
+      }
+    } catch (emailError) {
+      console.error('Failed to send new application email:', emailError);
+    }
 
     return NextResponse.json(data);
   } catch (error) {

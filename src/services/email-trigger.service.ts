@@ -6,6 +6,7 @@ import { InterviewInviteEmail } from '../components/email/InterviewInviteEmail';
 import { WeeklySummaryEmail } from '../components/email/WeeklySummaryEmail';
 import { RejectionEmail } from '../components/email/RejectionEmail';
 import { OfferEmail } from '../components/email/OfferEmail';
+import { NewApplicationEmail } from '../components/email/NewApplicationEmail';
 
 export interface SendWelcomeEmailParams {
   name: string;
@@ -59,6 +60,22 @@ export interface SendOfferEmailParams {
   acceptanceDeadline?: string;
   contactPerson?: string;
   contactEmail?: string;
+}
+
+export interface SendNewApplicationEmailParams {
+  employerName: string;
+  candidateName: string;
+  positionTitle: string;
+  organizationName: string;
+  recipientEmail: string;
+  userId?: string;
+  organizationId: string;
+  candidateEmail?: string;
+  candidatePhone?: string;
+  applicationId: string;
+  resumeUrl?: string;
+  dashboardUrl?: string;
+  applicationDate?: string;
 }
 
 export interface SendWeeklySummaryEmailParams {
@@ -419,6 +436,80 @@ export class EmailTriggerService {
         'failed',
         recipientEmail,
         `Job Offer: ${positionTitle} at ${organizationName}`,
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      return false;
+    }
+  }
+
+  async sendNewApplicationEmail(params: SendNewApplicationEmailParams): Promise<boolean> {
+    const { 
+      employerName,
+      candidateName,
+      positionTitle,
+      organizationName,
+      recipientEmail,
+      userId,
+      organizationId,
+      candidateEmail,
+      candidatePhone,
+      applicationId,
+      resumeUrl,
+      dashboardUrl,
+      applicationDate
+    } = params;
+    
+    try {
+      // Check if user allows hiring updates emails
+      const canSend = await emailService.canSendEmail(userId || '', organizationId || '', 'hiring_updates');
+      if (!canSend) {
+        console.log('User has opted out of hiring update emails');
+        return false;
+      }
+
+      const emailHtml = await render(
+        NewApplicationEmail({ 
+          employerName,
+          candidateName,
+          positionTitle,
+          organizationName,
+          candidateEmail,
+          candidatePhone,
+          applicationId,
+          resumeUrl,
+          dashboardUrl,
+          applicationDate
+        })
+      );
+
+      const subject = `New Application Received: ${candidateName} for ${positionTitle}`;
+      const success = await emailService.sendEmail({
+        to: recipientEmail,
+        subject,
+        html: emailHtml,
+      });
+
+      // Log the email
+      await emailService.logEmail(
+        userId || '',
+        organizationId || '',
+        'hiring_updates',
+        success ? 'sent' : 'failed',
+        recipientEmail,
+        subject,
+        success ? undefined : 'Failed to send new application email'
+      );
+
+      return success;
+    } catch (error) {
+      console.error('Error sending new application email:', error);
+      await emailService.logEmail(
+        userId || '',
+        organizationId || '',
+        'hiring_updates',
+        'failed',
+        recipientEmail,
+        `New Application Received: ${candidateName} for ${positionTitle}`,
         error instanceof Error ? error.message : 'Unknown error'
       );
       return false;
