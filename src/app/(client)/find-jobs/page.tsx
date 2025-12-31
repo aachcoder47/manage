@@ -6,6 +6,7 @@ import { JobsService } from "@/services/jobs.service";
 import { Job } from "@/types/job";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 
 function FindJobsPage() {
   const [jobs, setJobs] = useState<(Job & { organization: { name: string; image_url: string } })[]>([]);
@@ -64,6 +65,18 @@ function FindJobsPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+        </div>
+
+        {/* Non-Disturbing Ad - Between search and results */}
+        <div className="w-full flex justify-center">
+          <ManualAdSense 
+            adSlot="1111222233" // Replace with your actual ad slot ID
+            style={{ 
+              width: '728px', 
+              height: '90px', 
+              maxWidth: '100%'
+            }}
+          />
         </div>
 
         {loading ? (

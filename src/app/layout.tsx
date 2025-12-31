@@ -5,6 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/providers";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
+import { AdSenseProvider } from "@/contexts/AdSenseContext";
+import { AdSenseScriptLoader } from "@/components/ads/AdSenseScriptLoader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,20 +44,24 @@ export default function RootLayout({
           signInForceRedirectUrl="/dashboard"
           signUpForceRedirectUrl="/dashboard"
         >
-          <Providers>
-            {children}
-            <Toaster
-              toastOptions={{
-                classNames: {
-                  toast: "bg-white",
-                  title: "text-black",
-                  description: "text-muted-foreground",
-                  actionButton: "bg-indigo-600 text-white",
-                  cancelButton: "bg-secondary text-secondary-foreground",
-                },
-              }}
-            />
-          </Providers>
+          <AdSenseScriptLoader>
+            <AdSenseProvider enabled={process.env.NEXT_PUBLIC_ADSENSE_ENABLED === 'true'}>
+              <Providers>
+                {children}
+                <Toaster
+                  toastOptions={{
+                    classNames: {
+                      toast: "bg-white",
+                      title: "text-black",
+                      description: "text-muted-foreground",
+                      actionButton: "bg-indigo-600 text-white",
+                      cancelButton: "bg-secondary text-secondary-foreground",
+                    },
+                  }}
+                />
+              </Providers>
+            </AdSenseProvider>
+          </AdSenseScriptLoader>
         </ClerkProvider>
       </body>
     </html>

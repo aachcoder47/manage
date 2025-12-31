@@ -14,6 +14,7 @@ import SubscriptionStats from "@/components/dashboard/SubscriptionStats";
 import { Gem, Plus, Sparkles, Building2, ArrowUpLeft } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 
 function Interviews() {
   const { interviews, interviewsLoading } = useInterviews();
@@ -133,6 +134,20 @@ function Interviews() {
         {organization?.id && (
           <div className="w-full">
             <SubscriptionStats organizationId={organization.id} />
+          </div>
+        )}
+
+        {/* Non-Disturbing Ad - Only for free users */}
+        {currentPlan === "free" && (
+          <div className="w-full flex justify-center">
+            <ManualAdSense 
+              adSlot="1234567890" // Replace with your actual ad slot ID
+              style={{ 
+                width: '728px', 
+                height: '90px', 
+                maxWidth: '100%'
+              }}
+            />
           </div>
         )}
 

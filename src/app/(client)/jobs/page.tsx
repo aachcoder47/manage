@@ -8,6 +8,7 @@ import { JobsService } from "@/services/jobs.service";
 import { Job } from "@/types/job";
 import { Building2, ArrowUpLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 
 function JobsPage() {
   const { organization, isLoaded } = useOrganization();
@@ -104,6 +105,18 @@ function JobsPage() {
           <p className="text-muted-foreground text-lg">
             Create and track your job postings.
           </p>
+        </div>
+
+        {/* Non-Disturbing Ad - Between header and content */}
+        <div className="w-full flex justify-center">
+          <ManualAdSense 
+            adSlot="0987654321" // Replace with your actual ad slot ID
+            style={{ 
+              width: '728px', 
+              height: '90px', 
+              maxWidth: '100%'
+            }}
+          />
         </div>
 
         <motion.div 

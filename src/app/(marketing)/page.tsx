@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, BarChart3, Users, Zap, Shield } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
+import { ManualAdSense } from "@/components/ads/AdSenseScriptLoader";
 
 export default function LandingPage() {
   const { userId } = useAuth();
@@ -140,6 +141,18 @@ export default function LandingPage() {
               icon={<Shield className="w-6 h-6 text-emerald-600" />}
               title="Unbiased Evaluation"
               description="Remove unconscious bias from your hiring process with standardized scoring and objective criteria."
+            />
+          </div>
+
+          {/* Non-Disturbing Ad - Between features and how-it-works */}
+          <div className="w-full flex justify-center mt-16">
+            <ManualAdSense 
+              adSlot="4444555566" // Replace with your actual ad slot ID
+              style={{ 
+                width: '728px', 
+                height: '90px', 
+                maxWidth: '100%'
+              }}
             />
           </div>
         </div>
