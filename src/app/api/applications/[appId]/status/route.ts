@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getAuth } from "@clerk/nextjs/server";
+import { emailTriggerService } from "@/services/email-trigger.service";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +56,7 @@ export async function PATCH(req: NextRequest, context: { params: { appId: string
 
     const { data: job, error: jobErr } = await supabase
       .from("job")
-      .select("id, title, organization_id, organization(name)")
+      .select("id, title, organization_id")
       .eq("id", existingApp.job_id)
       .single();
 
@@ -104,6 +105,26 @@ export async function PATCH(req: NextRequest, context: { params: { appId: string
         const base = ensureProtocol(origin);
         const slug = interview.readable_slug || interview.id;
         if (base) {interviewUrl = `${base}/call/${slug}`;}
+      }
+    }
+
+    // Send interview invite email if status is "interviewing"
+    if (status === "interviewing" && interviewUrl && candidateEmail) {
+      try {
+        await emailTriggerService.sendInterviewInviteEmail({
+          candidateName: existingApp.email || 'Candidate',
+          positionTitle: job.title,
+          organizationName: 'Your Company',
+          interviewDate: new Date().toLocaleDateString(),
+          interviewTime: new Date().toLocaleTimeString(),
+          interviewLink: interviewUrl,
+          recipientEmail: candidateEmail,
+          userId: actor.id,
+          organizationId: actor.organization_id
+        });
+        console.log('Interview invite email sent to:', candidateEmail);
+      } catch (emailError) {
+        console.error('Failed to send interview invite email:', emailError);
       }
     }
 

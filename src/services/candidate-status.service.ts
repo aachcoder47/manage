@@ -4,6 +4,7 @@ import { CandidateStatus, CandidateProfile } from "@/types/skill-assessment";
 import { Response } from "@/types/response";
 import { CandidateFilteringService } from "./candidate-filtering.service";
 import { ATSIntegrationService } from "./ats.service";
+import { emailTriggerService } from "./email-trigger.service";
 
 const supabase = createClientComponentClient();
 
@@ -309,7 +310,7 @@ export class CandidateStatusService {
     await this.logStatusChange(responseId, fromStatus, toStatus, changedBy, reason, isAutomatic);
 
     // Send notifications
-    await this.sendStatusChangeNotifications(responseId, fromStatus, toStatus);
+    await this.sendStatusChangeNotifications(responseId, fromStatus, toStatus, reason);
 
     // Sync to ATS
     await this.syncStatusChangeToATS(responseId, toStatus);
@@ -372,7 +373,8 @@ export class CandidateStatusService {
   private static async sendStatusChangeNotifications(
     responseId: number,
     fromStatus: CandidateStatus,
-    toStatus: CandidateStatus
+    toStatus: CandidateStatus,
+    reason?: string
   ): Promise<void> {
     try {
       const transition = this.validateStatusTransition(fromStatus, toStatus);
@@ -428,10 +430,62 @@ export class CandidateStatusService {
     template?: string,
     interviewName?: string
   ): Promise<void> {
-    // Implement email sending logic here
-    console.log(`Sending notification to ${email} for status: ${status}`);
-    console.log(`Interview: ${interviewName}`);
-    console.log(`Message: ${template || 'Your application status has been updated.'}`);
+    try {
+      // Get response details to get job information
+      const { data: response } = await supabase
+        .from("response")
+        .select(`
+          *,
+          interview:interview_id(
+            name,
+            organization_id,
+            user_id
+          )
+        `)
+        .eq("email", email)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!response) {
+        console.log(`No response found for email: ${email}`);
+        return;
+      }
+
+      // Send appropriate email based on status
+      if (status === CandidateStatus.REJECTED) {
+        await emailTriggerService.sendRejectionEmail({
+          candidateName: email.split('@')[0] || 'Candidate',
+          positionTitle: response.interview?.name || 'Position',
+          organizationName: 'Your Company',
+          recipientEmail: email,
+          userId: response.interview?.user_id || '',
+          organizationId: response.interview?.organization_id || '',
+          rejectionReason: reason || 'We have decided to move forward with other candidates whose qualifications more closely match our current needs.'
+        });
+        console.log(`Rejection email sent to: ${email}`);
+      } else if (status === CandidateStatus.SELECTED) {
+        await emailTriggerService.sendInterviewInviteEmail({
+          candidateName: email.split('@')[0] || 'Candidate',
+          positionTitle: response.interview?.name || 'Position',
+          organizationName: 'Your Company',
+          interviewDate: new Date().toLocaleDateString(),
+          interviewTime: new Date().toLocaleTimeString(),
+          interviewLink: `https://yourapp.com/interview/${response.id}`,
+          recipientEmail: email,
+          userId: response.interview?.user_id || '',
+          organizationId: response.interview?.organization_id || ''
+        });
+        console.log(`Selection email sent to: ${email}`);
+      } else {
+        // Generic status update email
+        console.log(`Sending notification to ${email} for status: ${status}`);
+        console.log(`Interview: ${interviewName}`);
+        console.log(`Message: ${template || 'Your application status has been updated.'}`);
+      }
+    } catch (error) {
+      console.error("Error sending candidate notification:", error);
+    }
   }
 
   private static async sendHiringManagerNotification(

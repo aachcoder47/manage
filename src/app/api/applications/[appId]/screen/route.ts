@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Mistral } from "@mistralai/mistralai";
 import { parsePdfFromBuffer } from "@/actions/parse-pdf";
 import axios from "axios";
+import { emailTriggerService } from "@/services/email-trigger.service";
 
 export const dynamic = 'force-dynamic';
 
@@ -102,6 +103,35 @@ export async function POST(
       .eq("id", params.appId);
 
     if (updateError) {throw updateError;}
+
+    // 5. Send screening completed email notification
+    try {
+      // Get candidate email
+      let candidateEmail = application.email;
+      if (!candidateEmail && application.candidate_id) {
+        const { data: candidateUser } = await supabase
+          .from("user")
+          .select("email")
+          .eq("id", application.candidate_id)
+          .single();
+        candidateEmail = candidateUser?.email;
+      }
+
+      if (candidateEmail) {
+        await emailTriggerService.sendApplicationReceivedEmail({
+          candidateName: candidateEmail.split('@')[0] || 'Candidate',
+          positionTitle: application.job?.title || 'Position',
+          organizationName: 'Your Company',
+          applicationId: params.appId,
+          recipientEmail: candidateEmail,
+          userId: application.user_id,
+          organizationId: application.job?.organization_id || ''
+        });
+        console.log('Screening completed email sent to:', candidateEmail);
+      }
+    } catch (emailError) {
+      console.error('Failed to send screening email:', emailError);
+    }
 
     return NextResponse.json({ 
       success: true, 

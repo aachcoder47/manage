@@ -4,6 +4,7 @@ import { WelcomeEmail } from '../components/email/WelcomeEmail';
 import { ApplicationReceivedEmail } from '../components/email/ApplicationReceivedEmail';
 import { InterviewInviteEmail } from '../components/email/InterviewInviteEmail';
 import { WeeklySummaryEmail } from '../components/email/WeeklySummaryEmail';
+import { RejectionEmail } from '../components/email/RejectionEmail';
 
 export interface SendWelcomeEmailParams {
   name: string;
@@ -32,6 +33,16 @@ export interface SendInterviewInviteEmailParams {
   recipientEmail: string;
   userId?: string;
   organizationId: string;
+}
+
+export interface SendRejectionEmailParams {
+  candidateName: string;
+  positionTitle: string;
+  organizationName: string;
+  recipientEmail: string;
+  userId?: string;
+  organizationId: string;
+  rejectionReason?: string;
 }
 
 export interface SendWeeklySummaryEmailParams {
@@ -258,6 +269,68 @@ export class EmailTriggerService {
         'failed',
         recipientEmail,
         `Interview invitation for ${positionTitle} at ${organizationName}`,
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      return false;
+    }
+  }
+
+  async sendRejectionEmail(params: SendRejectionEmailParams): Promise<boolean> {
+    const { 
+      candidateName, 
+      positionTitle, 
+      organizationName, 
+      recipientEmail,
+      userId,
+      organizationId,
+      rejectionReason
+    } = params;
+    
+    try {
+      // Check if user allows hiring updates emails
+      const canSend = await emailService.canSendEmail(userId || '', organizationId || '', 'hiring_updates');
+      if (!canSend) {
+        console.log('User has opted out of hiring update emails');
+        return false;
+      }
+
+      const emailHtml = await render(
+        RejectionEmail({ 
+          candidateName, 
+          positionTitle, 
+          organizationName,
+          rejectionReason: rejectionReason || 'We have decided to move forward with other candidates whose qualifications more closely match our current needs.'
+        })
+      );
+
+      const subject = `Update on your application for ${positionTitle} at ${organizationName}`;
+      const success = await emailService.sendEmail({
+        to: recipientEmail,
+        subject,
+        html: emailHtml,
+      });
+
+      // Log the email
+      await emailService.logEmail(
+        userId || '',
+        organizationId || '',
+        'hiring_updates',
+        success ? 'sent' : 'failed',
+        recipientEmail,
+        subject,
+        success ? undefined : 'Failed to send rejection email'
+      );
+
+      return success;
+    } catch (error) {
+      console.error('Error sending rejection email:', error);
+      await emailService.logEmail(
+        userId || '',
+        organizationId || '',
+        'hiring_updates',
+        'failed',
+        recipientEmail,
+        `Update on your application for ${positionTitle} at ${organizationName}`,
         error instanceof Error ? error.message : 'Unknown error'
       );
       return false;
