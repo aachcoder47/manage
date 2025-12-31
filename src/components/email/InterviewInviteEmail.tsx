@@ -36,7 +36,8 @@ export const InterviewInviteEmail = ({
     'Have your resume and any relevant documents ready'
   ],
   calendarLinks
-}: InterviewInviteEmailProps) => (
+}: InterviewInviteEmailProps) => {
+  return (
   <EmailLayout 
     preview={`Interview invitation: ${positionTitle} at ${organizationName}`}
     footerText="This is an AI-powered interview that you can take from anywhere. We're excited to learn more about you!"
@@ -252,7 +253,7 @@ export const InterviewInviteEmail = ({
         </Text>
         <div style={{ display: 'grid', gap: '8px' }}>
           {preparationTips.map((tip, index) => (
-            <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <div key={`prep-tip-${index}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
               <span style={{ color: '#0ea5e9', fontSize: '12px', marginTop: '2px' }}>•</span>
               <Text style={{ color: '#0c4a6e', fontSize: '13px', margin: '0', lineHeight: '18px' }}>
                 {tip}
@@ -277,4 +278,5 @@ export const InterviewInviteEmail = ({
       </div>
     </Section>
   </EmailLayout>
-);
+  );
+};

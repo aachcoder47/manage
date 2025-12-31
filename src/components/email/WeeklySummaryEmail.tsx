@@ -45,7 +45,8 @@ export const WeeklySummaryEmail = ({
   organizationName, 
   weekSummary,
   dashboardUrl = 'https://app.futuristic-hr.com/dashboard'
-}: WeeklySummaryEmailProps) => (
+}: WeeklySummaryEmailProps) => {
+  return (
   <EmailLayout 
     preview={`Weekly hiring summary: ${weekSummary.candidatesScreened} candidates screened, ${weekSummary.hiresMade} hires made`}
     footerText="Your weekly hiring insights powered by AI. Track your progress and optimize your recruitment strategy."
@@ -77,7 +78,7 @@ export const WeeklySummaryEmail = ({
       </Text>
       
       <Text style={{ color: '#475569', fontSize: '16px', lineHeight: '24px', marginBottom: '32px' }}>
-        Here's your comprehensive weekly hiring summary from Futuristic HR. You're making incredible progress with AI-powered recruitment!
+        Here&apos;s your comprehensive weekly hiring summary from Futuristic HR. You&apos;re making incredible progress with AI-powered recruitment!
       </Text>
       
       {/* Key Metrics Grid */}
@@ -124,7 +125,7 @@ export const WeeklySummaryEmail = ({
           </Text>
           <div style={{ display: 'grid', gap: '12px' }}>
             {weekSummary.topPerformers.map((candidate, index) => (
-              <div key={index} style={{ 
+              <div key={`top-performer-${index}`} style={{ 
                 backgroundColor: '#f8fafc', 
                 border: '1px solid #e2e8f0', 
                 borderRadius: '8px', 
@@ -180,7 +181,7 @@ export const WeeklySummaryEmail = ({
           </Text>
           <div style={{ display: 'grid', gap: '12px' }}>
             {weekSummary.upcomingInterviews.map((interview, index) => (
-              <div key={index} style={{ 
+              <div key={`upcoming-interview-${index}`} style={{ 
                 backgroundColor: '#f8fafc', 
                 border: '1px solid #e2e8f0', 
                 borderRadius: '8px', 
@@ -218,7 +219,7 @@ export const WeeklySummaryEmail = ({
           </Text>
           <div style={{ display: 'grid', gap: '12px' }}>
             {weekSummary.recentHires.map((hire, index) => (
-              <div key={index} style={{ 
+              <div key={`recent-hire-${index}`} style={{ 
                 backgroundColor: '#f0fdf4', 
                 border: '1px solid #bbf7d0', 
                 borderRadius: '8px', 
@@ -297,7 +298,7 @@ export const WeeklySummaryEmail = ({
           🏆 Achievement Unlocked
         </Text>
         <Text style={{ color: '#78350f', fontSize: '13px', lineHeight: '20px', margin: '0' }}>
-          You've saved <strong>{weekSummary.hoursSaved} hours</strong> this week with AI-powered screening! That's {Math.round(weekSummary.hoursSaved * 60 / 40)} hours of traditional recruiting work automated.
+          You&apos;ve saved <strong>{weekSummary.hoursSaved} hours</strong> this week with AI-powered screening! That&apos;s {Math.round(weekSummary.hoursSaved * 60 / 40)} hours of traditional recruiting work automated.
         </Text>
       </div>
       
@@ -337,4 +338,5 @@ export const WeeklySummaryEmail = ({
       </div>
     </Section>
   </EmailLayout>
-);
+  );
+};

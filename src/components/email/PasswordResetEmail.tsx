@@ -15,7 +15,8 @@ export const PasswordResetEmail = ({
   userEmail,
   expirationTime = '1 hour',
   supportEmail = 'support@futuristic-hr.com'
-}: PasswordResetEmailProps) => (
+}: PasswordResetEmailProps) => {
+  return (
   <EmailLayout 
     preview="Reset your Futuristic HR password"
     footerText="If you didn't request this password reset, you can safely ignore this email. Your account remains secure."
@@ -141,4 +142,5 @@ export const PasswordResetEmail = ({
       </div>
     </Section>
   </EmailLayout>
-);
+  );
+};

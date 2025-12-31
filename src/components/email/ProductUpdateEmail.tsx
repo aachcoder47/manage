@@ -102,7 +102,7 @@ export const ProductUpdateEmail = ({
           </Text>
           <div style={{ display: 'grid', gap: '16px' }}>
             {features.map((feature, index) => (
-              <div key={index} style={{ 
+              <div key={`feature-${index}`} style={{ 
                 backgroundColor: '#f8fafc', 
                 border: '1px solid #e2e8f0', 
                 borderRadius: '8px', 
