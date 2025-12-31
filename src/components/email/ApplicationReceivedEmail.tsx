@@ -20,7 +20,7 @@ export function ApplicationReceivedEmail({
   applicationId,
   candidateEmail,
   resumeUrl,
-  dashboardUrl = 'https://app.futuristic-hr.com'
+  dashboardUrl = 'https://hr.futuristiccreations.store'
 }: ApplicationReceivedEmailProps) {
   return (
   <EmailLayout 

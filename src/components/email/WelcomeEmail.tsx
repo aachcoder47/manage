@@ -137,13 +137,13 @@ export function WelcomeEmail({
           Need help getting started?
         </Text>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-          <a href="mailto:support@futuristic-hr.com" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
+          <a href="mailto:support@futuristiccreations.store" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
             Email Support
           </a>
-          <a href="https://docs.futuristic-hr.com" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
+          <a href="https://docs.futuristiccreations.store" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
             Documentation
           </a>
-          <a href="https://calendly.com/futuristic-hr/demo" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
+          <a href="https://calendly.com/futuristiccreations/demo" style={{ color: '#667eea', textDecoration: 'none', fontSize: '14px' }}>
             Schedule Demo
           </a>
         </div>
