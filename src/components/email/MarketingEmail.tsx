@@ -133,7 +133,7 @@ export const MarketingEmail = ({
         <div style={{ marginBottom: '32px' }}>
           <div style={{ display: 'grid', gap: '16px' }}>
             {content.benefits.map((benefit, index) => (
-              <div key={index} style={{ 
+              <div key={`benefit-${index}`} style={{ 
                 backgroundColor: '#f8fafc', 
                 border: '1px solid #e2e8f0', 
                 borderRadius: '8px', 
