@@ -14,7 +14,7 @@ export function WelcomeEmail({
   name, 
   userEmail, 
   organizationName = 'Your Organization',
-  dashboardUrl = 'https://app.futuristic-hr.com/dashboard'
+  dashboardUrl = 'https://hr.futuristiccreations.store/dashboard'
 }: WelcomeEmailProps) {
   return (
   <EmailLayout 
