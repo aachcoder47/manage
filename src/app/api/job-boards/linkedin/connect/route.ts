@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     // Use redirect URI from query param, or construct from current origin, or use env var
     const finalRedirectUri = redirectUri || 
       `${req.nextUrl.origin}/api/job-boards/linkedin/callback` ||
-      process.env.LINKEDIN_REDIRECT_URI;
+      process.env.LINKEDIN_REDIRECT_URI || "";
 
     // Generate state token for CSRF protection
     const state = crypto.randomBytes(32).toString('hex');
