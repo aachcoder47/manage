@@ -59,7 +59,7 @@ export class IndeedOAuthService {
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token,
+        refresh_token: refreshToken,
         client_id: process.env.INDEED_CLIENT_ID || '',
         client_secret: process.env.INDEED_CLIENT_SECRET || '',
       }),
