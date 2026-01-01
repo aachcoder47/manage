@@ -3,6 +3,7 @@
 import React from "react";
 import { useOrganization } from "@clerk/nextjs";
 import JobBoardIntegrationCard from "@/components/job-boards/JobBoardIntegrationCard";
+import XMLFeedCard from "@/components/job-boards/XMLFeedCard";
 import { Linkedin, Briefcase, Building2 } from "lucide-react";
 
 export default function IntegrationsPage() {
@@ -38,12 +39,15 @@ export default function IntegrationsPage() {
           description="Post jobs to Naukri using API key"
           icon={<Building2 className="w-6 h-6 text-yellow-600" />}
         />
+
+        <XMLFeedCard />
       </div>
 
       <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h3 className="font-semibold text-sm mb-2">How it works:</h3>
         <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
           <li>Connect your job board accounts using OAuth or API keys</li>
+          <li>Or use the XML Feed to have job boards automatically index your jobs</li>
           <li>When you create a job, you can choose to post it to connected boards</li>
           <li>All applications will redirect to your platform</li>
           <li>Track posting status and analytics in your dashboard</li>

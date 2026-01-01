@@ -196,6 +196,17 @@ To post jobs to LinkedIn, you need:
 - API key authentication
 - Contact Naukri for enterprise partnership
 
+## XML Feed Integration
+
+In addition to API integrations, you can use the generated XML Feed to list your jobs on Indeed, Naukri, and other aggregators that support XML ingestion.
+
+### How to use
+1. Go to `/settings/integrations`
+2. Copy the **XML Job Feed** URL from the card
+3. Submit this URL to Indeed and Naukri (via their support or partner portals)
+
+The feed is automatically updated whenever you create, update, or close jobs.
+
 ## Troubleshooting
 
 ### "Cannot read properties of undefined (reading 'createCustomer')"
