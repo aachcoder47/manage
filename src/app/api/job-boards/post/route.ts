@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     );
 
     // Save posting records
-    const postingRecords = [];
+    const postingRecords: any[] = [];
     for (let i = 0; i < integration_ids.length; i++) {
       const integrationId = integration_ids[i];
       const result = results[i];
