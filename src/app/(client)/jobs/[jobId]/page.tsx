@@ -29,6 +29,7 @@ import {
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import JobBoardPostingStatus from "@/components/job-boards/JobBoardPostingStatus";
 
 export default function EmployerJobDetailsPage({ params }: { params: { jobId: string } }) {
   const [job, setJob] = useState<(Job & { organization?: { name: string; image_url: string } }) | null>(null);
@@ -288,6 +289,10 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
           </div>
       )}
 
+      <div className="mb-6">
+        <JobBoardPostingStatus jobId={params.jobId} />
+      </div>
+
       <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
           <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-lg font-semibold">Candidates</h2>
@@ -304,6 +309,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                       </TableHead>
                       <TableHead>Candidate</TableHead>
                       <TableHead>Applied</TableHead>
+                      <TableHead>Source</TableHead>
                       <TableHead>Resume</TableHead>
                       <TableHead>AI Score</TableHead>
                       <TableHead>Assessment</TableHead>
@@ -328,6 +334,20 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                                   </div>
                               </TableCell>
                               <TableCell>{new Date(app.created_at).toLocaleDateString()}</TableCell>
+                              <TableCell>
+                                  {app.source_platform ? (
+                                      <Badge variant="outline" className={
+                                          app.source_platform === 'linkedin' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                          app.source_platform === 'indeed' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                          app.source_platform === 'naukri' ? 'bg-green-50 text-green-700 border-green-200' :
+                                          'bg-gray-50 text-gray-700 border-gray-200'
+                                      }>
+                                          {app.source_platform.charAt(0).toUpperCase() + app.source_platform.slice(1)}
+                                      </Badge>
+                                  ) : (
+                                      <span className="text-muted-foreground text-xs">Direct</span>
+                                  )}
+                              </TableCell>
                               <TableCell>
                                   {app.resume_url ? (
                                       <a href={app.resume_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-indigo-600 hover:underline">
@@ -446,7 +466,7 @@ export default function EmployerJobDetailsPage({ params }: { params: { jobId: st
                       ))
                   ) : (
                       <TableRow>
-                          <TableCell colSpan={8} className="h-24 text-center">
+                          <TableCell colSpan={9} className="h-24 text-center">
                               No applications yet.
                           </TableCell>
                       </TableRow>

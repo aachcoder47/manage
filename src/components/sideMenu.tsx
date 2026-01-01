@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { PlayCircleIcon, SpeechIcon, BriefcaseIcon, SearchIcon, UserIcon, ClipboardCheckIcon } from "lucide-react";
+import { PlayCircleIcon, SpeechIcon, BriefcaseIcon, SearchIcon, UserIcon, ClipboardCheckIcon, Link2Icon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 function SideMenu() {
@@ -79,6 +79,17 @@ function SideMenu() {
           >
             <ClipboardCheckIcon className="font-thin mr-2" />
             <p className="font-medium ">Work Trials</p>
+          </div>
+          <div
+            className={`flex flex-row p-3 rounded-md hover:bg-slate-200 cursor-pointer ${
+              pathname.includes("/settings/integrations")
+                ? "bg-indigo-200"
+                : "bg-slate-100"
+            }`}
+            onClick={() => router.push("/settings/integrations")}
+          >
+            <Link2Icon className="font-thin mr-2" />
+            <p className="font-medium ">Integrations</p>
           </div>
         </div>
       </div>

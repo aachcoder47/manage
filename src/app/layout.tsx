@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import { AdSenseProvider } from "@/contexts/AdSenseContext";
 import { AdSenseScriptLoader } from "@/components/ads/AdSenseScriptLoader";
+import { NoSSRWrapper } from "@/components/NoSSRWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,7 +40,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/browser-client-icon.ico" />
       </head>
-      <body className={cn(inter.className, "antialiased min-h-screen")} suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <ClerkProvider
           signInForceRedirectUrl="/dashboard"
           signUpForceRedirectUrl="/dashboard"
@@ -47,18 +48,24 @@ export default function RootLayout({
           <AdSenseScriptLoader>
             <AdSenseProvider enabled={process.env.NEXT_PUBLIC_ADSENSE_ENABLED === 'true'}>
               <Providers>
-                {children}
-                <Toaster
-                  toastOptions={{
-                    classNames: {
-                      toast: "bg-white",
-                      title: "text-black",
-                      description: "text-muted-foreground",
-                      actionButton: "bg-indigo-600 text-white",
-                      cancelButton: "bg-secondary text-secondary-foreground",
-                    },
-                  }}
-                />
+                <div className="antialiased min-h-screen">
+                  <NoSSRWrapper>
+                    {children}
+                  </NoSSRWrapper>
+                </div>
+                <NoSSRWrapper>
+                  <Toaster
+                    toastOptions={{
+                      classNames: {
+                        toast: "bg-white",
+                        title: "text-black",
+                        description: "text-muted-foreground",
+                        actionButton: "bg-indigo-600 text-white",
+                        cancelButton: "bg-secondary text-secondary-foreground",
+                      },
+                    }}
+                  />
+                </NoSSRWrapper>
               </Providers>
             </AdSenseProvider>
           </AdSenseScriptLoader>

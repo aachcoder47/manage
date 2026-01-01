@@ -11,4 +11,6 @@ export type Job = {
     is_remote: boolean;
     status: 'open' | 'closed' | 'draft';
     views: number;
+    company_name?: string;
+    company_description?: string;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ADSENSE_CONFIG } from '@/config/adsense.config';
 
 interface AdSenseScriptLoaderProps {
@@ -8,9 +8,15 @@ interface AdSenseScriptLoaderProps {
 }
 
 export const AdSenseScriptLoader: React.FC<AdSenseScriptLoaderProps> = ({ children }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     // Load in both development and production for testing
-    if (process.env.NEXT_PUBLIC_ADSENSE_ENABLED !== 'true') return;
+    if (!isClient || process.env.NEXT_PUBLIC_ADSENSE_ENABLED !== 'true') return;
 
     // Check if script is already loaded
     if (window.adsbygoogle && window.adsbygoogle.length > 0) {
@@ -44,7 +50,7 @@ export const AdSenseScriptLoader: React.FC<AdSenseScriptLoaderProps> = ({ childr
         existingScript.parentNode.removeChild(existingScript);
       }
     };
-  }, []);
+  }, [isClient]);
 
   return <>{children}</>;
 };

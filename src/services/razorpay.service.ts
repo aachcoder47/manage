@@ -51,6 +51,7 @@ export class RazorpayService {
 
   /**
    * Create a Razorpay customer
+   * If customer already exists, attempts to find and return the existing customer
    */
   static async createCustomer(email: string, name: string, organizationId: string) {
     try {
@@ -65,7 +66,39 @@ export class RazorpayService {
       return customer;
     } catch (error: any) {
       console.error('Razorpay customer creation failed:', error);
-      throw new Error(error.message || 'Failed to create customer');
+      
+      // If customer already exists, try to fetch existing customers and find by email
+      if (error.error?.code === 'BAD_REQUEST_ERROR' && error.error?.description?.includes('Customer already exists')) {
+        try {
+          console.log('Attempting to fetch existing customers for email:', email);
+          // Fetch all customers and filter by email (Razorpay API limitation)
+          const customers = await razorpay.customers.all();
+          
+          console.log('Fetched customers response:', customers);
+          
+          if (customers && customers.items) {
+            console.log('Total customers found:', customers.items.length);
+            console.log('Customer emails:', customers.items.map((c: any) => c.email));
+            
+            // Use case-insensitive email comparison since Razorpay normalizes emails to lowercase
+            const existingCustomer = customers.items.find((c: any) => 
+              c.email && c.email.toLowerCase() === email.toLowerCase()
+            );
+            if (existingCustomer) {
+              console.log('Found existing customer:', existingCustomer);
+              return existingCustomer;
+            } else {
+              console.log('No customer found with email:', email);
+            }
+          } else {
+            console.log('No customers.items found in response');
+          }
+        } catch (fetchError: any) {
+          console.error('Failed to fetch existing customer:', fetchError);
+        }
+      }
+      
+      throw new Error(error.error?.description || error.message || 'Failed to create customer');
     }
   }
 

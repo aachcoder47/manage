@@ -8,17 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import JobBoardPostingSelector from "@/components/job-boards/JobBoardPostingSelector";
 
 export default function NewJobPage() {
   const router = useRouter();
   const { organization } = useOrganization();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [posting, setPosting] = useState(false);
   const [interviews, setInterviews] = useState<any[]>([]);
+  const [createdJobId, setCreatedJobId] = useState<string | null>(null);
+  const [autoPostToBoards, setAutoPostToBoards] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -63,13 +67,77 @@ export default function NewJobPage() {
           await JobsService.associateInterviewWithJob(interview_id, job.id);
       }
 
-      toast.success("Job posted and AI Interview linked!");
-      router.push("/jobs");
+      toast.success("Job created successfully!");
+      setCreatedJobId(job.id);
+
+      // Auto-post to job boards if enabled
+      if (autoPostToBoards) {
+        await autoPostJobToBoards(job.id);
+      }
     } catch (error) {
       console.error(error);
       toast.error("Failed to post job");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const autoPostJobToBoards = async (jobId: string) => {
+    setPosting(true);
+    try {
+      // Fetch connected integrations
+      const response = await fetch(
+        `/api/job-boards/integrations?organization_id=${organization?.id || ""}`
+      );
+      
+      if (!response.ok) {
+        console.error("Failed to fetch integrations");
+        return;
+      }
+
+      const data = await response.json();
+      const activeIntegrations = data.integrations?.filter(
+        (i: any) => i.status === "connected" && i.is_active
+      ) || [];
+
+      if (activeIntegrations.length === 0) {
+        // No integrations connected, skip auto-posting
+        return;
+      }
+
+      // Post to all connected boards
+      const integrationIds = activeIntegrations.map((i: any) => i.id);
+      const postResponse = await fetch("/api/job-boards/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          job_id: jobId,
+          integration_ids: integrationIds,
+        }),
+      });
+
+      const postData = await postResponse.json();
+
+      if (postResponse.ok) {
+        const successCount = postData.results.filter((r: any) => r.success).length;
+        const failCount = postData.results.length - successCount;
+
+        if (successCount > 0) {
+          toast.success(`Job automatically posted to ${successCount} job board(s)!`);
+        }
+        if (failCount > 0) {
+          toast.warning(`Failed to post to ${failCount} board(s)`);
+        }
+      } else {
+        console.error("Auto-posting error:", postData.error);
+      }
+    } catch (error) {
+      console.error("Auto-posting error:", error);
+      // Don't show error to user - auto-posting is optional
+    } finally {
+      setPosting(false);
     }
   };
 
@@ -186,15 +254,59 @@ export default function NewJobPage() {
           <Label htmlFor="remote">Remote Position</Label>
         </div>
 
+        <div className="flex items-center space-x-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <Switch
+            id="autoPost"
+            checked={autoPostToBoards}
+            onCheckedChange={setAutoPostToBoards}
+          />
+          <Label htmlFor="autoPost" className="cursor-pointer">
+            <span className="font-medium">Automatically post to job boards</span>
+            <p className="text-sm text-muted-foreground font-normal">
+              Post this job to all connected boards (LinkedIn, Naukri, Indeed). Applications will redirect to your website.
+            </p>
+          </Label>
+        </div>
+
         <div className="pt-4 flex justify-end gap-3">
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
-          <Button type="submit" disabled={loading} className="bg-indigo-600 hover:bg-indigo-700">
-            {loading ? "Posting..." : "Post Job"}
+          <Button type="submit" disabled={loading || posting} className="bg-indigo-600 hover:bg-indigo-700">
+            {loading || posting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                {loading ? "Creating..." : "Posting to boards..."}
+              </>
+            ) : (
+              "Create & Post Job"
+            )}
           </Button>
         </div>
       </form>
+
+      {createdJobId && (
+        <div className="mt-6">
+          <JobBoardPostingSelector
+            jobId={createdJobId}
+            onPostingComplete={(results) => {
+              // Redirect after posting is complete
+              setTimeout(() => {
+                router.push("/jobs");
+              }, 2000);
+            }}
+          />
+          <div className="mt-4 flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => router.push("/jobs")}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              Skip & Go to Jobs
+            </Button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
