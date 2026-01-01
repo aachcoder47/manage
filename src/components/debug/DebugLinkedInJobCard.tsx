@@ -3,10 +3,31 @@
 
 import React, { useEffect, useState } from 'react';
 
-const DebugLinkedInJobCard = ({ jobId }) => {
-  const [debugInfo, setDebugInfo] = useState({
+interface DebugLinkedInJobCardProps {
+  jobId: string;
+}
+
+interface ExternalPost {
+  id: string;
+  platform: string;
+  posting_status: string;
+  external_job_url: string;
+  [key: string]: any;
+}
+
+interface DebugInfo {
+  fetching: boolean;
+  posts: ExternalPost[];
+  linkedinPosts?: ExternalPost[];
+  error: string | null;
+  jobId: string;
+}
+
+const DebugLinkedInJobCard = ({ jobId }: DebugLinkedInJobCardProps) => {
+  const [debugInfo, setDebugInfo] = useState<DebugInfo>({
     fetching: false,
     posts: [],
+    linkedinPosts: [],
     error: null,
     jobId: jobId
   });
@@ -32,7 +53,7 @@ const DebugLinkedInJobCard = ({ jobId }) => {
         const data = await response.json();
         console.log('📊 API Response data:', data);
         
-        const linkedinPosts = data.posts?.filter(post => post.platform === 'linkedin') || [];
+        const linkedinPosts = data.posts?.filter((post: any) => post.platform === 'linkedin') || [];
         console.log('🔗 LinkedIn posts found:', linkedinPosts);
         
         setDebugInfo(prev => ({
@@ -42,11 +63,11 @@ const DebugLinkedInJobCard = ({ jobId }) => {
           fetching: false
         }));
         
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ Fetch error:', error);
         setDebugInfo(prev => ({
           ...prev,
-          error: error.message,
+          error: error.message || 'Unknown error',
           fetching: false
         }));
       }
@@ -104,7 +125,7 @@ const DebugLinkedInJobCard = ({ jobId }) => {
 
 // Export for use in components
 if (typeof window !== 'undefined') {
-  window.DebugLinkedInJobCard = DebugLinkedInJobCard;
+  (window as any).DebugLinkedInJobCard = DebugLinkedInJobCard;
   console.log('🔧 LinkedIn debug component loaded. Use <DebugLinkedInJobCard jobId="your-job-id" /> in your component.');
 }
 
