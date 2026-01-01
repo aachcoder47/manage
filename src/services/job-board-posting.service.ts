@@ -126,12 +126,15 @@ export class JobBoardPostingService {
         throw new Error('Indeed API key not found');
       }
 
+      // Add source tracking to apply URL
+      const trackedApplyUrl = `${applyUrl}${applyUrl.includes('?') ? '&' : '?'}source=indeed&utm_source=indeed`;
+
       const result = await IndeedAPIKeyService.postJob(apiKey, {
         title: job.title,
         description: job.description,
         location: job.location || 'Remote',
         employmentType: job.employment_type || 'full-time',
-        applyUrl: applyUrl,
+        applyUrl: trackedApplyUrl,
         salaryRange: job.salary_range ? {
           min: 0, // Parse from salary_range if needed
           max: 0,
@@ -174,12 +177,15 @@ export class JobBoardPostingService {
         throw new Error('Naukri API key not found');
       }
 
+      // Add source tracking to apply URL
+      const trackedApplyUrl = `${applyUrl}${applyUrl.includes('?') ? '&' : '?'}source=naukri&utm_source=naukri`;
+
       const result = await NaukriAPIKeyService.postJob(apiKey, {
         title: job.title,
         description: job.description,
         location: job.location || 'Remote',
         employmentType: job.employment_type || 'full-time',
-        applyUrl: applyUrl,
+        applyUrl: trackedApplyUrl,
         salaryRange: job.salary_range ? {
           min: 0, // Parse from salary_range if needed
           max: 0,
