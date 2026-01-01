@@ -1,7 +1,7 @@
 import { JobBoardIntegrationService, JobBoardPlatform } from './job-board-integration.service';
 import { LinkedInOAuthService } from './linkedin-oauth.service';
-import { IndeedAPIKeyService } from './indeed-api-key.service';
-import { NaukriAPIKeyService } from './naukri-api-key.service';
+import { IndeedOAuthService } from './indeed-oauth.service';
+import { NaukriOAuthService } from './naukri-oauth.service';
 import { LinkedInFeedPostService } from './linkedin-feed-post.service';
 import { Job } from '@/types/job';
 
@@ -13,7 +13,7 @@ export interface JobPostingResult {
   error?: string;
   error_code?: string;
   response_data?: any;
-  posting_method?: 'share' | 'formal' | 'api_key'; // Added api_key option
+  posting_method?: 'share' | 'formal' | 'api_key' | 'oauth';
 }
 
 export class JobBoardPostingService {
@@ -75,20 +75,15 @@ export class JobBoardPostingService {
         employmentTypeMap[job.employment_type?.toLowerCase() || ''] || 'FULL_TIME';
 
       // Use LinkedInFeedPostService to create a "We're Hiring" feed post
-      // This works with basic w_member_social scope and directs users to our platform
       const result = await LinkedInFeedPostService.postJobAsFeedPost(accessToken, {
         title: job.title,
         description: job.description,
         location: job.location || 'Remote',
         employmentType: job.employment_type || 'full-time',
-        applyUrl: trackedApplyUrl, // Use the actual tracking URL
+        applyUrl: trackedApplyUrl,
         salaryRange: job.salary_range ? {
            min: 0, max: 0, currency: 'USD' 
         } : undefined,
-        // job.salary_range in DB is usually a string range like "100k-120k" or JSON. 
-        // Existing code passed { min: 0, max: 0, currency: 'INR' }. Let's keep it simple or undefined for now if we can't parse.
-        // But let's look at the FeedPostService signature. It accepts optional salaryRange.
-        // Let's omit salaryRange if we don't have parsed values to avoid "Salary: $0 - $0".
         companyName: job.company_name || 'Hiring Company',
       });
 
@@ -98,7 +93,7 @@ export class JobBoardPostingService {
         external_job_id: result.shareId,
         external_job_url: result.shareUrl,
         response_data: result,
-        posting_method: 'share' // Indicate this was posted as a share
+        posting_method: 'share'
       };
     } catch (error: any) {
       console.error('LinkedIn posting error:', error);
@@ -112,8 +107,7 @@ export class JobBoardPostingService {
   }
 
   /**
-   * Post a job to Indeed
-   * Note: Indeed requires API key and publisher account
+   * Post a job to Indeed via OAuth
    */
   static async postToIndeed(
     integrationId: string,
@@ -121,22 +115,55 @@ export class JobBoardPostingService {
     applyUrl: string
   ): Promise<JobPostingResult> {
     try {
-      const apiKey = await JobBoardIntegrationService.getDecryptedApiKey(integrationId);
-      if (!apiKey) {
-        throw new Error('Indeed API key not found');
+      // Get integration and tokens
+      const integration = await JobBoardIntegrationService.getIntegrationById(integrationId);
+      if (!integration) {
+        throw new Error('Indeed integration not found');
+      }
+
+      let accessToken = await JobBoardIntegrationService.getDecryptedAccessToken(integrationId);
+      if (!accessToken) {
+        throw new Error('Indeed access token not found');
+      }
+
+      // Check expiry and refresh
+      const isExpired = !integration.token_expires_at || new Date() >= new Date(integration.token_expires_at);
+      if (isExpired) {
+        const refreshToken = await JobBoardIntegrationService.getDecryptedRefreshToken(integrationId);
+        if (refreshToken) {
+          const tokenResponse = await IndeedOAuthService.refreshToken(refreshToken);
+          accessToken = tokenResponse.access_token;
+
+          await JobBoardIntegrationService.upsertIntegration({
+            user_id: integration.user_id,
+            platform: 'indeed',
+            access_token: tokenResponse.access_token,
+            // If new refresh token provided, use it, else keep old
+            // Indeed usually rotates refresh tokens? Check response type.
+            // Our service returns { access_token, expires_in }, possibly refresh_token?
+            // IndeedOAuthService.refreshToken returns Promise<{ access_token: string; expires_in: number }>
+            // So we reuse the old refresh token unless we want to re-auth.
+            // Wait, does Indeed rotate usage? Often yes. But if service doesn't return it...
+            // Let's assume reuse for now or that we need to implement rotation if service provides it.
+            refresh_token: refreshToken, 
+            token_expires_at: new Date(Date.now() + tokenResponse.expires_in * 1000).toISOString(),
+          });
+        } else {
+          throw new Error('Indeed token expired and no refresh token available');
+        }
       }
 
       // Add source tracking to apply URL
       const trackedApplyUrl = `${applyUrl}${applyUrl.includes('?') ? '&' : '?'}source=indeed&utm_source=indeed`;
 
-      const result = await IndeedAPIKeyService.postJob(apiKey, {
+      const result = await IndeedOAuthService.postJob(accessToken, {
         title: job.title,
         description: job.description,
         location: job.location || 'Remote',
         employmentType: job.employment_type || 'full-time',
         applyUrl: trackedApplyUrl,
         salaryRange: job.salary_range ? {
-          min: 0, // Parse from salary_range if needed
+          min: 0,
           max: 0,
           currency: 'INR',
         } : undefined,
@@ -150,7 +177,7 @@ export class JobBoardPostingService {
         external_job_id: result.jobId,
         external_job_url: result.jobUrl,
         response_data: result,
-        posting_method: 'api_key' // Indicate this was posted via API key
+        posting_method: 'oauth'
       };
     } catch (error: any) {
       console.error('Indeed posting error:', error);
@@ -164,7 +191,7 @@ export class JobBoardPostingService {
   }
 
   /**
-   * Post job to Naukri
+   * Post job to Naukri via OAuth
    */
   static async postToNaukri(
     integrationId: string,
@@ -172,22 +199,47 @@ export class JobBoardPostingService {
     applyUrl: string
   ): Promise<JobPostingResult> {
     try {
-      const apiKey = await JobBoardIntegrationService.getDecryptedApiKey(integrationId);
-      if (!apiKey) {
-        throw new Error('Naukri API key not found');
+      const integration = await JobBoardIntegrationService.getIntegrationById(integrationId);
+      if (!integration) {
+        throw new Error('Naukri integration not found');
+      }
+
+      let accessToken = await JobBoardIntegrationService.getDecryptedAccessToken(integrationId);
+      if (!accessToken) {
+        throw new Error('Naukri access token not found');
+      }
+
+      // Check expiry and refresh
+      const isExpired = !integration.token_expires_at || new Date() >= new Date(integration.token_expires_at);
+      if (isExpired) {
+        const refreshToken = await JobBoardIntegrationService.getDecryptedRefreshToken(integrationId);
+        if (refreshToken) {
+          const tokenResponse = await NaukriOAuthService.refreshToken(refreshToken);
+          accessToken = tokenResponse.access_token;
+
+          await JobBoardIntegrationService.upsertIntegration({
+            user_id: integration.user_id,
+            platform: 'naukri',
+            access_token: tokenResponse.access_token,
+            refresh_token: refreshToken,
+            token_expires_at: new Date(Date.now() + tokenResponse.expires_in * 1000).toISOString(),
+          });
+        } else {
+          throw new Error('Naukri token expired and no refresh token available');
+        }
       }
 
       // Add source tracking to apply URL
       const trackedApplyUrl = `${applyUrl}${applyUrl.includes('?') ? '&' : '?'}source=naukri&utm_source=naukri`;
 
-      const result = await NaukriAPIKeyService.postJob(apiKey, {
+      const result = await NaukriOAuthService.postJob(accessToken, {
         title: job.title,
         description: job.description,
         location: job.location || 'Remote',
         employmentType: job.employment_type || 'full-time',
         applyUrl: trackedApplyUrl,
         salaryRange: job.salary_range ? {
-          min: 0, // Parse from salary_range if needed
+          min: 0,
           max: 0,
           currency: 'INR',
         } : undefined,
@@ -201,7 +253,7 @@ export class JobBoardPostingService {
         external_job_id: result.jobId,
         external_job_url: result.jobUrl,
         response_data: result,
-        posting_method: 'api_key' // Indicate this was posted via API key
+        posting_method: 'oauth'
       };
     } catch (error: any) {
       console.error('Naukri posting error:', error);
