@@ -36,7 +36,7 @@ export class NaukriOAuthService {
                 grant_type: 'authorization_code',
                 code,
                 redirect_uri: redirectUri,
-                client_id: process.env.NAUUKRI_CLIENT_ID || '',
+                client_id: process.env.NAUKRI_CLIENT_ID || '',
                 client_secret: process.env.NAUKRI_CLIENT_SECRET || '',
             }),
         });
