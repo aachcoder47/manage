@@ -284,7 +284,7 @@ export default function JobBoardIntegrationCard({
                   <p className="text-xs text-muted-foreground mt-1">
                     {platform === "indeed" ? (
                       <>
-                        Find API Key in <a href="https://secure.indeed.com/publisher" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">Indeed Publisher Dashboard</a>
+                        Find API Key in <a href="https://developers.indeed.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">Indeed Developers Portal</a>
                       </>
                     ) : (
                       <>
