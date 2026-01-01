@@ -41,7 +41,6 @@ export async function GET(req: NextRequest) {
       refresh_token: tokenResponse.refresh_token,
       token_expires_at: new Date(Date.now() + tokenResponse.expires_in * 1000).toISOString(),
       platform_user_id: userId,
-      is_active: true,
     });
 
     // Cleanup cookie
