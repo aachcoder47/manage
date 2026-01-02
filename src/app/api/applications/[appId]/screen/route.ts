@@ -34,12 +34,12 @@ export async function POST(
 
     // Get application details
     const { data: application, error: appError } = await supabase
-      .from('job_applications')
+      .from('job_application')
       .select(`
         *,
-        job:jobs (
+        job (
           *,
-          organization:organizations (
+          organization (
             name,
             image_url
           )
@@ -124,10 +124,10 @@ export async function GET(
       .from('ai_screening')
       .select(`
         *,
-        job_applications (
+        job_application (
           applicant_name,
           applicant_email,
-          job:jobs (
+          job (
             title,
             description
           )

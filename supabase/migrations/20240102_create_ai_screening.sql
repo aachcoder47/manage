@@ -28,7 +28,7 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_screening_application_id_fkey') THEN
         ALTER TABLE ai_screening 
         ADD CONSTRAINT ai_screening_application_id_fkey 
-        FOREIGN KEY (application_id) REFERENCES job_applications(id) ON DELETE CASCADE;
+        FOREIGN KEY (application_id) REFERENCES job_application(id) ON DELETE CASCADE;
     END IF;
 END $$;
 
