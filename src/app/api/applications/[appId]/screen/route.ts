@@ -23,9 +23,10 @@ function getMistral() {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { appId: string } }
+  context: { params: Promise<{ appId: string }> }
 ) {
   try {
+    const params = await context.params;
     const appId = params.appId;
     const supabase = getSupabase();
     const mistral = getMistral();
@@ -110,9 +111,10 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { appId: string } }
+  context: { params: Promise<{ appId: string }> }
 ) {
   try {
+    const params = await context.params;
     const appId = params.appId;
     const supabase = getSupabase();
 
