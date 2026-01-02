@@ -42,9 +42,9 @@ export async function POST(
       .from('job_application')
       .select(`
         *,
-        job (
+        job!inner (
           *,
-          organization (
+          organization!inner (
             name,
             image_url
           )
