@@ -2,9 +2,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Mistral } from "@mistralai/mistralai";
-import { parsePdfFromBuffer } from "@/actions/parse-pdf";
-import axios from "axios";
-import { emailTriggerService } from "@/services/email-trigger.service";
 
 export const dynamic = 'force-dynamic';
 
