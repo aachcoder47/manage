@@ -23,15 +23,20 @@ export async function POST(
   context: { params: Promise<{ appId: string }> }
 ) {
   try {
+    console.log('[AI Screening] POST request received');
     const params = await context.params;
     const appId = params.appId;
+    console.log('[AI Screening] App ID:', appId);
+    
     const supabase = getSupabase();
     const mistral = getMistral();
 
     if (!supabase) {
+      console.error('[AI Screening] Database connection failed');
       return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
+    console.log('[AI Screening] Fetching application from database...');
     // Get application details
     const { data: application, error: appError } = await supabase
       .from('job_application')
@@ -48,9 +53,18 @@ export async function POST(
       .eq('id', appId)
       .single();
 
+    console.log('[AI Screening] Query result:', { 
+      hasData: !!application, 
+      error: appError?.message,
+      errorCode: appError?.code 
+    });
+
     if (appError || !application) {
-      return NextResponse.json({ error: "Application not found" }, { status: 404 });
+      console.error('[AI Screening] Application not found:', appError);
+      return NextResponse.json({ error: "Application not found", details: appError?.message }, { status: 404 });
     }
+
+    console.log('[AI Screening] Application found, starting screening process...');
 
     // Start AI screening process
     const screeningData = {
