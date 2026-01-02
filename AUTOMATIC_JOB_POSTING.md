@@ -46,7 +46,7 @@ This lets you:
 
 1. Go to `/settings/integrations`
 2. Click "Connect LinkedIn" (OAuth)
-3. For Indeed/Naukri: Enter your API keys (when available)
+3. For Indeed/Naukri: Copy the XML Feed URL and submit it to their portals
 
 ### Step 2: Create a Job
 

@@ -6,7 +6,7 @@ This document explains how to set up and use the job board integration system th
 
 - **Multi-User Integration**: Each user connects their own job board accounts
 - **OAuth Support**: LinkedIn integration via OAuth 2.0
-- **API Key Support**: Indeed and Naukri via API keys (coming soon)
+- **XML Feed Support**: Indeed, Naukri, and other aggregators via XML Feed
 - **Automatic Posting**: Post jobs to multiple boards with one click
 - **Secure Token Storage**: All tokens and API keys are encrypted at rest
 - **Posting Tracking**: Track job postings and their status across platforms
@@ -37,11 +37,8 @@ LINKEDIN_REDIRECT_URI=https://hr.futuristiccreations.store/api/job-boards/linked
 # App URL (Required for generating apply URLs)
 NEXT_PUBLIC_APP_URL=https://hr.futuristiccreations.store
 
-# Indeed & Naukri (Optional - API keys are stored per-user in database)
-# Users will connect their own API keys through the UI
-# These are just for reference/documentation:
-# INDEED_API_ENDPOINT=https://api.indeed.com/v2/jobs
-# NAUKRI_API_ENDPOINT=https://api.naukri.com/v1/jobs
+# XML Feed (Optional - No API keys needed for Indeed/Naukri)
+# Just submit the XML Feed URL to these platforms
 ```
 
 ### Getting LinkedIn Credentials
@@ -186,15 +183,10 @@ To post jobs to LinkedIn, you need:
 
 ## Indeed & Naukri Integration
 
-### Indeed
-- Requires Indeed Publisher API access
-- API key authentication
-- Apply through Indeed for Publishers
-
-### Naukri
-- Requires Naukri Enterprise API access
-- API key authentication
-- Contact Naukri for enterprise partnership
+We support Indeed and Naukri via **XML Feed**:
+- No API keys required
+- Simply submit your XML Feed URL to their publisher portals
+- Jobs are automatically indexed and updated
 
 ## XML Feed Integration
 
@@ -206,6 +198,18 @@ In addition to API integrations, you can use the generated XML Feed to list your
 3. Submit this URL to Indeed and Naukri (via their support or partner portals)
 
 The feed is automatically updated whenever you create, update, or close jobs.
+
+## Google Jobs Integration
+
+Your job posts are automatically optimized for **Google Jobs**.
+
+### How it works
+1. Every public job page includes **Schema.org JobPosting** JSON-LD data.
+2. A `sitemap.xml` is automatically generated at `/sitemap.xml`.
+3. `robots.txt` points Google bots to the sitemap.
+
+### Validation
+You can validate your job posts using the [Google Rich Results Test](https://search.google.com/test/rich-results). Simply paste the URL of any public job page.
 
 ## Troubleshooting
 
@@ -230,8 +234,6 @@ The feed is automatically updated whenever you create, update, or close jobs.
 
 ## Future Enhancements
 
-- [ ] Indeed API key integration UI
-- [ ] Naukri API key integration UI
 - [ ] Webhook support for application notifications
 - [ ] Analytics dashboard for posting performance
 - [ ] Bulk job posting

@@ -4,7 +4,7 @@ import React from "react";
 import { useOrganization } from "@clerk/nextjs";
 import JobBoardIntegrationCard from "@/components/job-boards/JobBoardIntegrationCard";
 import XMLFeedCard from "@/components/job-boards/XMLFeedCard";
-import { Linkedin, Briefcase, Building2 } from "lucide-react";
+import { Linkedin } from "lucide-react";
 
 export default function IntegrationsPage() {
   const { organization } = useOrganization();
@@ -26,28 +26,14 @@ export default function IntegrationsPage() {
           icon={<Linkedin className="w-6 h-6 text-blue-600" />}
         />
 
-        <JobBoardIntegrationCard
-          platform="indeed"
-          title="Indeed"
-          description="Post jobs to Indeed using API key"
-          icon={<Briefcase className="w-6 h-6 text-indigo-600" />}
-        />
-
-        <JobBoardIntegrationCard
-          platform="naukri"
-          title="Naukri"
-          description="Post jobs to Naukri using API key"
-          icon={<Building2 className="w-6 h-6 text-yellow-600" />}
-        />
-
         <XMLFeedCard />
       </div>
 
       <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h3 className="font-semibold text-sm mb-2">How it works:</h3>
         <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-          <li>Connect your job board accounts using OAuth or API keys</li>
-          <li>Or use the XML Feed to have job boards automatically index your jobs</li>
+          <li>Connect your LinkedIn account using OAuth</li>
+          <li>Use the XML Feed to have job boards like Indeed and Naukri automatically index your jobs</li>
           <li>When you create a job, you can choose to post it to connected boards</li>
           <li>All applications will redirect to your platform</li>
           <li>Track posting status and analytics in your dashboard</li>
